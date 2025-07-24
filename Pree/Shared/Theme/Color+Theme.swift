@@ -8,23 +8,35 @@
 import SwiftUI
 
 enum AppColor {
-    static let primary: Color = Color(hex: "#487EE3")
-    static let secondary: Color = Color(hex: "#D2D6DA")
-    static let alertRed: Color = Color(hex: "#1A1E27")
-    static let mainBackground: Color = Color(hex: "#F2F4F6")
-    static let cardBackground: Color = Color(hex: "#FFFFFF")
-    static let textPrimary: Color = Color(hex: "#1A1E27")
-    static let textSecondary: Color = Color("TextSecondary")
+    static let primary: Color = Color(hex: "#3370FF")
+    static let blue100: Color = Color(hex: "#B0C8FF")
+    static let blue200: Color = Color(hex: "#8AADFF")
+    static let preeRed: Color = Color(hex: "#FF0000")
+    static let preeGreen: Color = Color(hex: "#00C033")
+    static let preeYellow: Color = Color(hex: "#FFB700")
+    
+    static let mainBackground: Color = Color(hex: "#F5FAFF")
+    static let sectionBackground: Color = Color(hex: "#FFFFFF")
+    
+    static let textTitle: Color = Color(hex:"#00206B")
+    static let textGray: Color = Color(hex:"#9D9FA5")
+    static let textBlack: Color = Color("#2E2F32")
     static let textRed: Color = Color(hex: "#1A1E27")
 }
 
 
 extension Color {
     static let primary = AppColor.primary
-    static let secondary = AppColor.secondary
-    static let alertRed = AppColor.alertRed
+    static let blue100 = AppColor.blue100
+    static let blue200 = AppColor.blue200
+    static let preeRed = AppColor.preeRed
+    static let preeGreen = AppColor.preeGreen
+    static let preeYellow = AppColor.preeYellow
+    
     static let mainBackground = AppColor.mainBackground
-    static let cardBackground = AppColor.cardBackground
-    static let textPrimary = AppColor.textPrimary
-    static let textRed = AppColor.textRed
+    static let sectionBackground = AppColor.sectionBackground
+    
+    static let textTitle = AppColor.textTitle
+    static let textGray = AppColor.textGray
+    static let textBlack = AppColor.textBlack
 }
