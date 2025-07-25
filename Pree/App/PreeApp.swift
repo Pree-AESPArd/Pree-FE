@@ -9,9 +9,14 @@ import SwiftUI
 
 @main
 struct PreeApp: App {
+    
+    init() {
+        
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
         }
     }
 }
