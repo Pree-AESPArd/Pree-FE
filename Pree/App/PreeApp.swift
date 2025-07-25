@@ -16,7 +16,8 @@ struct PreeApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            LaunchView()
         }
     }
 }
+
