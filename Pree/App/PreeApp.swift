@@ -10,13 +10,23 @@ import SwiftUI
 @main
 struct PreeApp: App {
     
+    @StateObject private var authVM = AuthViewModel()
+    
     init() {
         
     }
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            Group {
+                if authVM.isSignedIn {
+                    RootTabView()
+                } else {
+                    LaunchSignInView()
+                }
+            }
+            .environmentObject(authVM)
         }
     }
 }
+
