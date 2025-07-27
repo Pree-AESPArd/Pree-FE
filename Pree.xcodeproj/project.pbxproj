@@ -98,6 +98,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C8C01432E360C19003FD18F /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				0CBCCBA32E324E8F0094475A /* Debug.xcconfig */,
+				0CBCCBA42E324EA00094475A /* Release.xcconfig */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		0CBCCB6A2E324DF90094475A = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +116,7 @@
 				0CBCCB862E324DFB0094475A /* PreeTests */,
 				0CBCCB902E324DFB0094475A /* PreeUITests */,
 				0CBCCB742E324DF90094475A /* Products */,
+				0C8C01432E360C19003FD18F /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -301,7 +311,8 @@
 /* Begin XCBuildConfiguration section */
 		0CBCCB952E324DFB0094475A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA32E324E8F0094475A /* Debug.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -365,7 +376,8 @@
 		};
 		0CBCCB962E324DFB0094475A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA42E324EA00094475A /* Release.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -422,7 +434,8 @@
 		};
 		0CBCCB982E324DFB0094475A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA32E324E8F0094475A /* Debug.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -451,7 +464,8 @@
 		};
 		0CBCCB992E324DFB0094475A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA42E324EA00094475A /* Release.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -480,7 +494,8 @@
 		};
 		0CBCCB9B2E324DFB0094475A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA32E324E8F0094475A /* Debug.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -499,7 +514,8 @@
 		};
 		0CBCCB9C2E324DFB0094475A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA42E324EA00094475A /* Release.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -518,7 +534,8 @@
 		};
 		0CBCCB9E2E324DFB0094475A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA32E324E8F0094475A /* Debug.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -535,7 +552,8 @@
 		};
 		0CBCCB9F2E324DFB0094475A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA42E324EA00094475A /* Release.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
