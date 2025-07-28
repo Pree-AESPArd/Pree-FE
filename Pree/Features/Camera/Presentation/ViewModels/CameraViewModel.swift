@@ -8,39 +8,44 @@
 import SwiftUI
 import ReplayKit
 
-
+@MainActor
 final class CameraViewModel: ObservableObject {
-    @Published var isRecording = false
-    @Published var showPreview  = false
-    var previewController: RPPreviewViewController?
-
-    private let startUseCase: StartScreenRecordingUseCase
-    private let stopUseCase: StopScreenRecordingUseCase
-
-    init(start: StartScreenRecordingUseCase,
-         stop: StopScreenRecordingUseCase) {
+    @Published var isCapturing = false
+    @Published var videoURL: URL?
+    @Published var errorMessage: String?
+    
+    private let startUseCase: StartScreenCaptureUseCase
+    private let stopUseCase: StopScreenCaptureUseCase
+    
+    public init(
+        start: StartScreenCaptureUseCase,
+        stop:  StopScreenCaptureUseCase
+    ) {
         self.startUseCase = start
         self.stopUseCase  = stop
     }
-
-    func toggleRecording() {
-        if isRecording {
+    
+    func toggleCapture() {
+        if isCapturing {
             stopUseCase.execute { result in
-                switch result {
-                case .success(let preview):
-                    self.previewController = preview
-                    self.showPreview = true
-                    self.isRecording = false
-                case .failure:
-                    self.isRecording = false
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let url):
+                        self.videoURL = url
+                    case .failure(let err):
+                        self.errorMessage = "\(err)"
+                    }
+                    self.isCapturing = false
                 }
             }
         } else {
-            startUseCase.execute { result in
-                if case .success = result {
-                    self.isRecording = true
-                }
-            }
+            startUseCase.execute(
+                completion: { result in
+                    switch result {
+                    case .success: self.isCapturing = true
+                    case .failure(let err): self.errorMessage = "\(err)"
+                    }
+                })
         }
     }
 }

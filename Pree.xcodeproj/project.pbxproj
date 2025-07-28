@@ -48,6 +48,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0C8C03312E37753B003FD18F /* Docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Docs;
+			sourceTree = "<group>";
+		};
 		0CBCCB752E324DF90094475A /* Pree */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Pree;
@@ -110,6 +115,7 @@
 		0CBCCB6A2E324DF90094475A = {
 			isa = PBXGroup;
 			children = (
+				0C8C03312E37753B003FD18F /* Docs */,
 				0CBCCBA92E324F530094475A /* Config */,
 				0CBCCBA02E324E1E0094475A /* .gitignore */,
 				0CBCCB752E324DF90094475A /* Pree */,
@@ -146,6 +152,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				0C8C03312E37753B003FD18F /* Docs */,
 				0CBCCB752E324DF90094475A /* Pree */,
 				0CBCCBA92E324F530094475A /* Config */,
 			);
@@ -445,6 +452,7 @@
 				DEVELOPMENT_TEAM = 4JXC27SJKM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -477,6 +485,7 @@
 				DEVELOPMENT_TEAM = 4JXC27SJKM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
