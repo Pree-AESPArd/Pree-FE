@@ -10,6 +10,7 @@ import ReplayKit
 import AVFoundation
 import AVFAudio
 import UIKit
+import Photos
 
 public final class ScreenCaptureServiceImpl: ScreenCaptureService {
     private let recorder = RPScreenRecorder.shared()
@@ -154,6 +155,7 @@ public final class ScreenCaptureServiceImpl: ScreenCaptureService {
                 self.audioInput?.markAsFinished()
                 self.assetWriter?.finishWriting {
                     self.isSessionStarted = false
+                    self.saveVideoToGallery(self.outputURL) { _, _ in}
                     completion(.success(self.outputURL))
                 }
             }
@@ -165,11 +167,17 @@ public final class ScreenCaptureServiceImpl: ScreenCaptureService {
     private func setupWriter() throws {
         assetWriter = try AVAssetWriter(outputURL: outputURL, fileType: .mp4)
         
+        // 1) 실제 화면 크기 (포인트 단위)
+        let screenSize = UIScreen.main.bounds.size
+        // 2) 디스플레이 스케일(2×, 3×)을 곱해서 픽셀 단위로 변환
+        let width  = Int(screenSize.width * UIScreen.main.scale)
+        let height = Int(screenSize.height * UIScreen.main.scale)
+        
         // 비디오 설정 (1080p, H.264, 5Mbps)
         let videoSettings: [String: Any] = [
             AVVideoCodecKey: AVVideoCodecType.h264,
-            AVVideoWidthKey: 1920,
-            AVVideoHeightKey: 1080,
+            AVVideoWidthKey: width,
+            AVVideoHeightKey: height,
             AVVideoCompressionPropertiesKey: [
                 AVVideoAverageBitRateKey: 5_000_000
             ]
@@ -192,4 +200,24 @@ public final class ScreenCaptureServiceImpl: ScreenCaptureService {
         audioInput = aInput
         
     }
+    
+    
+    func saveVideoToGallery(_ videoURL: URL, completion: @escaping (Bool, Error?) -> Void) {
+        // 1) 권한 요청
+        PHPhotoLibrary.requestAuthorization { status in
+            guard status == .authorized else {
+                completion(false, ScreenCaptureError.noPermission)
+                return
+            }
+            // 2) 변경 작업 수행
+            PHPhotoLibrary.shared().performChanges {
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: videoURL)
+            } completionHandler: { success, error in
+                DispatchQueue.main.async {
+                    completion(success, error)
+                }
+            }
+        }
+    }
+    
 }

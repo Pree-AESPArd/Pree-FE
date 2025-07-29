@@ -10,16 +10,21 @@ import AVKit
 
 struct CameraView: View {
     @StateObject var vm: CameraViewModel
+    @StateObject private var overlayManager = OverlayWindowManager()
     
     @State private var player: AVPlayer?
     
     var body: some View {
+        
         VStack(spacing: 20) {
             if vm.isCapturing {
                 Text("🔴 Capturing...")
             } else {
                 Text("⏺️ Ready")
             }
+            
+            
+            
             
             Button(action: vm.toggleCapture) {
                 Text(vm.isCapturing ? "Stop Capture" : "Start Capture")
@@ -47,6 +52,12 @@ struct CameraView: View {
             }
         }
         .padding()
+        .onAppear {
+            overlayManager.show {
+                OverlayView()
+            }
+        }
+        
     }
 }
 
