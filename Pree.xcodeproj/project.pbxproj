@@ -45,6 +45,13 @@
 			);
 			target = 0CBCCB722E324DF90094475A /* Pree */;
 		};
+		14535B452E3BB09F004813B2 /* Exceptions for "Pree" folder in "Pree" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0CBCCB722E324DF90094475A /* Pree */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -55,6 +62,9 @@
 		};
 		0CBCCB752E324DF90094475A /* Pree */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				14535B452E3BB09F004813B2 /* Exceptions for "Pree" folder in "Pree" target */,
+			);
 			path = Pree;
 			sourceTree = "<group>";
 		};
@@ -452,6 +462,7 @@
 				DEVELOPMENT_TEAM = QPXSR9M985;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pree/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
@@ -487,6 +498,7 @@
 				DEVELOPMENT_TEAM = QPXSR9M985;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pree/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
