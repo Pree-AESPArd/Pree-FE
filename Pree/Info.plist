@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
     
-    // http 서버통신 허용
+    <!-- http 서버통신 허용 -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
     
-    // 폰트 설정
+    <!-- 폰트 설정 -->
     <key>UIAppFonts</key>
         <array>
             <string>Pretendard-Black.otf</string>
