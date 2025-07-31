@@ -48,6 +48,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0C8C03312E37753B003FD18F /* Docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Docs;
+			sourceTree = "<group>";
+		};
 		0CBCCB752E324DF90094475A /* Pree */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Pree;
@@ -98,9 +103,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C8C01432E360C19003FD18F /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				0CBCCBA32E324E8F0094475A /* Debug.xcconfig */,
+				0CBCCBA42E324EA00094475A /* Release.xcconfig */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		0CBCCB6A2E324DF90094475A = {
 			isa = PBXGroup;
 			children = (
+				0C8C03312E37753B003FD18F /* Docs */,
 				0CBCCBA92E324F530094475A /* Config */,
 				0CBCCBA02E324E1E0094475A /* .gitignore */,
 				0CBCCB752E324DF90094475A /* Pree */,
@@ -146,6 +161,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				0C8C03312E37753B003FD18F /* Docs */,
 				0CBCCB752E324DF90094475A /* Pree */,
 				0CBCCBA92E324F530094475A /* Config */,
 			);
@@ -442,8 +458,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
+				DEVELOPMENT_TEAM = 4JXC27SJKM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "녹화된 영상을 사진 보관함에 저장하기 위해 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -472,8 +493,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
+				DEVELOPMENT_TEAM = 4JXC27SJKM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "녹화된 영상을 사진 보관함에 저장하기 위해 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
