@@ -103,15 +103,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0C8C01432E360C19003FD18F /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				0CBCCBA32E324E8F0094475A /* Debug.xcconfig */,
-				0CBCCBA42E324EA00094475A /* Release.xcconfig */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		0CBCCB6A2E324DF90094475A = {
 			isa = PBXGroup;
 			children = (
@@ -458,7 +449,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
-				DEVELOPMENT_TEAM = 4JXC27SJKM;
+				DEVELOPMENT_TEAM = QPXSR9M985;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
@@ -493,7 +484,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
-				DEVELOPMENT_TEAM = 4JXC27SJKM;
+				DEVELOPMENT_TEAM = QPXSR9M985;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";

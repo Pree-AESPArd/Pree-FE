@@ -10,13 +10,14 @@ import SwiftUI
 enum Tab { case home, profile }
 
 struct RootTabView: View {
+    let vm = AppDI.shared.makeHomewViewModel()
     @State private var selection: Tab = .home
     
     var body: some View {
         TabView (selection: $selection) {
             
             NavigationStack {
-                HomeView()
+                HomeView(vm:vm)
             }
             .tabItem {
                 Image(systemName: "house")

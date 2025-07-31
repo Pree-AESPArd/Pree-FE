@@ -37,4 +37,8 @@ final class AppDI {
       stop:  stopCaptureUseCase
     )
   }
+    
+    func makeHomewViewModel() -> HomeViewModel {
+        HomeViewModel()
+    }
 }
