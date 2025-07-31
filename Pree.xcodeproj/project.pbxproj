@@ -48,6 +48,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0C8C03312E37753B003FD18F /* Docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Docs;
+			sourceTree = "<group>";
+		};
 		0CBCCB752E324DF90094475A /* Pree */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Pree;
@@ -98,15 +103,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C8C01432E360C19003FD18F /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				0CBCCBA32E324E8F0094475A /* Debug.xcconfig */,
+				0CBCCBA42E324EA00094475A /* Release.xcconfig */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		0CBCCB6A2E324DF90094475A = {
 			isa = PBXGroup;
 			children = (
+				0C8C03312E37753B003FD18F /* Docs */,
 				0CBCCBA92E324F530094475A /* Config */,
 				0CBCCBA02E324E1E0094475A /* .gitignore */,
 				0CBCCB752E324DF90094475A /* Pree */,
 				0CBCCB862E324DFB0094475A /* PreeTests */,
 				0CBCCB902E324DFB0094475A /* PreeUITests */,
 				0CBCCB742E324DF90094475A /* Products */,
+				0C8C01432E360C19003FD18F /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -136,6 +152,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				0C8C03312E37753B003FD18F /* Docs */,
 				0CBCCB752E324DF90094475A /* Pree */,
 				0CBCCBA92E324F530094475A /* Config */,
 			);
@@ -301,7 +318,8 @@
 /* Begin XCBuildConfiguration section */
 		0CBCCB952E324DFB0094475A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA32E324E8F0094475A /* Debug.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -365,7 +383,8 @@
 		};
 		0CBCCB962E324DFB0094475A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA42E324EA00094475A /* Release.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -422,15 +441,21 @@
 		};
 		0CBCCB982E324DFB0094475A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA32E324E8F0094475A /* Debug.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
+				DEVELOPMENT_TEAM = 4JXC27SJKM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "녹화된 영상을 사진 보관함에 저장하기 위해 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -451,15 +476,21 @@
 		};
 		0CBCCB992E324DFB0094475A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA42E324EA00094475A /* Release.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
+				DEVELOPMENT_TEAM = 4JXC27SJKM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "녹화된 영상을 사진 보관함에 저장하기 위해 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -480,7 +511,8 @@
 		};
 		0CBCCB9B2E324DFB0094475A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA32E324E8F0094475A /* Debug.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -499,7 +531,8 @@
 		};
 		0CBCCB9C2E324DFB0094475A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA42E324EA00094475A /* Release.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -518,7 +551,8 @@
 		};
 		0CBCCB9E2E324DFB0094475A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA32E324E8F0094475A /* Debug.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Debug.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -535,7 +569,8 @@
 		};
 		0CBCCB9F2E324DFB0094475A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CBCCBA42E324EA00094475A /* Release.xcconfig */;
+			baseConfigurationReferenceAnchor = 0CBCCBA92E324F530094475A /* Config */;
+			baseConfigurationReferenceRelativePath = Release.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

@@ -24,6 +24,16 @@ struct RootTabView: View {
             }
             .tag(Tab.home)
             
+            
+            NavigationStack {
+                WrapperView()
+            }
+            .tabItem {
+                Image(systemName: "camera")
+                Text("Camera")
+            }
+            .tag(Tab.home)
+            
         }
     }
 }

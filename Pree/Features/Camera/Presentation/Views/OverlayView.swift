@@ -1,0 +1,73 @@
+//
+//  OverlayView.swift
+//  Pree
+//
+//  Created by KimDogyung on 7/29/25.
+//
+
+// 영상촬영 화면 위에 보이는 버튼과 안내문구 요소를 보여주기 위한 뷰
+// 화면 녹화시 이 화면은 유저에게는 보이지만 화면 녹화에는 녹화되지 않음
+
+import SwiftUI
+
+struct OverlayView: View {
+    
+    var body: some View {
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                
+                backButton
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 12)
+                
+                descriptionText
+                
+                Spacer()
+                
+                
+                Image("face_guide")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
+                    .frame(maxWidth: .infinity) // 가운데 정렬
+
+                
+                Spacer()
+                
+                PrimaryButton(title: "촬영 시작하기")
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.white)
+                }
+            }
+            .appPadding()
+        }
+    }
+    
+    
+    private var backButton: some View {
+        Button(
+            action: {},
+            label: {
+                Image(systemName: "chevron.left")
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.white)
+            }
+        )
+    }
+    
+    private var descriptionText: some View {
+        Text("얼굴을 프레임에 맞추고\n 중심의 점을 바라봐주세요")
+            .font(.pretendardMedium(size: 14))
+            .foregroundStyle(Color.primary)
+            .multilineTextAlignment(.center)
+            .padding(8)
+            .background(.white)
+            .cornerRadius(20)
+    }
+    
+}
+
+
