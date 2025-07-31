@@ -14,6 +14,7 @@ struct WrapperView: View {
         NavigationStack{
                 NavigationLink("카메라") {
                     CameraView(vm: vm)
+                        .toolbarVisibility(.hidden, for: .tabBar)
                 }
                 .foregroundStyle(.primary)
             

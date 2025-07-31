@@ -1,7 +1,6 @@
 {
   "images" : [
     {
-      "filename" : "pree_launch_text.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -10,6 +9,7 @@
       "scale" : "2x"
     },
     {
+      "filename" : "pree_icon_bottom.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

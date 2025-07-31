@@ -33,7 +33,7 @@ struct BlueRoundedButtonStyle: ButtonStyle {
             .frame(maxWidth: .infinity)   
             .padding(.vertical, 14)
             .background(Color.primary)
-            .cornerRadius(16)
+            .cornerRadius(20)
             .opacity(configuration.isPressed ? 0.8 : 1.0)
     }
 }

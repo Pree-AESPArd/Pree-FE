@@ -11,26 +11,61 @@
 import SwiftUI
 
 struct OverlayView: View {
+    
     var body: some View {
-        VStack(spacing: 0) {
-            
-            descriptionText
-            
-            Spacer()
-            
-            PrimaryButton(title: "촬영 시작하기")
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                
+                backButton
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 12)
+                
+                descriptionText
+                
+                Spacer()
+                
+                
+                Image("face_guide")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
+                    .frame(maxWidth: .infinity) // 가운데 정렬
+
+                
+                Spacer()
+                
+                PrimaryButton(title: "촬영 시작하기")
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.white)
+                }
+            }
+            .appPadding()
         }
     }
     
     
+    private var backButton: some View {
+        Button(
+            action: {},
+            label: {
+                Image(systemName: "chevron.left")
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.white)
+            }
+        )
+    }
+    
     private var descriptionText: some View {
-        Text("아이트래킹을 위해\n 얼굴에 프레임을 맞춰서 촬영해주세요")
+        Text("얼굴을 프레임에 맞추고\n 중심의 점을 바라봐주세요")
             .font(.pretendardMedium(size: 14))
             .foregroundStyle(Color.primary)
             .multilineTextAlignment(.center)
             .padding(8)
             .background(.white)
-            .cornerRadius(8)
+            .cornerRadius(20)
     }
     
 }
