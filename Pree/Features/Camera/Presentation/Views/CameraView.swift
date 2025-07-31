@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import RealityKit
+import ARKit
 import AVKit
 
 struct CameraView: View {
@@ -16,42 +18,11 @@ struct CameraView: View {
     
     var body: some View {
         
-        VStack(spacing: 20) {
-            if vm.isCapturing {
-                Text("🔴 Capturing...")
-            } else {
-                Text("⏺️ Ready")
-            }
-            
-            
-            
-            
-            Button(action: vm.toggleCapture) {
-                Text(vm.isCapturing ? "Stop Capture" : "Start Capture")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(vm.isCapturing ? Color.red : Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-            }
-            
-            if let url = vm.videoURL {
-                VideoPlayer(player: player)
-                    .frame(height: 300)
-                    .onAppear {
-                        player = AVPlayer(url: url)
-                        player?.play()  // 자동 재생
-                    }
-                    .onDisappear {
-                        player?.pause()
-                        player = nil
-                    }
-            }
-            if let err = vm.errorMessage {
-                Text(err).foregroundColor(.red)
-            }
+        Group {
+            FrontCameraPreview()
+                .edgesIgnoringSafeArea(.all)
         }
-        .padding()
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             overlayManager.show {
                 OverlayView()
@@ -62,6 +33,36 @@ struct CameraView: View {
 }
 
 
+struct FrontCameraPreview: UIViewRepresentable {
+    func makeUIView(context: Context) -> ARView {
+        let arView = ARView(frame: .zero)
+        
+        // 1) 이 기기에서 Face Tracking이 지원되는지 확인
+        // TrueDepth 센서가 없는 기기 (iPhone 8) 이하는 걸러져야 함
+        guard ARFaceTrackingConfiguration.isSupported else {
+            // 지원 안 하면 그냥 빈 ARView 돌려줌
+            // TODO: 뒤로가기 구현
+            return arView
+        }
+        
+        // 2) ARFaceTrackingConfiguration 생성
+        let config = ARFaceTrackingConfiguration()
+        config.isLightEstimationEnabled = true  // 조명 정보도 받고 싶다면
+        
+        // 3) 세션 실행 (전면 카메라로)
+        arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
+        
+        // (선택) 자동 세션 구성 끄기, 디버그 옵션 끄기
+        arView.automaticallyConfigureSession = false
+        arView.debugOptions = []
+        
+        return arView
+    }
+    
+    func updateUIView(_ uiView: ARView, context: Context) {
+        // 화면 회전 등 업데이트 필요 시 처리
+    }
+}
 
 
 
