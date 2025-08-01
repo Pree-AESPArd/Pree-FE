@@ -14,6 +14,6 @@ struct PracticeModel: Hashable, Identifiable {
     let count: Int
     let dateDiff: Int
     let score: Double
-    let bookmark: Bool = false
+    let bookmark: Bool? = false
     let select: Bool? = false
 }
