@@ -22,7 +22,8 @@ struct RoundedCorner: Shape {
 }
 
 extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
+    func cornerRadiusCustom(_ radius: CGFloat, corners: UIRectCorner? = nil) -> some View {
+        let cornerRadius = corners ?? .allCorners
+        return clipShape(RoundedCorner(radius: radius, corners: cornerRadius))
     }
 }

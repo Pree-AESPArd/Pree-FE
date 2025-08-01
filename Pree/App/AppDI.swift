@@ -38,7 +38,11 @@ final class AppDI {
     )
   }
     
-    func makeHomewViewModel() -> HomeViewModel {
+    func makeHomeViewModel() -> HomeViewModel {
         HomeViewModel()
+    }
+    
+    func makePresnetationListViewModel() -> PresentaionListViewModel {
+        PresentaionListViewModel()
     }
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0CBCCBA12E324E1E0094475A /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 0CBCCBA02E324E1E0094475A /* .gitignore */; };
+		1481E2ED2E3CA04A00ED27E9 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 1481E2EC2E3CA04A00ED27E9 /* DGCharts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +94,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1481E2ED2E3CA04A00ED27E9 /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,6 +170,7 @@
 			);
 			name = Pree;
 			packageProductDependencies = (
+				1481E2EC2E3CA04A00ED27E9 /* DGCharts */,
 			);
 			productName = Pree;
 			productReference = 0CBCCB732E324DF90094475A /* Pree.app */;
@@ -251,6 +254,9 @@
 			);
 			mainGroup = 0CBCCB6A2E324DF90094475A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0CBCCB742E324DF90094475A /* Products */;
 			projectDirPath = "";
@@ -637,6 +643,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1481E2EC2E3CA04A00ED27E9 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0CBCCB6B2E324DF90094475A /* Project object */;
 }

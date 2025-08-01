@@ -20,8 +20,9 @@ enum AppColor {
     
     static let textTitle: Color = Color(hex:"#00206B")
     static let textGray: Color = Color(hex:"#9D9FA5")
-    static let textBlack: Color = Color("#2E2F32")
+    static let textBlack: Color = Color(hex:"#2E2F32")
     static let textRed: Color = Color(hex: "#1A1E27")
+    static let textDarkGray: Color = Color(hex:"#6D7078")
 }
 
 
@@ -39,4 +40,5 @@ extension Color {
     static let textTitle = AppColor.textTitle
     static let textGray = AppColor.textGray
     static let textBlack = AppColor.textBlack
+    static let textDarkGray = AppColor.textDarkGray
 }

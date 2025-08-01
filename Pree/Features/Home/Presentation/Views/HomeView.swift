@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct HomeView: View {
+    let vm2 = AppDI.shared.makePresnetationListViewModel()
     @StateObject var vm: HomeViewModel
+    @State var showPresentationList: Bool = false
     
     enum HomeMenu {
             case header
@@ -49,6 +51,10 @@ struct HomeView: View {
                 Spacer()
             } // : VStack
             .padding(.horizontal, 16)
+            .padding(.bottom, 300)
+            .fullScreenCover(isPresented: $showPresentationList) {
+                PresentaionList(vm: vm2, showPresentationList: $showPresentationList)
+            }
         } // : ScrollView
         .background(Color.mainBackground.ignoresSafeArea())
     }
@@ -73,7 +79,7 @@ struct HomeView: View {
                 .padding(.bottom, 16)
             
             VStack(alignment: .leading,spacing:0){
-                Text("최근 \(vm.prarticeListCount)개 발표의 평균 점수 그래프")
+                Text("최근 \(vm.presentationListCount)개 발표의 평균 점수 그래프")
                     .foregroundStyle(Color.black)
                     .font(.pretendardMedium(size: 16))
                     .padding(.top, 16)
@@ -100,7 +106,7 @@ struct HomeView: View {
     
     private var searchBarOff: some View {
         HStack(spacing: 0){
-            Text("\(vm.prarticeListCount)개의 발표 연습 목록이 있어요")
+            Text("\(vm.presentationListCount)개의 발표 연습 목록이 있어요")
                 .foregroundStyle(Color.textTitle)
                 .font(.pretendardSemiBold(size: 20))
             
@@ -219,18 +225,21 @@ struct HomeView: View {
                 Spacer()
             }// : HStack
             .background(Color.sectionBackground)
-            .cornerRadius(20, corners: [.topLeft, .bottomLeft])
-            .cornerRadius(35, corners: [.topRight, .bottomRight])
+            .cornerRadiusCustom(20, corners: [.topLeft, .bottomLeft])
+            .cornerRadiusCustom(35, corners: [.topRight, .bottomRight])
             .applyShadowStyle()
             
             
             CircularProgressBarView(value: vm.score)
                 .frame(width: 80, height: 80)
         } // : ZStack
+        .onTapGesture {
+            showPresentationList.toggle()
+        }
     }
 }
 
 #Preview {
-    let vm = AppDI.shared.makeHomewViewModel()
+    let vm = AppDI.shared.makeHomeViewModel()
     HomeView(vm:vm)
 }

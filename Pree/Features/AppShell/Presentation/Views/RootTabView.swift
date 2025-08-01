@@ -10,7 +10,7 @@ import SwiftUI
 enum Tab { case home, profile }
 
 struct RootTabView: View {
-    let vm = AppDI.shared.makeHomewViewModel()
+    let vm = AppDI.shared.makeHomeViewModel()
     @State private var selection: Tab = .home
     
     var body: some View {
