@@ -26,9 +26,9 @@ struct PresentaionList: View {
     ]
     
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            
-            ZStack {
+        ZStack {
+            ScrollView(showsIndicators: false) {
+                
                 VStack(alignment: .leading, spacing: 0){
                     
                     ForEach(menus, id:\.self){ menu in
@@ -48,13 +48,41 @@ struct PresentaionList: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 300)
                 
-                if let option = vm.option  {
-                    overlayClearBg
-                }
-            }//: ZStack
+            } // :ScrollView
+            .background(Color.mainBackground.ignoresSafeArea())
             
-        } // :ScrollView
-        .background(Color.mainBackground.ignoresSafeArea())
+            // eidtor 및 alert overlay
+            if let option = vm.option {
+                overlayClearBg
+            }
+            
+            if let option = vm.option,
+               option == .editName
+            {
+                EditAlertView(
+                    onCancel: {
+                        vm.option = nil
+                    },
+                    onConfirm: { newText in
+                        vm.option = nil
+                        print("확인됨, 입력된 값: \(newText)")
+                    })
+            }
+            
+            if let option = vm.option,
+               option == .deleteAll
+            {
+                DeleteAlertView(
+                    onCancel: {
+                        vm.option = nil
+                    },
+                    onDelete: {
+                        vm.option = nil
+                        print("삭제됨")
+                    },
+                )
+            }
+        } // :ZStack
     }
     
     //MARK: - view
