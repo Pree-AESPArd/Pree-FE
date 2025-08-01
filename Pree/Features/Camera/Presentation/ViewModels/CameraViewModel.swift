@@ -13,6 +13,7 @@ final class CameraViewModel: ObservableObject {
     @Published var isCapturing = false
     @Published var videoURL: URL?
     @Published var errorMessage: String?
+    @Published var gazePoint: CGPoint? = nil // 시선이 닿은 화면 좌표 (UIKit 좌표계)
     
     private let startUseCase: StartScreenCaptureUseCase
     private let stopUseCase: StopScreenCaptureUseCase
