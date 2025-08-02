@@ -43,9 +43,11 @@ struct HomeView: View {
                         case .filter:
                             filter
                         case .presentationList:
-                            ForEach(1...10, id:\.self){ _ in
-                                presentationList
-                            }
+                            VStack(alignment: .leading, spacing: 8){
+                                ForEach(1...10, id:\.self){ _ in
+                                    presentationList
+                                }
+                            } // :VStack
                         }
                     } // ForEach
                     

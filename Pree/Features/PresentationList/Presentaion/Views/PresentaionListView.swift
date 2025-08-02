@@ -43,9 +43,11 @@ struct PresentaionListView: View {
                             case .deleteFilter:
                                 deleteFilter
                             case .practiceList:
-                                ForEach(1...10, id:\.self){ _ in
-                                    practiceList
-                                }
+                                VStack(alignment: .leading, spacing: 8){
+                                    ForEach(1...10, id:\.self){ _ in
+                                        practiceList
+                                    }
+                                } // :VStack
                             }
                         } // : ForEach
                         

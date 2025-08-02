@@ -82,10 +82,11 @@ struct PracticeResultView: View {
                 
                 standardModalView(showModalView: $showModalView)
                     .transition(.asymmetric(
-                        insertion: .move(edge: .bottom).combined(with: .opacity),  // 나타날 때: 아래에서 위로
-                        removal: .move(edge: .top).combined(with: .opacity) // 사라질 때: 위에서 아래로
+                        insertion: .move(edge: .bottom).combined(with: .opacity),
+                        removal: .move(edge: .bottom).combined(with: .opacity)
                     ))
-            } // : if
+                    .zIndex(1) // zIndex가 0인 경우 사라지는 애니메이션 적용이 안됨
+            } // if
             
         }// : ZStack
     }
@@ -161,9 +162,8 @@ struct PracticeResultView: View {
             Spacer()
             
             Button(action: {
-                
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    showModalView.toggle()
+                withAnimation {
+                    showModalView = true
                 }
             }){
                 Text("평가 기준 보러가기 >")
@@ -174,8 +174,6 @@ struct PracticeResultView: View {
             .padding(.vertical, 12)
         } // :HStack
     }
-    
-    
     
     // edit Mode
     private var overlayClearBg: some View {
