@@ -39,7 +39,7 @@ struct PracticeResultView: View {
                         
                     } // : VStack
                     .padding(.top, 20)
-                    .padding(.bottom, 300)
+                    .padding(.bottom, 30)
                 }// : ScrollView
             }// : VStack
             .background(Color.mainBackground.ignoresSafeArea())
