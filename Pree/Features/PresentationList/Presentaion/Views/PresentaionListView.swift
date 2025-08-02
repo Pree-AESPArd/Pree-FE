@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PresentaionList: View {
+struct PresentaionListView: View {
     let vm2 = AppDI.shared.makePracticeResultViewModel()
     @StateObject var vm: PresentaionListViewModel
     
@@ -90,7 +90,7 @@ struct PresentaionList: View {
             }
         } // :ZStack
         .fullScreenCover(isPresented: $showPracticeResult) {
-            PracticeResult(vm: vm2, showPracticeResult: $showPracticeResult)
+            PracticeResultView(vm: vm2, showPracticeResult: $showPracticeResult)
         }
     }
     
@@ -290,5 +290,5 @@ struct PresentaionList: View {
 
 #Preview {
     let vm = AppDI.shared.makePresnetationListViewModel()
-    PresentaionList(vm:vm, showPresentationList: .constant(false))
+    PresentaionListView(vm:vm, showPresentationList: .constant(false))
 }

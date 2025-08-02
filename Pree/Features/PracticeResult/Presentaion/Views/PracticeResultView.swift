@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PracticeResult: View {
+struct PracticeResultView: View {
     @StateObject var vm: PracticeResultViewModel
     @Binding var showPracticeResult: Bool
     
@@ -26,18 +26,18 @@ struct PracticeResult: View {
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading,spacing:8){
-                        
-                        //MARK: - report result
+
                         ForEach(Array(vm.itemNameList.enumerated()), id:\.offset){ index, item in
                             ExpandableReportItemView(
                                 item: item,
                                 progressScore: vm.progressScores[index],
                                 index: index
                             )
-                        }
+                        } // :ForEach
                         
                         //MARK: - show evaluation criteria
                     } // : VStack
+                    .padding(.top, 20)
                     .padding(.bottom, 300)
                 }// : ScrollView
             }// : VStack
@@ -197,5 +197,5 @@ struct PracticeResult: View {
 
 #Preview {
     let vm = AppDI.shared.makePracticeResultViewModel()
-    PracticeResult(vm:vm, showPracticeResult: .constant(false))
+    PracticeResultView(vm:vm, showPracticeResult: .constant(false))
 }

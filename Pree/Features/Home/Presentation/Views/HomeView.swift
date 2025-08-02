@@ -54,7 +54,7 @@ struct HomeView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 300)
                 .fullScreenCover(isPresented: $showPresentationList) {
-                    PresentaionList(vm: vm2, showPresentationList: $showPresentationList)
+                    PresentaionListView(vm: vm2, showPresentationList: $showPresentationList)
                 }
             } // : ScrollView
         }// : VStack

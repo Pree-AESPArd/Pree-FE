@@ -38,12 +38,12 @@ struct ExpandableReportItemView: View {
         .cornerRadius(20)
         .applyShadowStyle()
         .padding(.horizontal, 16)
-        .padding(.top, 20)
         .animation(.easeInOut(duration: 0.3), value: isExpanded)
         .zIndex(isExpanded ? 1 : 0) // 확장된 아이템이 위에 표시되도록
         .overlay{
             if showHelpView {
                 helpOverlay
+                    .offset(x: getHelpOffset(for: item).x, y: getHelpOffset(for: item).y)
             }
         }
         .zIndex(showHelpView ? 2 : (isExpanded ? 1 : 0)) // Help 뷰가 가장 위에 표시되도록
@@ -84,6 +84,9 @@ struct ExpandableReportItemView: View {
             Button(action: {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isExpanded.toggle()
+                    if !isExpanded {
+                        showHelpView = false
+                    } // : if
                 }
             }) {
                 Image(isExpanded ? "dropdown_up" : "dropdown_down")
@@ -190,6 +193,26 @@ struct ExpandableReportItemView: View {
             return "전체 영상 중 화면을\n바라본 비율을 측정해요"
         default:
             return ""
+        }
+    }
+    
+    /// 각 아이템에 대한 help 뷰의 offset 값을 반환하는 헬퍼 메서드
+    private func getHelpOffset(for item: String) -> (x: CGFloat, y: CGFloat) {
+        switch item {
+        case "발표 시간":
+            return (x: 30, y: -5)
+        case "말의 빠르기":
+            return (x: 25, y: -25)
+        case "목소리 크기":
+            return (x: 50, y: -15)
+        case "발화 지연 표현 횟수":
+            return (x: 25, y: 5)
+        case "불필요한 공백 횟수":
+            return (x: 30, y: 5)
+        case "시선 처리":
+            return (x: 40, y: 5)
+        default:
+            return (x: 0, y: 0)
         }
     }
 }
