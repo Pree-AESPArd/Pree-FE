@@ -31,17 +31,18 @@ struct EditAlertView: View {
                     .padding(.bottom, 14)
                 
                 TextField("협체발표", text: $text)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .focused($isFocused)
-                                .frame(height: 26)
-                                .padding(.horizontal, 20)
-                                .padding(.bottom, 17)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .focused($isFocused)
+                    .frame(height: 26)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 17)
                 
                 Divider()
                     .foregroundColor(Color.alertDivider.opacity(0.36))
                 
                 HStack(alignment: .top,spacing:0){
                     Button(action:{
+                        isFocused = false  // 즉시 포커스 해제
                         onCancel()
                     }){
                         Text("취소")
@@ -56,6 +57,7 @@ struct EditAlertView: View {
                         .foregroundColor(Color.alertDivider.opacity(0.36))
                     
                     Button(action:{
+                        isFocused = false  // 즉시 포커스 해제
                         onConfirm(text)
                     }){
                         Text("확인")
@@ -71,6 +73,11 @@ struct EditAlertView: View {
             .frame(width: 270, height: 160)
             .background(Color.alertContiner)
             .cornerRadius(14)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    isFocused = true
+                }
+            }
             
             Spacer()
         } // : HStack

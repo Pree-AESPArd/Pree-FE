@@ -11,7 +11,7 @@ import AVKit
 struct VideoPlayerView: View {
     let videoKey: String // PHAsset identifier
     @StateObject private var viewModel = VideoPlayerViewModel()
-
+    
     var body: some View {
         ZStack {
             if let player = viewModel.player {
@@ -20,8 +20,24 @@ struct VideoPlayerView: View {
                     .cornerRadius(20)
             } else {
                 // 로딩 중일 때 Progress 표시
-                ProgressView()
-                    .frame(height: 225)
+                VStack(spacing: 0) {
+                    Spacer()
+                    
+                    HStack{
+                        Spacer()
+                        
+                        ProgressView()
+                            .tint(Color.primary)
+                            
+                        Spacer()
+                    
+                    } // :HStack
+                    
+                    Spacer()
+                } // :VStack
+                .frame(height: 225)
+                .background(.black)
+                .cornerRadius(20)
             }
         }
         .onAppear {
@@ -38,7 +54,7 @@ struct VideoPlayerView: View {
 // MARK: - UIViewControllerRepresentable
 struct VideoPlayerRepresentable: UIViewControllerRepresentable {
     let player: AVPlayer
-
+    
     // AVPlayerViewController 생성
     func makeUIViewController(context: Context) -> AVPlayerViewController {
         let controller = AVPlayerViewController()
@@ -49,7 +65,7 @@ struct VideoPlayerRepresentable: UIViewControllerRepresentable {
         controller.canStartPictureInPictureAutomaticallyFromInline = true
         return controller
     }
-
+    
     // 플레이어가 바뀌었을 경우 업데이트
     func updateUIViewController(_ uiViewController: AVPlayerViewController, context: Context) {
         if uiViewController.player !== player {
