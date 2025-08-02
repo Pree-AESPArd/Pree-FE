@@ -45,4 +45,8 @@ final class AppDI {
     func makePresnetationListViewModel() -> PresentaionListViewModel {
         PresentaionListViewModel()
     }
+    
+    func makePracticeResultViewModel()-> PracticeResultViewModel {
+        PracticeResultViewModel()
+    }
 }

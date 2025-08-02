@@ -13,15 +13,13 @@ struct HomeView: View {
     @State var showPresentationList: Bool = false
     
     enum HomeMenu {
-            case header
-            case avgScoreGraph
-            case searchBarOff
-            case filter
-            case presentationList
+        case avgScoreGraph
+        case searchBarOff
+        case filter
+        case presentationList
     }
     
     private let menus: [HomeMenu] = [
-        .header,
         .avgScoreGraph,
         .searchBarOff,
         .filter,
@@ -29,33 +27,37 @@ struct HomeView: View {
     ]
     
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        VStack(alignment: .leading, spacing: 0){
+            header
+                .padding(.horizontal, 16)
             
-            VStack(alignment: .leading, spacing: 0) {
-                
-                ForEach(menus, id:\.self){ menu in
-                    switch menu {
-                    case .header:
-                        header
-                    case .avgScoreGraph:
-                        avgScoreGraph
-                    case .searchBarOff:
-                        searchBarOff
-                    case .filter:
-                        filter
-                    case .presentationList:
-                        presentationList
-                    }
-                } // ForEach
-                
-                Spacer()
-            } // : VStack
-            .padding(.horizontal, 16)
-            .padding(.bottom, 300)
-            .fullScreenCover(isPresented: $showPresentationList) {
-                PresentaionList(vm: vm2, showPresentationList: $showPresentationList)
-            }
-        } // : ScrollView
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 0) {
+                    
+                    ForEach(menus, id:\.self){ menu in
+                        switch menu {
+                        case .avgScoreGraph:
+                            avgScoreGraph
+                        case .searchBarOff:
+                            searchBarOff
+                        case .filter:
+                            filter
+                        case .presentationList:
+                            ForEach(1...10, id:\.self){ _ in
+                                presentationList
+                            }
+                        }
+                    } // ForEach
+                    
+                    Spacer()
+                } // : VStack
+                .padding(.horizontal, 16)
+                .padding(.bottom, 300)
+                .fullScreenCover(isPresented: $showPresentationList) {
+                    PresentaionList(vm: vm2, showPresentationList: $showPresentationList)
+                }
+            } // : ScrollView
+        }// : VStack
         .background(Color.mainBackground.ignoresSafeArea())
     }
     
@@ -170,7 +172,7 @@ struct HomeView: View {
         } // : HStack
         .padding(.bottom, 12)
     }
-
+    
     private var presentationList: some View {
         ZStack(alignment: .trailing){
             HStack(alignment: .top,spacing:0){

@@ -8,18 +8,19 @@
 import SwiftUI
 
 struct PresentaionList: View {
+    let vm2 = AppDI.shared.makePracticeResultViewModel()
     @StateObject var vm: PresentaionListViewModel
+    
+    @State var showPracticeResult: Bool = false
     @Binding var showPresentationList: Bool
     
     enum PtListMenu {
-        case header
         case graph
         case deleteFilter
         case practiceList
     }
     
     private let menus: [PtListMenu] = [
-        .header,
         .graph,
         .deleteFilter,
         .practiceList
@@ -27,28 +28,33 @@ struct PresentaionList: View {
     
     var body: some View {
         ZStack {
-            ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0){
+                header
+                    .padding(.horizontal, 16)
                 
-                VStack(alignment: .leading, spacing: 0){
+                ScrollView(showsIndicators: false) {
                     
-                    ForEach(menus, id:\.self){ menu in
-                        switch menu {
-                        case .header:
-                            header
-                        case .graph:
-                            graph
-                        case .deleteFilter:
-                            deleteFilter
-                        case .practiceList:
-                            practiceList
-                        }
-                    } // : ForEach
+                    VStack(alignment: .leading, spacing: 0){
+                        
+                        ForEach(menus, id:\.self){ menu in
+                            switch menu {
+                            case .graph:
+                                graph
+                            case .deleteFilter:
+                                deleteFilter
+                            case .practiceList:
+                                ForEach(1...10, id:\.self){ _ in
+                                    practiceList
+                                }
+                            }
+                        } // : ForEach
+                        
+                    } // : VStack
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 300)
                     
-                } // : VStack
-                .padding(.horizontal, 16)
-                .padding(.bottom, 300)
-                
-            } // :ScrollView
+                } // :ScrollView
+            } // : VStack
             .background(Color.mainBackground.ignoresSafeArea())
             
             // eidtor 및 alert overlay
@@ -83,6 +89,9 @@ struct PresentaionList: View {
                 )
             }
         } // :ZStack
+        .fullScreenCover(isPresented: $showPracticeResult) {
+            PracticeResult(vm: vm2, showPracticeResult: $showPracticeResult)
+        }
     }
     
     //MARK: - view
@@ -143,7 +152,7 @@ struct PresentaionList: View {
                                     .foregroundStyle(Color.primary)
                             }// : overlay
                     }// : overlay
-                    
+                
             }// : HStack
             .padding(.bottom,16)
             
@@ -211,16 +220,19 @@ struct PresentaionList: View {
                 .font(.pretendardMedium(size:14))
             
             Spacer()
-    
+            
             SmallCircularProgressBarRepresentable(value: 0.6)
                 .frame(width: 60, height: 60)
-                
+            
         } // : HStack
         .frame(height: 60)
         .background(Color.white)
         .cornerRadiusCustom(20, corners: [.topLeft, .bottomLeft])
         .cornerRadiusCustom(35, corners: [.topRight, .bottomRight])
         .applyShadowStyle()
+        .onTapGesture {
+            showPracticeResult.toggle()
+        }
     }
     
     // edit Mode
