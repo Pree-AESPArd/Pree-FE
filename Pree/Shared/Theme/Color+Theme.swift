@@ -28,6 +28,8 @@ enum AppColor {
     static let alertContiner: Color = Color(hex: "dfdedf")
     static let alertBlack: Color = Color(hex:"383838")
     static let alertDivider: Color = Color(hex:"3C3C43")
+    
+    static let progressBarGray: Color = Color(hex:"F0F1F2")
 }
 
 
@@ -51,4 +53,6 @@ extension Color {
     static let alertContiner = AppColor.alertContiner
     static let alertBlack = AppColor.alertBlack
     static let alertDivider = AppColor.alertDivider
+    
+    static let progressBarGray = AppColor.progressBarGray
 }
