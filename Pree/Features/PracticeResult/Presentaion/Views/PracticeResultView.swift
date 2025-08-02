@@ -128,9 +128,7 @@ struct PracticeResultView: View {
     } // : header
     
     private var videoPlayerView: some View {
-        Rectangle()
-            .frame(height: 225)
-            .cornerRadius(20)
+        VideoPlayerView(videoKey: vm.videoKey)
             .padding(.bottom, 25)
     }
     
