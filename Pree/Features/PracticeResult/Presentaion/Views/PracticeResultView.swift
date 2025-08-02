@@ -9,8 +9,8 @@ import SwiftUI
 
 struct PracticeResultView: View {
     @StateObject var vm: PracticeResultViewModel
-    @Binding var showPracticeResult: Bool
     @State var showModalView: Bool = false
+    @EnvironmentObject var navigationManager: NavigationManager
     
     var body: some View {
         ZStack {
@@ -89,13 +89,14 @@ struct PracticeResultView: View {
             } // if
             
         }// : ZStack
+        .navigationBarBackButtonHidden(true)
     }
     
     //MARK: - view
     private var header: some View {
         HStack(spacing:0){
             Button(action:{
-                showPracticeResult.toggle()
+                navigationManager.pop()
             }){
                 Image("back")
             }
@@ -228,5 +229,6 @@ struct PracticeResultView: View {
 
 #Preview {
     let vm = AppDI.shared.makePracticeResultViewModel()
-    PracticeResultView(vm:vm, showPracticeResult: .constant(false))
+    PracticeResultView(vm:vm)
+        .environmentObject(NavigationManager())
 }

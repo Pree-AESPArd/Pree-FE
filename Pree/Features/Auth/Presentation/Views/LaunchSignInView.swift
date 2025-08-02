@@ -11,6 +11,7 @@ import AuthenticationServices
 struct LaunchSignInView: View {
     
     @EnvironmentObject var authVM: AuthViewModel
+    @StateObject private var navigationManager = NavigationManager()
     @State private var isAnimating = false  // 첫 시작 아이콘 애니메이션 플래그
     @State private var showText = false // 텍스트 애니메이션 플래그
     @State private var showSignIn = false
@@ -119,5 +120,6 @@ struct LaunchSignInView: View {
 
 #Preview {
     LaunchSignInView()
+        .environmentObject(AuthViewModel())
 }
 

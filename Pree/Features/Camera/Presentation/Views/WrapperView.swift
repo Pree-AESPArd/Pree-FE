@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//나중에 지우셈
 struct WrapperView: View {
     let vm = AppDI.shared.makeCameraViewModel()
     

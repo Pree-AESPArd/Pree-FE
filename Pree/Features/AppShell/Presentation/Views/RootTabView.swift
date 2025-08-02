@@ -10,31 +10,37 @@ import SwiftUI
 enum Tab { case home, profile }
 
 struct RootTabView: View {
-    let vm = AppDI.shared.makeHomeViewModel()
-    @State private var selection: Tab = .home
+    @StateObject private var navigationManager = NavigationManager()
+    let homeViewModel = AppDI.shared.makeHomeViewModel()
+    let cameraViewModel = AppDI.shared.makeCameraViewModel()
+    let presnetationListViewModel = AppDI.shared.makePresnetationListViewModel()
+    let practiceResultViewModel = AppDI.shared.makePracticeResultViewModel()
     
     var body: some View {
-        TabView (selection: $selection) {
+        ZStack(alignment: .bottom){
+            NavigationStack(path: $navigationManager.path) {
+                HomeView(vm: homeViewModel)
+                    .navigationDestination(for: ViewType.self) { path in
+                        switch path {
+                        case .camera:
+                            CameraView(vm: cameraViewModel)
+                        case .home:
+                            HomeView(vm: homeViewModel)
+                        case .profile:
+                            EmptyView()
+                        case .presentationList:
+                            PresentaionListView(vm: presnetationListViewModel)
+                        case .practiceResult:
+                            PracticeResultView(vm: practiceResultViewModel)
+                        }
+                    } // : navigationDestination
+            } // : NavigationStack
             
-            NavigationStack {
-                HomeView(vm:vm)
-            }
-            .tabItem {
-                Image(systemName: "house")
-                Text("Home")
-            }
-            .tag(Tab.home)
-            
-            
-            NavigationStack {
-                WrapperView()
-            }
-            .tabItem {
-                Image(systemName: "camera")
-                Text("Camera")
-            }
-            .tag(Tab.home)
-            
-        }
+            CustomTabView()            
+        } // :ZStack
+        .environmentObject(navigationManager)
+        .edgesIgnoringSafeArea(.bottom)
+
+        
     }
 }

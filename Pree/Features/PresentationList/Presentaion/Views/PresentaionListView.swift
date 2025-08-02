@@ -8,11 +8,8 @@
 import SwiftUI
 
 struct PresentaionListView: View {
-    let vm2 = AppDI.shared.makePracticeResultViewModel()
     @StateObject var vm: PresentaionListViewModel
-    
-    @State var showPracticeResult: Bool = false
-    @Binding var showPresentationList: Bool
+    @EnvironmentObject var navigationManager: NavigationManager
     
     enum PtListMenu {
         case graph
@@ -53,7 +50,7 @@ struct PresentaionListView: View {
                         
                     } // : VStack
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 300)
+                    .padding(.bottom, 100)
                     
                 } // :ScrollView
             } // : VStack
@@ -91,16 +88,14 @@ struct PresentaionListView: View {
                 )
             }
         } // :ZStack
-        .fullScreenCover(isPresented: $showPracticeResult) {
-            PracticeResultView(vm: vm2, showPracticeResult: $showPracticeResult)
-        }
+        .navigationBarBackButtonHidden(true)
     }
     
     //MARK: - view
     private var header: some View {
         HStack(spacing:0){
             Button(action:{
-                showPresentationList.toggle()
+                navigationManager.pop()
             }){
                 Image("back")
             }
@@ -233,7 +228,7 @@ struct PresentaionListView: View {
         .cornerRadiusCustom(35, corners: [.topRight, .bottomRight])
         .applyShadowStyle()
         .onTapGesture {
-            showPracticeResult.toggle()
+            navigationManager.push(.practiceResult)
         }
     }
     
@@ -292,5 +287,6 @@ struct PresentaionListView: View {
 
 #Preview {
     let vm = AppDI.shared.makePresnetationListViewModel()
-    PresentaionListView(vm:vm, showPresentationList: .constant(false))
+    PresentaionListView(vm:vm)
+        .environmentObject(NavigationManager())
 }

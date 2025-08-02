@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct HomeView: View {
-    let vm2 = AppDI.shared.makePresnetationListViewModel()
+    @EnvironmentObject var navigationManager: NavigationManager
     @StateObject var vm: HomeViewModel
     @State var showPresentationList: Bool = false
+    
     
     enum HomeMenu {
         case avgScoreGraph
@@ -54,13 +55,11 @@ struct HomeView: View {
                     Spacer()
                 } // : VStack
                 .padding(.horizontal, 16)
-                .padding(.bottom, 300)
-                .fullScreenCover(isPresented: $showPresentationList) {
-                    PresentaionListView(vm: vm2, showPresentationList: $showPresentationList)
-                }
+                .padding(.bottom, 100)
             } // : ScrollView
         }// : VStack
         .background(Color.mainBackground.ignoresSafeArea())
+        .navigationBarBackButtonHidden(true)
     }
     
     //MARK: - view
@@ -238,7 +237,7 @@ struct HomeView: View {
                 .frame(width: 80, height: 80)
         } // : ZStack
         .onTapGesture {
-            showPresentationList.toggle()
+            navigationManager.push(.presentationList)
         }
     }
 }
@@ -246,4 +245,5 @@ struct HomeView: View {
 #Preview {
     let vm = AppDI.shared.makeHomeViewModel()
     HomeView(vm:vm)
+        .environmentObject(NavigationManager())
 }
