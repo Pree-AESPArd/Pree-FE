@@ -10,7 +10,7 @@ import SwiftUI
 struct PracticeResultView: View {
     @StateObject var vm: PracticeResultViewModel
     @Binding var showPracticeResult: Bool
-    
+    @State var showModalView: Bool = false
     
     var body: some View {
         ZStack {
@@ -26,7 +26,7 @@ struct PracticeResultView: View {
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading,spacing:8){
-
+                        
                         ForEach(Array(vm.itemNameList.enumerated()), id:\.offset){ index, item in
                             ExpandableReportItemView(
                                 item: item,
@@ -35,7 +35,8 @@ struct PracticeResultView: View {
                             )
                         } // :ForEach
                         
-                        //MARK: - show evaluation criteria
+                        evaluationCriteria
+                        
                     } // : VStack
                     .padding(.top, 20)
                     .padding(.bottom, 300)
@@ -74,6 +75,18 @@ struct PracticeResultView: View {
                     },
                 )
             }
+            
+            if showModalView {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                
+                standardModalView(showModalView: $showModalView)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .bottom).combined(with: .opacity),  // 나타날 때: 아래에서 위로
+                        removal: .move(edge: .top).combined(with: .opacity) // 사라질 때: 위에서 아래로
+                    ))
+            } // : if
+            
         }// : ZStack
     }
     
@@ -130,17 +143,39 @@ struct PracticeResultView: View {
             
             Spacer()
             
-            Text("\(Int(vm.score))점")
+            Text("\(Int(vm.totalscore))점")
                 .foregroundColor(Color.white)
                 .font(.pretendardBold(size: 24))
                 .padding(.vertical, 5.5)
                 .padding(.horizontal, 8)
-                .background(Color(colorForScore(vm.score/100)))
+                .background(Color(colorForScore(vm.totalscore/100)))
                 .cornerRadius(20)
                 .applyShadowStyle()
             
         } // : HStack
     }
+    
+    private var evaluationCriteria: some View {
+        HStack(alignment: .top) {
+            
+            Spacer()
+            
+            Button(action: {
+                
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showModalView.toggle()
+                }
+            }){
+                Text("평가 기준 보러가기 >")
+                    .foregroundColor(Color.primary)
+                    .font(.pretendardMedium(size: 14))
+            } // : Button
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        } // :HStack
+    }
+    
+    
     
     // edit Mode
     private var overlayClearBg: some View {
