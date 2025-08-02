@@ -29,46 +29,11 @@ struct PracticeResult: View {
                         
                         //MARK: - report result
                         ForEach(Array(vm.itemNameList.enumerated()), id:\.offset){ index, item in
-                        HStack(spacing:0){
-                            VStack(alignment: .leading,spacing:0) {
-                                Text("\(item)")
-                                    .foregroundColor(Color.textGray)
-                                    .font(.pretendardMedium(size: 14))
-                                    .padding(.top, 14)
-                                    .padding(.bottom, 2)
-                                    
-                                Text("\(item)")
-                                    .foregroundColor(Color.black)
-                                    .font(.pretendardMedium(size: 14))
-                                    .padding(.bottom, 8)
-                                
-                                ProgressView(value: vm.progressScores[index]/100)
-                                    .progressViewStyle(CustomLinearProgressStyle(
-                                        score: Int(vm.progressScores[index]),
-                                        trackColor: Color.progressBarGray,
-                                        progressColor: Color(colorForScore(vm.progressScores[index]/100)),
-                                        height: 24,
-                                        cornerRadius: 8,
-                                        width: 280
-                                    ))
-                                    .padding(.bottom, 14)
-                                
-                            } // :VStack
-                            
-                            Spacer()
-                            
-                            Button(action:{}){
-                                Image("dropdown_down")
-                                    .frame(maxHeight: .infinity)
-                            }
-                            
-                        } // : HStack
-                        .padding(.horizontal, 16)
-                        .background(Color.white)
-                        .cornerRadius(20)
-                        .applyShadowStyle()
-                        .padding(.horizontal, 16)
-                        .padding(.top, 20)
+                            ExpandableReportItemView(
+                                item: item,
+                                progressScore: vm.progressScores[index],
+                                index: index
+                            )
                         }
                         
                         //MARK: - show evaluation criteria
