@@ -53,6 +53,11 @@ struct PracticeResultView: View {
             
         }// : ZStack
         .navigationBarBackButtonHidden(true)
+        .onChange(of: showModalView) { newValue in
+            if newValue {
+                modalManager.showStandardModal()
+            }
+        } // : onChange
         .onChange(of: vm.option) { newOption in
             switch newOption {
             case .editName:
