@@ -61,11 +61,10 @@ struct HomeView: View {
                         case .searchBarOn:
                             SearchBarView(
                                 searchText: $searchText,
-                                isExpanded: $isSearchBarExpanded,
-                                menus: $menus)
+                                isExpanded: $isSearchBarExpanded)
                             .transition(.asymmetric(
-                                insertion: .move(edge: .bottom).combined(with: .opacity),
-                                removal: .move(edge: .top).combined(with: .opacity)
+                                insertion: .move(edge: .leading).combined(with: .opacity),
+                                removal: .move(edge: .trailing).combined(with: .opacity)
                             ))
                             
                         case .filter:
@@ -91,6 +90,19 @@ struct HomeView: View {
         }// : VStack
         .background(Color.mainBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
+        .onChange(of: isSearchBarExpanded) { newValue in
+            if !newValue {
+                // 검색바가 닫힐 때 메뉴 상태 복원
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        menus.removeAll { $0 == .searchBarOn }
+                        menus.insert(.avgScoreGraph, at: 0)
+                        menus.insert(.searchBarOff, at: 1)
+                        menus.insert(.filter, at: 2)
+                    }
+                }
+            }
+        }
     }
     
     //MARK: - view
@@ -150,7 +162,13 @@ struct HomeView: View {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     menus.removeAll { $0 == .avgScoreGraph || $0 == .filter || $0 == .searchBarOff }
                     menus.insert(.searchBarOn, at: 0)
-                    isSearchBarExpanded = true
+                }
+                
+                // 검색바가 완전히 나타난 후에 확장 상태 활성화
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                        isSearchBarExpanded = true
+                    }
                 }
             }){
                 Image("search_off")
