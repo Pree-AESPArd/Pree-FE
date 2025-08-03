@@ -18,7 +18,7 @@ enum ModalType {
 
 // 앱 전체의 모달을 중앙 집중식으로 관리
 // RootTabView에서 모든 모달을 표시하고, 각 뷰에서는 이 매니저를 통해 모달을 요청
-class ModalManager: ObservableObject {
+final class ModalManager: ObservableObject {
     static let shared = ModalManager()
     private init() {}
     
