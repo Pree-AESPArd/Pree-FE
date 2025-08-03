@@ -90,7 +90,7 @@ struct PresentaionListView: View {
             case .defalut, .none:
                 break
             }
-        }
+        } // : onChange
     }
     
     //MARK: - view
@@ -291,4 +291,5 @@ struct PresentaionListView: View {
     let vm = AppDI.shared.makePresnetationListViewModel()
     PresentaionListView(vm:vm)
         .environmentObject(NavigationManager())
+        .environmentObject(ModalManager.shared)
 }
