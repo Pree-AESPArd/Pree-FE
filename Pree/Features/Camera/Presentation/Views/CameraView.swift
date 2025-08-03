@@ -143,4 +143,5 @@ struct FrontCameraPreview: UIViewRepresentable {
 #Preview {
     let vm = AppDI.shared.makeCameraViewModel()
     CameraView(vm: vm)
+        .environmentObject(NavigationManager())
 }

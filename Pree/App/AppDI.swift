@@ -41,4 +41,17 @@ final class AppDI {
             service: eyeTrackingService
         )
     }
+  
+    
+    func makeHomeViewModel() -> HomeViewModel {
+        HomeViewModel()
+    }
+    
+    func makePresnetationListViewModel() -> PresentaionListViewModel {
+        PresentaionListViewModel()
+    }
+    
+    func makePracticeResultViewModel()-> PracticeResultViewModel {
+        PracticeResultViewModel()
+    }
 }
