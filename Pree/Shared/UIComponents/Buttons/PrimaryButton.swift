@@ -9,11 +9,12 @@ import SwiftUI
 
 struct PrimaryButton: View {
     
-    var title: String?
+    let title: String?
+    let action: ()->Void
     
     var body: some View {
         Button(
-            action: {},
+            action: action,
             label: {
                 Text(title ?? "")
             }

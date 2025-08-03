@@ -12,38 +12,54 @@ import SwiftUI
 
 struct OverlayView: View {
     
+    @StateObject var vm: CameraViewModel
+//    @Binding var vm: CameraViewModel
+    
     var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
-                
-                backButton
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 12)
-                
-                descriptionText
-                
-                Spacer()
-                
-                
-                Image("face_guide")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
-                    .frame(maxWidth: .infinity) // 가운데 정렬
+        
+        Group {
+            if vm.isCalibrating {
+                EyeTrackingCalibrationView()
+            } else {
+                GeometryReader { geometry in
+                    VStack(spacing: 0) {
+                        
+                        backButton
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom, 12)
+                        
+                        descriptionText
+                        
+                        Spacer()
+                        
+                        
+                        Image("face_guide")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
+                            .frame(maxWidth: .infinity) // 가운데 정렬
 
-                
-                Spacer()
-                
-                PrimaryButton(title: "촬영 시작하기")
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        PrimaryButton(
+                            title: "촬영 시작하기",
+                            action: {
+                                vm.startCalibration()
+                            }
+                        )
+                    }
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .appPadding()
                 }
             }
-            .appPadding()
         }
+        
     }
     
     
