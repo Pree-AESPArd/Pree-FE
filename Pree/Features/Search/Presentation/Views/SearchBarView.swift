@@ -10,6 +10,8 @@ import SwiftUI
 struct SearchBarView: View {
     @Binding var searchText: String
     @Binding var isExpanded: Bool
+    @Binding var menus: [HomeMenu]
+    
     @FocusState private var isFocused: Bool
     
     var body: some View {
@@ -28,6 +30,9 @@ struct SearchBarView: View {
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                     isExpanded = false
                     searchText = ""
+                    
+                    menus.insert(.avgScoreGraph, at: 0)
+                    menus.insert(.filter, at: 2)
                 }
                 isFocused = false
             }){
@@ -59,5 +64,5 @@ struct SearchBarView: View {
 
 
 #Preview {
-    SearchBarView(searchText: .constant(""), isExpanded: .constant(true))
+    SearchBarView(searchText: .constant(""), isExpanded: .constant(true), menus: .constant([]))
 }

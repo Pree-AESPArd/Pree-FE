@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+enum HomeMenu: Hashable, Identifiable {
+    case avgScoreGraph
+    case searchBarOff
+    case filter
+    case presentationList
+    
+    var id: String {
+        String(describing: self)
+    }
+}
+
 struct HomeView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @StateObject var vm: HomeViewModel
@@ -14,17 +25,6 @@ struct HomeView: View {
     
     @State private var isSearchBarExpanded = false
     @State private var searchText = ""
-    
-    enum HomeMenu: Hashable, Identifiable {
-        case avgScoreGraph
-        case searchBarOff
-        case filter
-        case presentationList
-        
-        var id: String {
-            String(describing: self)
-        }
-    }
     
     @State private var menus: [HomeMenu] = [
         .avgScoreGraph,
@@ -45,21 +45,27 @@ struct HomeView: View {
                         switch menu {
                         case .avgScoreGraph:
                             avgScoreGraph
-                                .transition(.move(edge: .top).combined(with: .opacity))
+                                .transition(.asymmetric(
+                                            insertion: .move(edge: .bottom).combined(with: .opacity),
+                                            removal: .move(edge: .top).combined(with: .opacity)
+                                        ))
                             
                         case .searchBarOff:
                             if !isSearchBarExpanded {
                                 searchBarOff
-                                    .transition(.move(edge: .top).combined(with: .opacity))
                             } else {
-                                SearchBarView(searchText: $searchText, isExpanded: $isSearchBarExpanded)
-                                    .transition(.move(edge: .top).combined(with: .opacity))
-                                    .padding(.top, 8)
+                                SearchBarView(
+                                    searchText: $searchText,
+                                    isExpanded: $isSearchBarExpanded,
+                                    menus: $menus)
                             }
                             
                         case .filter:
                             filter
-                                .transition(.move(edge: .top).combined(with: .opacity))
+                                .transition(.asymmetric(
+                                            insertion: .move(edge: .bottom).combined(with: .opacity),
+                                            removal: .move(edge: .top).combined(with: .opacity)
+                                        ))
                         case .presentationList:
                             VStack(alignment: .leading, spacing: 8){
                                 ForEach(1...10, id:\.self){ _ in
