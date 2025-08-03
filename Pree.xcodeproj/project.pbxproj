@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0CBCCBA12E324E1E0094475A /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 0CBCCBA02E324E1E0094475A /* .gitignore */; };
+		1481E2ED2E3CA04A00ED27E9 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 1481E2EC2E3CA04A00ED27E9 /* DGCharts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,13 @@
 			);
 			target = 0CBCCB722E324DF90094475A /* Pree */;
 		};
+		14535B452E3BB09F004813B2 /* Exceptions for "Pree" folder in "Pree" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0CBCCB722E324DF90094475A /* Pree */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -55,6 +63,9 @@
 		};
 		0CBCCB752E324DF90094475A /* Pree */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				14535B452E3BB09F004813B2 /* Exceptions for "Pree" folder in "Pree" target */,
+			);
 			path = Pree;
 			sourceTree = "<group>";
 		};
@@ -83,6 +94,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1481E2ED2E3CA04A00ED27E9 /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,15 +115,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0C8C01432E360C19003FD18F /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				0CBCCBA32E324E8F0094475A /* Debug.xcconfig */,
-				0CBCCBA42E324EA00094475A /* Release.xcconfig */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		0CBCCB6A2E324DF90094475A = {
 			isa = PBXGroup;
 			children = (
@@ -122,7 +125,7 @@
 				0CBCCB862E324DFB0094475A /* PreeTests */,
 				0CBCCB902E324DFB0094475A /* PreeUITests */,
 				0CBCCB742E324DF90094475A /* Products */,
-				0C8C01432E360C19003FD18F /* Recovered References */,
+				14246C892E336B5A008D1EDF /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -134,6 +137,15 @@
 				0CBCCB8D2E324DFB0094475A /* PreeUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		14246C892E336B5A008D1EDF /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				0CBCCBA32E324E8F0094475A /* Debug.xcconfig */,
+				0CBCCBA42E324EA00094475A /* Release.xcconfig */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -158,6 +170,7 @@
 			);
 			name = Pree;
 			packageProductDependencies = (
+				1481E2EC2E3CA04A00ED27E9 /* DGCharts */,
 			);
 			productName = Pree;
 			productReference = 0CBCCB732E324DF90094475A /* Pree.app */;
@@ -241,6 +254,9 @@
 			);
 			mainGroup = 0CBCCB6A2E324DF90094475A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0CBCCB742E324DF90094475A /* Products */;
 			projectDirPath = "";
@@ -449,9 +465,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
-				DEVELOPMENT_TEAM = 4JXC27SJKM;
+				DEVELOPMENT_TEAM = QPXSR9M985;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pree/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
@@ -484,9 +501,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
-				DEVELOPMENT_TEAM = 4JXC27SJKM;
+				DEVELOPMENT_TEAM = QPXSR9M985;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pree/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
@@ -625,6 +643,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1481E2EC2E3CA04A00ED27E9 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0CBCCB6B2E324DF90094475A /* Project object */;
 }

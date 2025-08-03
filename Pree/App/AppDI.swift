@@ -37,4 +37,16 @@ final class AppDI {
       stop:  stopCaptureUseCase
     )
   }
+    
+    func makeHomeViewModel() -> HomeViewModel {
+        HomeViewModel()
+    }
+    
+    func makePresnetationListViewModel() -> PresentaionListViewModel {
+        PresentaionListViewModel()
+    }
+    
+    func makePracticeResultViewModel()-> PracticeResultViewModel {
+        PracticeResultViewModel()
+    }
 }
