@@ -12,6 +12,7 @@ enum HomeMenu: Hashable, Identifiable {
     case searchBarOff
     case filter
     case presentationList
+    case searchBarOn
     
     var id: String {
         String(describing: self)
@@ -46,26 +47,33 @@ struct HomeView: View {
                         case .avgScoreGraph:
                             avgScoreGraph
                                 .transition(.asymmetric(
-                                            insertion: .move(edge: .bottom).combined(with: .opacity),
-                                            removal: .move(edge: .top).combined(with: .opacity)
-                                        ))
+                                    insertion: .move(edge: .top).combined(with: .opacity),
+                                    removal: .move(edge: .top).combined(with: .opacity)
+                                ))
                             
                         case .searchBarOff:
-                            if !isSearchBarExpanded {
-                                searchBarOff
-                            } else {
-                                SearchBarView(
-                                    searchText: $searchText,
-                                    isExpanded: $isSearchBarExpanded,
-                                    menus: $menus)
-                            }
+                            searchBarOff
+                                .transition(.asymmetric(
+                                    insertion: .move(edge: .bottom).combined(with: .opacity),
+                                    removal: .move(edge: .top).combined(with: .opacity)
+                                ))
+                            
+                        case .searchBarOn:
+                            SearchBarView(
+                                searchText: $searchText,
+                                isExpanded: $isSearchBarExpanded,
+                                menus: $menus)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .bottom).combined(with: .opacity),
+                                removal: .move(edge: .top).combined(with: .opacity)
+                            ))
                             
                         case .filter:
                             filter
                                 .transition(.asymmetric(
-                                            insertion: .move(edge: .bottom).combined(with: .opacity),
-                                            removal: .move(edge: .top).combined(with: .opacity)
-                                        ))
+                                    insertion: .move(edge: .top).combined(with: .opacity),
+                                    removal: .move(edge: .top).combined(with: .opacity)
+                                ))
                         case .presentationList:
                             VStack(alignment: .leading, spacing: 8){
                                 ForEach(1...10, id:\.self){ _ in
@@ -140,7 +148,8 @@ struct HomeView: View {
             
             Button(action:{
                 withAnimation(.easeInOut(duration: 0.3)) {
-                    menus.removeAll { $0 == .avgScoreGraph || $0 == .filter }
+                    menus.removeAll { $0 == .avgScoreGraph || $0 == .filter || $0 == .searchBarOff }
+                    menus.insert(.searchBarOn, at: 0)
                     isSearchBarExpanded = true
                 }
             }){

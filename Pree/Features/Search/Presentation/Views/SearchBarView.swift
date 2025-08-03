@@ -31,7 +31,10 @@ struct SearchBarView: View {
                     isExpanded = false
                     searchText = ""
                     
+                    menus.removeAll {$0 == .searchBarOn }
+                    
                     menus.insert(.avgScoreGraph, at: 0)
+                    menus.insert(.searchBarOff, at: 1)
                     menus.insert(.filter, at: 2)
                 }
                 isFocused = false
