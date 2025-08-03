@@ -10,6 +10,7 @@ import SwiftUI
 struct PresentaionListView: View {
     @StateObject var vm: PresentaionListViewModel
     @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject private var modalManager: ModalManager
     
     enum PtListMenu {
         case graph
@@ -61,34 +62,35 @@ struct PresentaionListView: View {
                 overlayClearBg
             }
             
-            if let option = vm.option,
-               option == .editName
-            {
-                EditAlertView(
+            // 모달은 RootTabView에서 관리됨
+        } // :ZStack
+        .navigationBarBackButtonHidden(true)
+        .onChange(of: vm.option) { newOption in
+            switch newOption {
+            case .editName:
+                modalManager.showEditAlert(
                     onCancel: {
                         vm.option = nil
                     },
                     onConfirm: { newText in
                         vm.option = nil
                         print("확인됨, 입력된 값: \(newText)")
-                    })
-            }
-            
-            if let option = vm.option,
-               option == .deleteAll
-            {
-                DeleteAlertView(
+                    }
+                )
+            case .deleteAll:
+                modalManager.showDeleteAlert(
                     onCancel: {
                         vm.option = nil
                     },
                     onDelete: {
                         vm.option = nil
                         print("삭제됨")
-                    },
+                    }
                 )
+            case .defalut, .none:
+                break
             }
-        } // :ZStack
-        .navigationBarBackButtonHidden(true)
+        }
     }
     
     //MARK: - view

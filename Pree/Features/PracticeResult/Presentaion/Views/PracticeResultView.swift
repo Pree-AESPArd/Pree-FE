@@ -10,7 +10,9 @@ import SwiftUI
 struct PracticeResultView: View {
     @StateObject var vm: PracticeResultViewModel
     @State var showModalView: Bool = false
+    
     @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject private var modalManager: ModalManager
     
     var body: some View {
         ZStack {
@@ -76,20 +78,15 @@ struct PracticeResultView: View {
                 )
             }
             
-            if showModalView {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                
-                standardModalView(showModalView: $showModalView)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .bottom).combined(with: .opacity),
-                        removal: .move(edge: .bottom).combined(with: .opacity)
-                    ))
-                    .zIndex(1) // zIndex가 0인 경우 사라지는 애니메이션 적용이 안됨
-            } // if
+            // 모달은 RootTabView에서 관리됨
             
         }// : ZStack
         .navigationBarBackButtonHidden(true)
+        .onChange(of: showModalView) { newValue in
+            if newValue {
+                modalManager.showStandardModal()
+            }
+        }
     }
     
     //MARK: - view
@@ -172,6 +169,7 @@ struct PracticeResultView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         } // :HStack
+        .padding(.bottom, 30)
     }
     
     // edit Mode
