@@ -41,6 +41,7 @@ struct CameraView: View {
             overlayManager.show {
                 OverlayView(vm: vm)
             }
+            vm.startCalibration()
         }
         
     }

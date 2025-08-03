@@ -45,6 +45,8 @@ public final class EyeTrackingServiceImpl: EyeTrackingService {
     
     private var cancellable: AnyCancellable?
     private var arView: ARView?
+    
+    private var currentPoint: CGPoint = .zero
 
     public init() {}
 
@@ -84,7 +86,9 @@ public final class EyeTrackingServiceImpl: EyeTrackingService {
             .map { [weak self] faceAnchor in
                 let worldPoint = faceAnchor.lookAtPoint // ARFaceAnchor.lookAtPoint: 사용자 눈의 시선이 향하는 3D 월드 좌표
                 // project returns optional CGPoint, so fallback
-                return self?.arView?.project(worldPoint) ?? .zero
+                let screenPos = self?.arView?.project(worldPoint) ?? .zero
+                self?.currentPoint = screenPos
+                return screenPos
             }
             // sink: 파이프라인의 최종 구독자(subscriber) 역할.
             // 매 CGPoint를 받으면 subject.send(pt)로 내부 Subject에 흘려 넣습니다.
@@ -92,6 +96,13 @@ public final class EyeTrackingServiceImpl: EyeTrackingService {
             .sink { [weak self] pt in
                 self?.subject.send(pt) // 최종 2D 좌표(pt)를 subject에 실어 발행
             }
+    }
+    
+    
+    public func startCalibration() {
+        print("points ===================")
+        print(currentPoint)
+        
     }
 
     public enum TrackingError: Error {

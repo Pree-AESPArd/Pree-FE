@@ -15,4 +15,7 @@ public protocol EyeTrackingService {
     
     /// A Combine publisher that emits every time the user’s gaze moves on‐screen.
     var gazePublisher: AnyPublisher<CGPoint, Never> { get }
+    
+    
+    func startCalibration()
 }

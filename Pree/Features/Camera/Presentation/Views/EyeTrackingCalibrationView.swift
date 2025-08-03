@@ -19,11 +19,9 @@ struct EyeTrackingCalibrationView: View {
             CGPoint(x: 16,       y: 0),
             CGPoint(x: w/2,      y: 0),
             CGPoint(x: w - 16,   y: 0),
-            
             CGPoint(x: w - 16,   y: h/2),
             CGPoint(x: w - 16,   y: h - 12),
             CGPoint(x: w/2,      y: h - 12),
-            
             CGPoint(x: 16,       y: h - 12),
             CGPoint(x: 16,       y: h/2),
             CGPoint(x: w/2,      y: h/2),
@@ -72,14 +70,6 @@ struct EyeTrackingCalibrationView: View {
         Text("움직이는 점을 따라 응시해주세요")
             .font(.pretendardSemiBold(size: 14))
             .foregroundStyle(.white)
-    }
-    
-    
-    private func gazeCircle(x: CGFloat, y: CGFloat) -> some View {
-        Circle()
-            .fill(Color.primary)
-            .frame(width: 20, height: 20)
-            .position(x: x, y: y)
     }
     
     

@@ -52,11 +52,11 @@ final class CameraViewModel: ObservableObject {
 //                self.isCalibrating = false
 //            }
         }
-        
     }
     
-    func startCapture() {
-        
+    
+    public func printPoint(){
+        self.service.startCalibration()
     }
     
     func toggleCapture() {
