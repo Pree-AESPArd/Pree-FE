@@ -12,15 +12,21 @@ struct HomeView: View {
     @StateObject var vm: HomeViewModel
     @State var showPresentationList: Bool = false
     
+    @State private var isSearchBarExpanded = false
+    @State private var searchText = ""
     
-    enum HomeMenu {
+    enum HomeMenu: Hashable, Identifiable {
         case avgScoreGraph
         case searchBarOff
         case filter
         case presentationList
+        
+        var id: String {
+            String(describing: self)
+        }
     }
     
-    private let menus: [HomeMenu] = [
+    @State private var menus: [HomeMenu] = [
         .avgScoreGraph,
         .searchBarOff,
         .filter,
@@ -39,10 +45,21 @@ struct HomeView: View {
                         switch menu {
                         case .avgScoreGraph:
                             avgScoreGraph
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                            
                         case .searchBarOff:
-                            searchBarOff
+                            if !isSearchBarExpanded {
+                                searchBarOff
+                                    .transition(.move(edge: .top).combined(with: .opacity))
+                            } else {
+                                SearchBarView(searchText: $searchText, isExpanded: $isSearchBarExpanded)
+                                    .transition(.move(edge: .top).combined(with: .opacity))
+                                    .padding(.top, 8)
+                            }
+                            
                         case .filter:
                             filter
+                                .transition(.move(edge: .top).combined(with: .opacity))
                         case .presentationList:
                             VStack(alignment: .leading, spacing: 8){
                                 ForEach(1...10, id:\.self){ _ in
@@ -115,7 +132,14 @@ struct HomeView: View {
             
             Spacer()
             
-            Image("search_off")
+            Button(action:{
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    menus.removeAll { $0 == .avgScoreGraph || $0 == .filter }
+                    isSearchBarExpanded = true
+                }
+            }){
+                Image("search_off")
+            }
         }
         .padding(.bottom, 16)
     }

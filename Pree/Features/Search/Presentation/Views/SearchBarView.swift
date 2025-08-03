@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct SearchBarView: View {
-    @State private var searchText: String = ""
+    @Binding var searchText: String
+    @Binding var isExpanded: Bool
     @FocusState private var isFocused: Bool
     
     var body: some View {
@@ -24,27 +25,39 @@ struct SearchBarView: View {
             Spacer()
             
             Button(action:{
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                    isExpanded = false
+                    searchText = ""
+                }
                 isFocused = false
-                searchText = ""
             }){
                 Image("search_cancel")
                     .padding(.vertical, 10)
                     .padding(.horizontal, 12)
                 
             } // : Button
+            
         } // HStack
         .background(Color.white)
         .cornerRadius(20)
         .applyShadowStyle()
+        .padding(.bottom, 20)
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.isFocused = true
+            if isExpanded {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.isFocused = true
+                }
             }
         } // : onAppear
+        .onChange(of: isExpanded) { newValue in
+            if !newValue {
+                isFocused = false
+            }
+        }
     }
 }
 
 
 #Preview {
-    SearchBarView()
+    SearchBarView(searchText: .constant(""), isExpanded: .constant(true))
 }
