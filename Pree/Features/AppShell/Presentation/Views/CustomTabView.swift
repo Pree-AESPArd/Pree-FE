@@ -18,8 +18,8 @@ struct CustomTabView: View {
                 Ellipse()
                     .frame(width: 100, height: 90)
                     .foregroundColor(Color.white)
-                    .applyShadowStyle()
                     .offset(y:-29)
+                    .applyShadowStyle()
                 
                 Spacer()
             } // :HStack
@@ -74,6 +74,7 @@ struct CustomTabView: View {
                     .frame(width: 100, height: 90)
                     .foregroundColor(Color.white)
                     .offset(y:-29)
+                    .applyShadowStyle()
                 
                 Spacer()
             } // :HStack
@@ -89,6 +90,11 @@ struct CustomTabView: View {
                     }
             }
             .offset(y:-19)
+            .background{
+                Rectangle()
+                    .frame(width: 140)
+                    .foregroundColor(.white)
+            }
             
         } // :ZStack
 //        edgesIgnoringSafeArea(.bottom)
