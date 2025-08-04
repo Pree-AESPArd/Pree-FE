@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct standardModalView: View {
-    @Binding var showModalView: Bool
+    @EnvironmentObject private var modalManager: ModalManager
     
     var body: some View {
         VStack(alignment: .leading,spacing: 0) {
             
+            Spacer()
+            
             Button(action:{
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    showModalView = false
-                }
+                modalManager.hideModal()
             }){
                 Image("x_close")
                     .padding(.horizontal,8)
@@ -91,6 +91,9 @@ struct standardModalView: View {
             .cornerRadius(20)
             .padding(.horizontal, 16)
             
+            Spacer()
+            Spacer()
+            
         } // : VStack
     }
     
@@ -125,5 +128,6 @@ struct standardModalView: View {
 }
 
 #Preview {
-    standardModalView(showModalView: .constant(true))
+    standardModalView()
+        .environmentObject(ModalManager.shared)
 }

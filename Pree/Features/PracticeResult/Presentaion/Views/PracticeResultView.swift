@@ -10,7 +10,9 @@ import SwiftUI
 struct PracticeResultView: View {
     @StateObject var vm: PracticeResultViewModel
     @State var showModalView: Bool = false
+    
     @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject private var modalManager: ModalManager
     
     var body: some View {
         ZStack {
@@ -49,47 +51,39 @@ struct PracticeResultView: View {
                 overlayClearBg
             }
             
-            if let option = vm.option,
-               option == .editName
-            {
-                EditAlertView(
+        }// : ZStack
+        .navigationBarBackButtonHidden(true)
+        .onChange(of: showModalView) { newValue in
+            if newValue {
+                modalManager.showStandardModal()
+            }
+        } // : onChange
+        .onChange(of: vm.option) { newOption in
+            switch newOption {
+            case .editName:
+                modalManager.showEditAlert(
                     onCancel: {
                         vm.option = nil
                     },
                     onConfirm: { newText in
                         vm.option = nil
                         print("확인됨, 입력된 값: \(newText)")
-                    })
-            }
-            
-            if let option = vm.option,
-               option == .deleteAll
-            {
-                DeleteAlertView(
+                    }
+                )
+            case .deleteAll:
+                modalManager.showDeleteAlert(
                     onCancel: {
                         vm.option = nil
                     },
                     onDelete: {
                         vm.option = nil
                         print("삭제됨")
-                    },
+                    }
                 )
+            case .defalut, .none:
+                break
             }
-            
-            if showModalView {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                
-                standardModalView(showModalView: $showModalView)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .bottom).combined(with: .opacity),
-                        removal: .move(edge: .bottom).combined(with: .opacity)
-                    ))
-                    .zIndex(1) // zIndex가 0인 경우 사라지는 애니메이션 적용이 안됨
-            } // if
-            
-        }// : ZStack
-        .navigationBarBackButtonHidden(true)
+        } // : onChange
     }
     
     //MARK: - view
@@ -172,6 +166,7 @@ struct PracticeResultView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         } // :HStack
+        .padding(.bottom, 30)
     }
     
     // edit Mode
