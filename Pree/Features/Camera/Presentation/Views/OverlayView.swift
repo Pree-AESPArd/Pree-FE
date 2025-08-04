@@ -12,14 +12,14 @@ import SwiftUI
 
 struct OverlayView: View {
     
-    @StateObject var vm: CameraViewModel
+    @ObservedObject var vm: CameraViewModel
 //    @Binding var vm: CameraViewModel
     
     var body: some View {
         
         Group {
             if vm.isCalibrating {
-                EyeTrackingCalibrationView()
+                EyeTrackingCalibrationView(vm: vm)
             } else {
                 GeometryReader { geometry in
                     VStack(spacing: 0) {

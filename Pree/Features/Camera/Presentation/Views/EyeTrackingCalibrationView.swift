@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct EyeTrackingCalibrationView: View {
+    @ObservedObject var vm: CameraViewModel
     
     @State private var currentIndex: Int = -1
     // 총 9개의 포인트를 담을 배열. GeometryReader 안에서 화면 크기에 맞춰 계산합니다.
@@ -60,6 +61,7 @@ struct EyeTrackingCalibrationView: View {
     private func showNext(at idx: Int, total: Int) {
         guard idx < total else { return }
         currentIndex = idx
+        //vm.startCalibraton()
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             // 이전 원은 사라지고 다음 원만 보인다
             showNext(at: idx + 1, total: total)
@@ -78,5 +80,5 @@ struct EyeTrackingCalibrationView: View {
 
 
 #Preview {
-    EyeTrackingCalibrationView()
+//    EyeTrackingCalibrationView()
 }

@@ -84,7 +84,7 @@ struct PresentaionListView: View {
                     onDelete: {
                         vm.option = nil
                         print("삭제됨")
-                    },
+                    }
                 )
             }
         } // :ZStack

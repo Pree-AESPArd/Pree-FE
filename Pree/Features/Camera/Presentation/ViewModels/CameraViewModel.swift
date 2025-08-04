@@ -55,9 +55,11 @@ final class CameraViewModel: ObservableObject {
     }
     
     
-    public func printPoint(){
-        self.service.startCalibration()
+    func getCurrentLokkingPoint() {
+        print(gazePoint)
     }
+    
+    
     
     func toggleCapture() {
         if isCapturing {
