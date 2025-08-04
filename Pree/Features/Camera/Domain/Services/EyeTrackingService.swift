@@ -13,6 +13,8 @@ public protocol EyeTrackingService {
     /// Starts the face-tracking session.
     func startTracking(in arView: ARView) throws
     
+    func stopTracking()
+    
     /// A Combine publisher that emits every time the user’s gaze moves on‐screen.
     var gazePublisher: AnyPublisher<CGPoint, Never> { get }
     

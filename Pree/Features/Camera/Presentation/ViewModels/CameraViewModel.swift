@@ -55,16 +55,18 @@ final class CameraViewModel: ObservableObject {
     }
     
     
-    func getCurrentLookingPoint(isCalibrating: Bool) {
-        var currentGazePoint: [CGPoint] = []
+    func stopTracking(){
+        self.service.stopTracking()
         
-        while isCalibrating {
-            currentGazePoint.append(gazePoint)
-        }
-        
-        print(currentGazePoint)
     }
     
+    func resumeTracking() {
+        do {
+            try service.startTracking(in: arView)
+        } catch {
+            print("Could not restart face tracking:", error)
+        }
+    }
     
     
     func toggleCapture() {

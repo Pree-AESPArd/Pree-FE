@@ -13,7 +13,8 @@ import SwiftUI
 struct OverlayView: View {
     
     @ObservedObject var vm: CameraViewModel
-//    @Binding var vm: CameraViewModel
+    @ObservedObject var overlayManager: OverlayWindowManager
+    @EnvironmentObject var navigationManager: NavigationManager
     
     var body: some View {
         
@@ -65,7 +66,10 @@ struct OverlayView: View {
     
     private var backButton: some View {
         Button(
-            action: {},
+            action: {
+                overlayManager.hide()
+                navigationManager.pop()
+            },
             label: {
                 Image(systemName: "chevron.left")
                     .frame(width: 24, height: 24)

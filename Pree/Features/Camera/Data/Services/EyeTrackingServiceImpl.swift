@@ -99,6 +99,12 @@ public final class EyeTrackingServiceImpl: EyeTrackingService {
     }
     
     
+    public func stopTracking() {
+        cancellable?.cancel()
+        self.arView?.session.pause()
+    }
+    
+    
 
     public enum TrackingError: Error {
         case notSupported

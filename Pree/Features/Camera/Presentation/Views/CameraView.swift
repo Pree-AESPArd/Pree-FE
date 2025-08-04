@@ -32,9 +32,15 @@ struct CameraView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear {
             overlayManager.show {
-                OverlayView(vm: vm)
+                OverlayView(vm: vm, overlayManager: overlayManager)
+                    .environmentObject(navigationManager)
             }
+            vm.resumeTracking()
             vm.startCalibration()
+        }
+        .onDisappear {
+          
+            vm.stopTracking()
         }
         
     }
