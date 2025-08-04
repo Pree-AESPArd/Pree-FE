@@ -55,8 +55,14 @@ final class CameraViewModel: ObservableObject {
     }
     
     
-    func getCurrentLokkingPoint() {
-        print(gazePoint)
+    func getCurrentLookingPoint(isCalibrating: Bool) {
+        var currentGazePoint: [CGPoint] = []
+        
+        while isCalibrating {
+            currentGazePoint.append(gazePoint)
+        }
+        
+        print(currentGazePoint)
     }
     
     

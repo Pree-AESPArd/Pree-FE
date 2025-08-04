@@ -19,8 +19,7 @@ struct CameraView: View {
     var body: some View {
         
         ZStack {
-            //            FrontCameraPreview(gazePoint: $vm.gazePoint)
-            //                .edgesIgnoringSafeArea(.all)
+            
             FrontCameraPreview(arView: vm.arView)
                 .ignoresSafeArea()
             
@@ -29,13 +28,6 @@ struct CameraView: View {
                 .frame(width: 12, height: 12)
                 .position(vm.gazePoint)
             
-            
-            //            if let pt = vm.gazePoint {
-            //                Circle()
-            //                    .fill(Color.red.opacity(0.8))
-            //                    .frame(width: 12, height: 12)
-            //                    .position(pt) // UIKit 좌표계 기준
-            //            }
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {

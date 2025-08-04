@@ -99,11 +99,6 @@ public final class EyeTrackingServiceImpl: EyeTrackingService {
     }
     
     
-    public func startCalibration() {
-        print("points ===================")
-        print(currentPoint)
-        
-    }
 
     public enum TrackingError: Error {
         case notSupported

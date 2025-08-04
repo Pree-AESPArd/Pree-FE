@@ -18,7 +18,7 @@ struct OverlayView: View {
     var body: some View {
         
         Group {
-            if vm.isCalibrating {
+            if false {
                 EyeTrackingCalibrationView(vm: vm)
             } else {
                 GeometryReader { geometry in

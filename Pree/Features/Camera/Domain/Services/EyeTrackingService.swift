@@ -17,5 +17,4 @@ public protocol EyeTrackingService {
     var gazePublisher: AnyPublisher<CGPoint, Never> { get }
     
     
-    func startCalibration()
 }
