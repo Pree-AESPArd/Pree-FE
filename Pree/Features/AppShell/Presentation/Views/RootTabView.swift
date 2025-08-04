@@ -26,6 +26,7 @@ struct RootTabView: View {
                         switch path {
                         case .camera:
                             CameraView(vm: cameraViewModel)
+                                //.toolbarVisibility(.hidden, for: .tabBar)
                         case .home:
                             HomeView(vm: homeViewModel)
                         case .profile:

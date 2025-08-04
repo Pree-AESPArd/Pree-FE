@@ -12,6 +12,7 @@ import Combine
 
 struct CameraView: View {
     @StateObject var vm: CameraViewModel
+    @EnvironmentObject var navigationManager: NavigationManager
     @StateObject private var overlayManager = OverlayWindowManager()
     
     
