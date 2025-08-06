@@ -67,7 +67,7 @@ struct OverlayView: View {
     private var backButton: some View {
         Button(
             action: {
-                overlayManager.hide()
+                overlayManager.hide() // Overaly 된 UI 요소들을 없애줌, CameraView 안에서 onDisappear 에서 실행하면 바로 안없어지고 잠시 남아있다가 사라짐
                 navigationManager.pop()
             },
             label: {
