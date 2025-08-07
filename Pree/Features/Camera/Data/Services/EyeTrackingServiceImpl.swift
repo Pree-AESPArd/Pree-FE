@@ -10,9 +10,6 @@ import RealityKit
 import Combine
 import CoreGraphics
 
-extension SIMD4 where Scalar == Float {
-  var xyz: SIMD3<Float> { SIMD3<Float>(x, y, z) }
-}
 
 public final class EyeTrackingServiceImpl: NSObject, EyeTrackingService, ARSessionDelegate{
     
@@ -63,54 +60,15 @@ public final class EyeTrackingServiceImpl: NSObject, EyeTrackingService, ARSessi
         // ① keep a reference to the real ARView
         self.arView = arView
         
-        // 1) 이 기기에서 Face Tracking이 지원되는지 확인
-        // TrueDepth 센서가 없는 기기 (iPhone 8) 이하는 걸러져야 함
-        guard ARFaceTrackingConfiguration.isSupported else {
-            throw TrackingError.notSupported
+        // ARView 설정
+        do {
+            try setupARView(arView: arView)
+        } catch let error {
+            throw error
         }
-        
-        
-        // ② optionally disable RealityKit auto-configuration
-        arView.automaticallyConfigureSession = false
-        
-        arView.session.delegate = self
-        
-        // ③ run the face-tracking session
-        let config = ARFaceTrackingConfiguration() // ARFaceTrackingConfiguration 생성
-        config.isLightEstimationEnabled = true  // 조명 정보도 받고 싶다면
-        arView.session.run(config, options: [.resetTracking, .removeExistingAnchors]) // 세션 실행 (전면 카메라로)
-        
-        
-//        let plane = ModelEntity(
-//            mesh: .generatePlane(width: 2, depth: 2), //    MeshResource.generatePlane(width:depth:) -> 2 m × 2 m 크기의 평면 메시(geometry)를 생성합니다.
-//            materials: [UnlitMaterial(color: .init(.clear))]  // UnlitMaterial은 조명에 영향을 받지 않는 단색(material) 재질입니다. 투명색 적용
-//        )
-//        plane.generateCollisionShapes(recursive: false) // plane 모델(Entity)에 대해 “이게 ray-cast 가능한 geometry”를 생성해 줍니다. recursive: false이므로 자식 노드까지 내려가진 않고, 이 Entity 자체의 메시에 대해서만 충돌체를 만듭니다.
-//        
-//        //        let screenAnchor = AnchorEntity(world: [0,0,-1])
-//        // 앵커(AnchorEntity)는 RealityKit에서 “가상 콘텐츠(Entity)를 어디에, 어떻게 고정시킬지”를 정해 주는 기준점
-//        let screenAnchor = AnchorEntity(.camera) // RealityKit의 특별 앵커: “항상 카메라(디바이스) 좌표계에 고정”. 디바이스가 움직여도 앵커는 카메라 바로 뒤에서 따라붙습니다.
-//        plane.setPosition([0, 0, -1], relativeTo: screenAnchor) // 앵커(local) 기준으로 Z축 음수 방향으로 1 m 떨어진 위치에 평면을 놓습니다.
-//        screenAnchor.addChild(plane)    // 방금 만든 평면 Entity를 “카메라 앵커”의 자식 노드로 붙입니다.
-//        arView.scene.addAnchor(screenAnchor) // 씬에 앵커 전체를 등록해야, 실제로 렌더링 혹은 레이캐스트 충돌 대상이 됩니다.
-        
-        // ─────────────── 보이지 않는 박스형 충돌체 설정 ───────────────
-        let planeCollider = Entity()
-        let cameraAnchor = AnchorEntity(.camera)
-        planeCollider.setPosition([0, 0, -1], relativeTo: cameraAnchor)
-        
-        // ShapeResource.generateBox(width:height:depth:) 로 얇은 박스 생성
-        let boxShape = ShapeResource.generateBox(
-            width: 2.0,
-            height: 2.0,
-            depth: 0.001
-        )
-        planeCollider.components[CollisionComponent.self] =
-        CollisionComponent(shapes: [boxShape], mode: .default)
-        
-        cameraAnchor.addChild(planeCollider)
-        arView.scene.addAnchor(cameraAnchor)
-        // ─────────────────────────────────────────────────────────────
+    
+        // 직사각형 충돌체 생성
+        let plane = setupVirtualPlane(in: arView)
         
         // 눈 모델(Entity) 준비
         leftEyeEntity  = makeEyeContainer(color: .red.withAlphaComponent(0.4))
@@ -137,12 +95,7 @@ public final class EyeTrackingServiceImpl: NSObject, EyeTrackingService, ARSessi
                     .first
             }
             .map { [weak self] faceAnchor in
-                //                                let worldPoint = faceAnchor.lookAtPoint // ARFaceAnchor.lookAtPoint: 사용자 눈의 시선이 향하는 3D 월드 좌표
-                //                                // project returns optional CGPoint, so fallback
-                //                                let screenPos = self?.arView?.project(worldPoint) ?? .zero
-                //                                return screenPos
-                //                self?.trackEyes(from: faceAnchor) ?? .zero
-                self?.computeGaze(from: faceAnchor, on: arView, using: planeCollider) ?? .zero
+                self?.computeGaze(from: faceAnchor, on: arView, using: plane) ?? .zero
             }
         // sink: 파이프라인의 최종 구독자(subscriber) 역할.
         // 매 CGPoint를 받으면 subject.send(pt)로 내부 Subject에 흘려 넣습니다.
@@ -163,6 +116,26 @@ public final class EyeTrackingServiceImpl: NSObject, EyeTrackingService, ARSessi
         // 눈 모델이 실제 눈의 위치와 자세를 실시간으로 따라가게 됨
         leftEyeEntity.transform.matrix  = anchor.leftEyeTransform
         rightEyeEntity.transform.matrix = anchor.rightEyeTransform
+    }
+    
+    
+    private func setupARView(arView: ARView) throws {
+        // 1) 이 기기에서 Face Tracking이 지원되는지 확인
+        // TrueDepth 센서가 없는 기기 (iPhone 8) 이하는 걸러져야 함
+        guard ARFaceTrackingConfiguration.isSupported else {
+            throw TrackingError.notSupported
+        }
+        
+        
+        // ② optionally disable RealityKit auto-configuration
+        arView.automaticallyConfigureSession = false
+        
+        arView.session.delegate = self
+        
+        // ③ run the face-tracking session
+        let config = ARFaceTrackingConfiguration() // ARFaceTrackingConfiguration 생성
+        config.isLightEstimationEnabled = true  // 조명 정보도 받고 싶다면
+        arView.session.run(config, options: [.resetTracking, .removeExistingAnchors]) // 세션 실행 (전면 카메라로)
     }
     
     
@@ -206,177 +179,94 @@ public final class EyeTrackingServiceImpl: NSObject, EyeTrackingService, ARSessi
          \text{단위 벡터} = \frac{1}{5}(3,4,0) = (0.6,\;0.8,\;0.0)
          */
         
-        
         return container
     }
     
     
-//    private func computeGaze(
-//        from faceAnchor: ARFaceAnchor,   // ① ARFaceAnchor: 매 프레임마다 업데이트되는 얼굴·눈 위치 정보
-//        on arView: ARView,               // ② ARView: RealityKit 렌더링 뷰, 여기서 레이캐스트·프로젝션 수행
-//        using plane: Entity         // ③ screen plane: 눈 시선이 부딪칠 가상의 투명 평면
-//    ) -> CGPoint {
-//        
-//        // ───────────────────────────────────────────────────────────────
-//        // screenHit(of:) : 하나의 눈(eye entity)에서 레이캐스트해
-//        // 화면 평면과 충돌한 2D 스크린 좌표를 반환하는 내부 함수
-//        func screenHit(of eye: Entity) -> CGPoint? {
-//            // 1) eye 엔티티의 월드 변환 매트릭스 계산
-//            let worldM = eye.transformMatrix(relativeTo: nil)
-//            //    └─ eye.transformMatrix(relativeTo: nil)
-//            //       - eye 로컬 좌표계를 월드 좌표계로 변환하는 4×4 행렬
-//            
-//            // 2) 매트릭스 네 번째 열(columns.3)에서 x,y,z 추출 → eye의 월드 위치(origin)
-//            let origin = worldM.columns.3.xyz
-//            //    └─ columns.3 : 행렬의 네 번째 열(translation 성분)
-//            //    └─ .xyz : SIMD4→SIMD3 확장 프로퍼티
-//            
-//            // 3) eye 로컬 (0,0,1,1) 좌표를 월드로 변환 → 눈이 바라보는 “정면 지점”
-//            let world4 = worldM * SIMD4<Float>(0, 0, 1, 1)
-//            let target = SIMD3<Float>(world4.x, world4.y, world4.z)
-//            //    └─ (0,0,1,1) : eye 컨테이너 로컬 앞쪽(z축 1m) 지점
-//            //    └─ 곱셈 결과 → world4 : 그 지점의 월드 좌표
-//            
-//            // 4) 방향 벡터(direction) 계산: normalize(target – origin)
-//            let dir = normalize(target - origin)
-//            //    └─ (target – origin) : 눈 위치→앞쪽 지점으로 향하는 벡터
-//            //    └─ normalize()    : 단위 길이 벡터로 변환
-//            
-//            // 5) 레이캐스트(ray) 쏘기
-//            let hits = arView.scene.raycast(
-//                origin: origin,
-//                direction: dir,
-//                length: 3.0,        // 최대 3m까지
-//                query: .nearest     // 가장 가까운 충돌만
-//            )
-//            //    └─ origin : 눈의 월드 위치
-//            //    └─ direction : 눈이 바라보는 단위 방향 벡터
-//            
-//            // 6) 충돌 결과 중 우리가 만든 plane과 충돌한 첫 지점 찾기
-//            if let hit = hits.first(where: { $0.entity == plane }) {
-//                // 7) 3D 충돌 지점(hit.position)을 2D 화면 좌표로 투영
-//                return arView.project(hit.position)
-//            }
-//            
-//            // 8) 평면과 충돌하지 않으면 nil 반환
-//            return nil
-//        }
-//        // ───────────────────────────────────────────────────────────────
-//        
-//        // 9) 왼쪽·오른쪽 눈에 대해 각각 screenHit 실행
-//        guard let pL = screenHit(of: leftEyeEntity),
-//              let pR = screenHit(of: rightEyeEntity)
-//        else {
-//            // 10) 어느 한 쪽이라도 실패하면 (시선 미검출) CGPoint.zero 반환
-//            return .zero
-//        }
-//        
-//        // 11) 둘의 x,y 좌표를 평균 내서 최종 시선 위치 계산
-//        let x = (pL.x + pR.x) * 0.5
-//        let y = (pL.y + pR.y) * 0.5
-//        //    └─ RealityKit 좌표계는 화면 좌하단(origin)이기 때문에
-//        //       별도의 y 반전 처리 없이 그대로 사용
-//        
-//        // 12) CGPoint 로 포장해 반환
-//        return CGPoint(x: x, y: y)
-//    }
-//
     
     private func computeGaze(
         from faceAnchor: ARFaceAnchor,
         on arView: ARView,
         using plane: Entity
     ) -> CGPoint {
+        /// Cast a ray from a single eye and return the 2D screen hit point, if any.
         func screenHit(of eye: Entity) -> CGPoint? {
-            let worldM = eye.transformMatrix(relativeTo: nil)
-            let origin = worldM.columns.3.xyz
-            let world4 = worldM * SIMD4<Float>(0, 0, -1, 1)
-            let target = SIMD3<Float>(world4.x, world4.y, world4.z)
-            let dir = normalize(target - origin)
-
-            //--- 디버그 로그 ---
-            print("origin:", origin, "dir:", dir)
-
+            // 1) Get the eye's world transform matrix (4×4)
+            let worldTransform = eye.transformMatrix(relativeTo: nil)
+            
+            // 2) Extract the eye origin (translation) from the 4th column
+            let origin = worldTransform.columns.3.xyz
+            
+            // 3) Compute a point 1 m along the eye's local –Z axis in world space
+            let forward4 = worldTransform * SIMD4<Float>(0, 0, -1, 1)
+            let target = SIMD3<Float>(forward4.x, forward4.y, forward4.z)
+            
+            // 4) Build and normalize the direction vector for our ray
+            let direction = normalize(target - origin)
+            
+            // 5) Raycast into the scene for up to 3 m, nearest-hit only
             let hits = arView.scene.raycast(
                 origin: origin,
-                direction: dir,
+                direction: direction,
                 length: 3.0,
                 query: .nearest
             )
+            
+            // 6) If we hit our transparent plane, project that 3D point back to 2D screen coordinates
             if let hit = hits.first(where: { $0.entity == plane }) {
-                let p = arView.project(hit.position)!
-                //--- 디버그 로그 ---
-                print("→ Plane hit at", hit.position, "projected to", p)
-                return p
+                return arView.project(hit.position)
             }
+            
+            // 7) No hit → no valid screen point
             return nil
         }
-
+        
+        // 8) Perform raycast for left & right eyes; bail out if either fails
         guard let pL = screenHit(of: leftEyeEntity),
               let pR = screenHit(of: rightEyeEntity) else {
             return .zero
         }
-
-        // 원래 계산된 화면 좌표
+        
+        // 9) Average the two eye screen positions for a single gaze point
         let rawX = (pL.x + pR.x) * 0.5
         let rawY = (pL.y + pR.y) * 0.5
-
-        // 화면 크기를 읽어서 좌표 뒤집기
-        let size = arView.bounds.size
-        let flippedX = size.width  - rawX
-        let flippedY = size.height - rawY
-
-        let gazePoint = CGPoint(x: flippedX, y: flippedY)
-        print("Computed gazePoint (flipped) =", gazePoint)
-        return gazePoint
+        
+        // 10) Flip horizontally & vertically to convert from RealityKit’s origin-at-bottom-left
+        //     to UIKit’s origin-at-top-left coordinate system
+        let screenSize = arView.bounds.size
+        let flippedX = screenSize.width  - rawX
+        let flippedY = screenSize.height - rawY
+        
+        // 11) Return the final 2D gaze point
+        return CGPoint(x: flippedX, y: flippedY)
     }
     
     
     
-    //    private func setupVirtualPlane(in arView: ARView) {
-    //        // 기존 평면 제거
-    //        if let existingAnchor = planeAnchor {
-    //            arView.scene.removeAnchor(existingAnchor)
-    //        }
-    //
-    //        // 더 큰 평면 생성 (2m x 2m)
-    //        let mesh = MeshResource.generatePlane(width: 2.0, depth: 2.0)
-    //        var material = UnlitMaterial()
-    //        material.color = .init(tint: .clear) // 투명하게
-    //
-    //        planeEntity = ModelEntity(mesh: mesh, materials: [material])
-    //
-    //        // 충돌 감지를 위한 설정 개선
-    //        planeEntity?.generateCollisionShapes(recursive: false)
-    //
-    //        // 평면을 더 멀리 배치 (1m 앞)
-    //        planeAnchor = AnchorEntity(.camera)
-    //        planeEntity.setPosition([0, 0, -1], relativeTo: planeAnchor)
-    //
-    //        if let planeEntity = planeEntity, let planeAnchor = planeAnchor {
-    //            planeAnchor.addChild(planeEntity)
-    //            arView.scene.addAnchor(planeAnchor)
-    //        }
-    //
-    //        print("Virtual plane setup complete")
-    //    }
-    //
-    
-    
-    
-    private func calculateBasicGazePoint(from faceAnchor: ARFaceAnchor) -> CGPoint {
-        guard let arView = self.arView else { return .zero }
+    private func setupVirtualPlane(in arView: ARView) -> Entity {
         
-        let worldPoint = faceAnchor.lookAtPoint
-        guard let screenPos = arView.project(worldPoint) else { return .zero }
+        let planeCollider = Entity()
+        let cameraAnchor = AnchorEntity(.camera)    // RealityKit의 특별 앵커: “항상 카메라(디바이스) 좌표계에 고정”. 디바이스가 움직여도 앵커는 카메라 바로 뒤에서 따라붙습니다.
+        planeCollider.setPosition([0, 0, -1], relativeTo: cameraAnchor) // 앵커(local) 기준으로 Z축 음수 방향으로 1 m 떨어진 위치에 평면을 놓습니다.
         
-        // 좌표 정규화 - 올바른 방향으로 매핑
-        return CGPoint(
-            x: screenPos.x, // X축 반전 제거 - 자연스러운 매핑
-            y: screenPos.y
+        // ShapeResource.generateBox(width:height:depth:) 로 얇은 박스 모양 충돌체 생성
+        let boxShape = ShapeResource.generateBox(
+            width: 2.0,
+            height: 2.0,
+            depth: 0.001
         )
+        
+        // RealityKit의 Entity는 여러 Component를 달 수 있는 컨테이너 역할을 합니다.
+        // components[CollisionComponent.self]는 “이 엔티티에 붙어 있는 CollisionComponent를 꺼내거나 새로 설정하라”는 의미입니다.
+        planeCollider.components[CollisionComponent.self] =
+        CollisionComponent(shapes: [boxShape], mode: .default) // 기본 모드로, 이 엔티티가 “레이캐스트나 물리엔진 충돌 대상”이 되도록 설정
+        
+        cameraAnchor.addChild(planeCollider)
+        arView.scene.addAnchor(cameraAnchor)
+        
+        return planeCollider
+        
     }
-    
     
     
     
@@ -390,4 +280,9 @@ public final class EyeTrackingServiceImpl: NSObject, EyeTrackingService, ARSessi
     public enum TrackingError: Error {
         case notSupported
     }
+}
+
+
+extension SIMD4 where Scalar == Float {
+  var xyz: SIMD3<Float> { SIMD3<Float>(x, y, z) }
 }
