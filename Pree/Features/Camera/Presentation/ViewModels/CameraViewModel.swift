@@ -21,7 +21,9 @@ final class CameraViewModel: ObservableObject {
     private let startUseCase: StartScreenCaptureUseCase
     private let stopUseCase: StopScreenCaptureUseCase
     
-    private let service: EyeTrackingService
+    private let eyeTrackingUseCase: EyeTrackingUseCase
+    
+//    private let service: EyeTrackingService
     private var cancellables = Set<AnyCancellable>()
     
     let arView: ARView
@@ -29,40 +31,36 @@ final class CameraViewModel: ObservableObject {
     public init(
         start: StartScreenCaptureUseCase,
         stop:  StopScreenCaptureUseCase,
-        service: EyeTrackingService
+        eyeTrackingUseCase: EyeTrackingUseCase
     ) {
         self.startUseCase = start
         self.stopUseCase  = stop
+        self.eyeTrackingUseCase = eyeTrackingUseCase
         self.arView = ARView(frame: .zero)
-        self.service = service
-        try? service.startTracking(in: arView)
-            service.gazePublisher
-              .receive(on: DispatchQueue.main)
-              .assign(to: \.gazePoint, on: self)
-              .store(in: &cancellables)
+        self.eyeTrackingUseCase.gazePublisher
+                    .receive(on: DispatchQueue.main)            // UI 업데이트는 메인 스레드
+                    .assign(to: \.gazePoint, on: self)
+                    .store(in: &cancellables)
     }
-    
-   
     
     
     func startCalibration() {
         if !isCalibrating {
             isCalibrating = true
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-//                self.isCalibrating = false
-//            }
+            
         }
     }
     
     
     func stopTracking(){
-        self.service.stopTracking()
+//        self.service.stopTracking()
+        self.eyeTrackingUseCase.stop()
         
     }
     
     func resumeTracking() {
         do {
-            try service.startTracking(in: arView)
+            try eyeTrackingUseCase.start(in: arView)
         } catch {
             print("Could not restart face tracking:", error)
         }

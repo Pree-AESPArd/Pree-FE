@@ -16,12 +16,13 @@ final class AppDI {
     
     // 1) Service
     private let screenCaptureService: ScreenCaptureService
+    private let eyeTrackingService: EyeTrackingService
     
     // 2) UseCases
     let startCaptureUseCase: StartScreenCaptureUseCase
     let stopCaptureUseCase: StopScreenCaptureUseCase
+    let eyeTrackingUseCase: EyeTrackingUseCase
     
-    private let eyeTrackingService: EyeTrackingService
     
     private init() {
         // Service 구현체 생성
@@ -31,6 +32,7 @@ final class AppDI {
         // UseCase 에 주입
         self.startCaptureUseCase = StartScreenCaptureUseCase(service: screenCaptureService)
         self.stopCaptureUseCase  = StopScreenCaptureUseCase(service: screenCaptureService)
+        self.eyeTrackingUseCase = EyeTrackingUseCase(service: eyeTrackingService)
     }
     
     // 3) ViewModel 팩토리
@@ -38,7 +40,7 @@ final class AppDI {
         CameraViewModel(
             start: startCaptureUseCase,
             stop:  stopCaptureUseCase,
-            service: eyeTrackingService
+            eyeTrackingUseCase: eyeTrackingUseCase
         )
     }
   
