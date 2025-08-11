@@ -13,22 +13,37 @@ struct EyeTrackingCalibrationView: View {
     
     @State private var currentIndex: Int = -1
     @State private var collectedGazePoints: [[CGPoint]] = []
+    @State private var isStarted: Bool = false
+    @State private var isCollecting = false
 
     // 총 9개의 포인트를 담을 배열. GeometryReader 안에서 화면 크기에 맞춰 계산합니다.
     private func positions(in size: CGSize) -> [CGPoint] {
         let w = size.width
         let h = size.height
+        // 화면 모서리에서 8% 안쪽으로 인셋
+        let mx = w * 0.08, my = h * 0.08
+        // 중간 지점은 30% 안쪽으로 인셋
+        let midMx = w * 0.30, midMy = h * 0.30
+
         return [
-            CGPoint(x: 16,       y: 0),
-            CGPoint(x: w/2,      y: 0),
-            CGPoint(x: w - 16,   y: 0),
-            CGPoint(x: w - 16,   y: h/2),
-            CGPoint(x: w - 16,   y: h - 12),
-            CGPoint(x: w/2,      y: h - 12),
-            CGPoint(x: 16,       y: h - 12),
-            CGPoint(x: 16,       y: h/2),
-            CGPoint(x: w/2,      y: h/2),
-    
+            // Outer ring (8 points)
+            CGPoint(x: mx,     y: my),
+            CGPoint(x: w/2,    y: my),
+            CGPoint(x: w - mx, y: my),
+            CGPoint(x: w - mx, y: h/2),
+            CGPoint(x: w - mx, y: h - my),
+            CGPoint(x: w/2,    y: h - my),
+            CGPoint(x: mx,     y: h - my),
+            CGPoint(x: mx,     y: h/2),
+            
+            // Inner ring (4 points)
+            CGPoint(x: midMx,     y: midMy),
+            CGPoint(x: w - midMx, y: midMy),
+            CGPoint(x: w - midMx, y: h - midMy),
+            CGPoint(x: midMx,     y: h - midMy),
+
+            // Center (1 point)
+            CGPoint(x: w/2, y: h/2)
         ]
     }
     
@@ -41,7 +56,11 @@ struct EyeTrackingCalibrationView: View {
                     .opacity(1.0)
                     .edgesIgnoringSafeArea(.all)
                 
-                
+            
+                if !isStarted {
+                    descriptionText
+                }
+
                 
                 // currentIndex 가 유효 범위일 때만 하나의 원을 찍어준다
                 if currentIndex >= 0 && currentIndex < pts.count {
@@ -53,11 +72,23 @@ struct EyeTrackingCalibrationView: View {
                         .animation(.easeInOut, value: currentIndex)
                 }
                 
+                // 포인트 UI 확인용 코드
+//                ForEach(positions(in: geo.size), id: \.self) {pt in
+//                    Circle()
+//                        .fill(Color.primary)
+//                        .frame(width: 20, height: 20)
+//                        .position(pt)
+//                        .animation(.easeInOut, value: currentIndex)
+//                }
+                
                 
             }
             .onAppear {
                 collectedGazePoints = Array(repeating: [], count: pts.count)
-                showNext(at: 0, total: pts.count)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                    isStarted = true
+                    showNext(at: 0, total: pts.count, targets: pts) 
+                }
                 
             }
             .onChange(of: vm.gazePoint) {
@@ -70,30 +101,45 @@ struct EyeTrackingCalibrationView: View {
         }
     }
     
-    @State var gazing: Bool = false
     
     // circle 애니메이션 제어
-    private func showNext(at idx: Int, total: Int) {
+    private func showNext(at idx: Int, total: Int, targets: [CGPoint]) {
         guard idx < total else {
-            vm.isCalibrating.toggle()
-            print(collectedGazePoints)
+            vm.isCalibrating = false
+            vm.processAndStoreCalibration(targets: targets, samples: collectedGazePoints) // ← 캘리브레이션 적용!
             return
         }
         
-        currentIndex = idx
-        gazing.toggle()
+//        currentIndex = idx
+//        gazing.toggle()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            gazing.toggle()
-            // 이전 원은 사라지고 다음 원만 보인다
-            showNext(at: idx + 1, total: total)
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+//            gazing.toggle()
+//            // 이전 원은 사라지고 다음 원만 보인다
+//            showNext(at: idx + 1, total: total, targets: targets)
+//        }
+        
+        currentIndex = idx
+        isCollecting = false
+        
+        // ① 정착 시간(250ms) 대기 후
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // ② 수집 시작(900ms 고정 윈도우)
+            isCollecting = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                isCollecting = false
+                // 다음 점으로
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    showNext(at: idx + 1, total: total, targets: targets)
+                }
+            }
         }
     }
     
     private func getCurrentGazingPoint() {
         var currentPoints: [CGPoint] = []
         
-        while gazing {
+        while isCollecting {
             currentPoints.append(vm.gazePoint)
         }
         print(currentPoints)
@@ -102,7 +148,7 @@ struct EyeTrackingCalibrationView: View {
     
     private var descriptionText: some View {
         Text("움직이는 점을 따라 응시해주세요")
-            .font(.pretendardSemiBold(size: 14))
+            .font(.pretendardSemiBold(size: 16))
             .foregroundStyle(.white)
     }
     
@@ -112,5 +158,6 @@ struct EyeTrackingCalibrationView: View {
 
 
 #Preview {
-//    EyeTrackingCalibrationView()
+    let vm = AppDI.shared.makeCameraViewModel()
+    EyeTrackingCalibrationView(vm: vm)
 }

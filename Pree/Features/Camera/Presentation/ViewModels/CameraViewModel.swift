@@ -23,8 +23,8 @@ final class CameraViewModel: ObservableObject {
     
     private let eyeTrackingUseCase: EyeTrackingUseCase
     
-//    private let service: EyeTrackingService
     private var cancellables = Set<AnyCancellable>()
+    private let calibrationProcessor = CalibrationProcessor()
     
     let arView: ARView
     
@@ -63,6 +63,22 @@ final class CameraViewModel: ObservableObject {
             try eyeTrackingUseCase.start(in: arView)
         } catch {
             print("Could not restart face tracking:", error)
+        }
+    }
+    
+    func processAndStoreCalibration(targets: [CGPoint], samples: [[CGPoint]]) {
+        // calibrationProcessor.calculate의 결과는 GazeCalibration 또는 PiecewiseCalibration 이지만,
+        // 두 타입 모두 GazeMapper 역할을 채택했으므로 문제없이 전달 가능합니다.
+        let result = calibrationProcessor.calculate(targets: targets, samples: samples)
+        
+        switch result {
+        case .success(let calibrationData):
+            print("✅ Calibration successful!")
+            // UseCase에 특정 모델이 아닌, GazeMapper '역할'을 전달
+            self.eyeTrackingUseCase.setCalibration(mapper: calibrationData) // <--- 여기를 수정
+        case .failure(let error):
+            print("❌ Calibration failed: \(error)")
+            self.errorMessage = "Calibration failed. Please try again."
         }
     }
     

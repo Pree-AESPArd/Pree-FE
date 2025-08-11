@@ -42,6 +42,9 @@ struct CameraView: View {
           
             vm.stopTracking()
         }
+//        .onChange(of: vm.gazePoint) {
+//            print(vm.gazePoint)
+//        }
         
     }
 }
