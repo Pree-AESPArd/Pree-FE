@@ -29,24 +29,31 @@ struct OverlayView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 12)
                         
-                        descriptionText
+                        if !vm.isCapturing {
+                            descriptionText
+                        }
                         
                         Spacer()
                         
-                        
-                        Image("face_guide")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
-                            .frame(maxWidth: .infinity) // 가운데 정렬
-
+                        if !vm.isCapturing {
+                            Image("face_guide")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
+                                .frame(maxWidth: .infinity) // 가운데 정렬
+                        }
                         
                         Spacer()
                         
                         PrimaryButton(
-                            title: "촬영 시작하기",
+                            title: vm.isDoneCalibration ? (vm.isCapturing ? "촬영 마치기" : "촬영 시작하기") : "눈 추적 조정 시작",
                             action: {
-                                vm.startCalibration()
+                                
+                                if vm.isDoneCalibration {
+                                    vm.toggleCapture()
+                                } else {
+                                    vm.startCalibration()
+                                }
                             }
                         )
                     }

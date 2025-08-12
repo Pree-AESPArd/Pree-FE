@@ -12,36 +12,53 @@ import Combine
 
 final class EyeTrackingUseCase {
     
-    private let service: EyeTrackingService
-    private var mapper: GazeMapper?
+    private let eyeTrackingService: EyeTrackingService
+    private var calibrationService: CalibrationService?
+    
+    // --- ⬇️ 수동 보정값 프로퍼티 추가 ⬇️ ---
+    // 이 값을 조절하여 최종 시선 위치를 미세 조정합니다.
+    // 예: x를 양수로 하면 오른쪽으로, 음수로 하면 왼쪽으로 이동합니다.
+    private var finalAdjustmentOffset: CGPoint = .zero
     
     init(service: EyeTrackingService) {
-        self.service = service
+        self.eyeTrackingService = service
     }
     
     
-    func setCalibration(mapper: GazeMapper) { // <--- 파라미터 타입 변경
-        self.mapper = mapper
+    func setCalibration(calibrationService: CalibrationService) { 
+        self.calibrationService = calibrationService
     }
     
     func start(in arView: ARView) throws {
-        try service.startTracking(in: arView)
+        try eyeTrackingService.startTracking(in: arView)
     }
     
-    func stop() { service.stopTracking() }
+    func stop() { eyeTrackingService.stopTracking() }
     
-//    var gazePublisher: AnyPublisher<CGPoint, Never> {
-//        service.gazePublisher
-//    }
+    
+    // --- ⬇️ 수동 보정값을 설정하는 함수 추가 ⬇️ ---
+    /// 캘리브레이션 완료 후, 시선의 미세한 편향을 수동으로 조절합니다.
+    /// - Parameters:
+    ///   - x: 좌/우 보정값. 양수는 오른쪽, 음수는 왼쪽.
+    ///   - y: 상/하 보정값. 양수는 아래쪽, 음수는 위쪽.
+    public func setFinalAdjustment(x: CGFloat, y: CGFloat) {
+        self.finalAdjustmentOffset = CGPoint(x: x, y: y)
+    }
     
     var gazePublisher: AnyPublisher<CGPoint, Never> {
-        service.gazePublisher
+        eyeTrackingService.gazePublisher
             .map { [weak self] rawPoint in
-                guard let self = self, let mapper = self.mapper else {
+                guard let self = self, let mapper = self.calibrationService else {
                     return rawPoint
                 }
-                // 어떤 종류의 모델이든 상관없이, 역할(calibratedPoint 함수)을 수행
-                return mapper.calibratedPoint(for: rawPoint) // <--- mapper 사용
+               
+                let calibratedPoint = mapper.calibratedPoint(for: rawPoint)
+                
+                // --- ⬇️ 2. 수동 보정값 최종 적용 ⬇️ ---
+                return CGPoint(
+                    x: calibratedPoint.x + self.finalAdjustmentOffset.x,
+                    y: calibratedPoint.y + self.finalAdjustmentOffset.y
+                )
             }
             .eraseToAnyPublisher()
     }

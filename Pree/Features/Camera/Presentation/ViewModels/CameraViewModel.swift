@@ -14,6 +14,7 @@ import RealityKit
 final class CameraViewModel: ObservableObject {
     @Published var isCapturing = false
     @Published var isCalibrating = false
+    @Published var isDoneCalibration: Bool = false
     @Published var videoURL: URL?
     @Published var errorMessage: String?
     @Published var gazePoint: CGPoint = .zero // 시선이 닿은 화면 좌표 (UIKit 좌표계)
@@ -24,8 +25,6 @@ final class CameraViewModel: ObservableObject {
     private let eyeTrackingUseCase: EyeTrackingUseCase
     
     private var cancellables = Set<AnyCancellable>()
-//    private let calibrationProcessor = CalibrationProcessor()
- 
     
     let arView: ARView
     
@@ -67,29 +66,15 @@ final class CameraViewModel: ObservableObject {
         }
     }
     
-//    func processAndStoreCalibration(targets: [CGPoint], samples: [[CGPoint]]) {
-//        // calibrationProcessor.calculate의 결과는 GazeCalibration 또는 PiecewiseCalibration 이지만,
-//        // 두 타입 모두 GazeMapper 역할을 채택했으므로 문제없이 전달 가능합니다.
-//        let result = calibrationProcessor.calculate(targets: targets, samples: samples)
-//        
-//        switch result {
-//        case .success(let hybridCalibrationModel):
-//            print("✅ Calibration successful!")
-//            // UseCase에 특정 모델이 아닌, GazeMapper '역할'을 전달
-//            self.eyeTrackingUseCase.setCalibration(mapper: hybridCalibrationModel) // <--- 여기를 수정
-//        case .failure(let error):
-//            print("❌ Calibration failed: \(error)")
-//            self.errorMessage = "Calibration failed. Please try again."
-//        }
-//    }
     
     func processAndStoreCalibration(targets: [CGPoint], samples: [[CGPoint]]) {
         // 직접 OffsetCalibration 모델을 생성합니다.
-        if let offsetModel = OffsetCalibration(targets: targets, samples: samples) {
+        if let offsetModel = CalibrationServiceImpl(targets: targets, samples: samples) {
             print("✅ Offset Calibration successful!")
             
-            // UseCase는 GazeMapper 역할만 알기 때문에, OffsetCalibration 모델도 전달 가능합니다.
-            self.eyeTrackingUseCase.setCalibration(mapper: offsetModel)
+            self.eyeTrackingUseCase.setCalibration(calibrationService: offsetModel)
+            
+            self.eyeTrackingUseCase.setFinalAdjustment(x: 15.0, y: -5.0) 
             
         } else {
             print("❌ Offset Calibration failed.")

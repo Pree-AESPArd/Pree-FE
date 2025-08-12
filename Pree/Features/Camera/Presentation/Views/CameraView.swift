@@ -31,20 +31,17 @@ struct CameraView: View {
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = true // 화면 자동꺼짐 방지
             overlayManager.show {
                 OverlayView(vm: vm, overlayManager: overlayManager)
                     .environmentObject(navigationManager)
             }
             vm.resumeTracking()
-            vm.startCalibration()
         }
         .onDisappear {
-          
+            UIApplication.shared.isIdleTimerDisabled = false
             vm.stopTracking()
         }
-//        .onChange(of: vm.gazePoint) {
-//            print(vm.gazePoint)
-//        }
         
     }
 }

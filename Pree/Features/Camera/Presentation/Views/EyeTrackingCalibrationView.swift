@@ -84,6 +84,7 @@ struct EyeTrackingCalibrationView: View {
                 
             }
             .onAppear {
+                UIApplication.shared.isIdleTimerDisabled = true
                 collectedGazePoints = Array(repeating: [], count: pts.count)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
                     isStarted = true
@@ -91,12 +92,14 @@ struct EyeTrackingCalibrationView: View {
                 }
                 
             }
+            .onDisappear {
+                UIApplication.shared.isIdleTimerDisabled = false
+            }
             .onChange(of: vm.gazePoint) {
                 guard currentIndex >= 0,
                       currentIndex < collectedGazePoints.count
                 else { return }
                 collectedGazePoints[currentIndex].append(vm.gazePoint)
-//                print("Bucket[\(currentIndex)] now has \(collectedGazePoints[currentIndex].count) points")
             }
         }
     }
@@ -106,18 +109,10 @@ struct EyeTrackingCalibrationView: View {
     private func showNext(at idx: Int, total: Int, targets: [CGPoint]) {
         guard idx < total else {
             vm.isCalibrating = false
+            vm.isDoneCalibration = true
             vm.processAndStoreCalibration(targets: targets, samples: collectedGazePoints) // ← 캘리브레이션 적용!
             return
         }
-        
-//        currentIndex = idx
-//        gazing.toggle()
-        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//            gazing.toggle()
-//            // 이전 원은 사라지고 다음 원만 보인다
-//            showNext(at: idx + 1, total: total, targets: targets)
-//        }
         
         currentIndex = idx
         isCollecting = false
@@ -126,7 +121,7 @@ struct EyeTrackingCalibrationView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             // ② 수집 시작(900ms 고정 윈도우)
             isCollecting = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 isCollecting = false
                 // 다음 점으로
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -134,15 +129,6 @@ struct EyeTrackingCalibrationView: View {
                 }
             }
         }
-    }
-    
-    private func getCurrentGazingPoint() {
-        var currentPoints: [CGPoint] = []
-        
-        while isCollecting {
-            currentPoints.append(vm.gazePoint)
-        }
-        print(currentPoints)
     }
     
     
