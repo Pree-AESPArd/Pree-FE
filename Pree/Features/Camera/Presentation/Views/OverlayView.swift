@@ -29,7 +29,7 @@ struct OverlayView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 12)
                         
-                        if vm.isCapturing {
+                        if !vm.isCapturing {
                             descriptionText
                         } else {
                             timerText
