@@ -35,6 +35,10 @@ struct OverlayView: View {
                             timerText
                         }
                         
+                        if vm.isDebugMode {
+                            eyeTrackingTimer
+                        }
+                        
                         Spacer()
                         
                         if !vm.isCapturing {
@@ -105,6 +109,17 @@ struct OverlayView: View {
             .padding(.vertical, 4)
             .background(Color.preeRed)
             .cornerRadius(4)
+    }
+    
+    private var eyeTrackingTimer: some View {
+        Text("\(vm.eyeTrackingTimerString)")
+            .font(.pretendardMedium(size: 20))
+            .foregroundStyle(Color.white)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color.primary)
+            .cornerRadius(4)
+        
     }
     
 }
