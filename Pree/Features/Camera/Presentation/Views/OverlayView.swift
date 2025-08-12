@@ -12,44 +12,71 @@ import SwiftUI
 
 struct OverlayView: View {
     
+    @ObservedObject var vm: CameraViewModel
+    @ObservedObject var overlayManager: OverlayWindowManager
+    @EnvironmentObject var navigationManager: NavigationManager
+    
     var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
-                
-                backButton
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 12)
-                
-                descriptionText
-                
-                Spacer()
-                
-                
-                Image("face_guide")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
-                    .frame(maxWidth: .infinity) // 가운데 정렬
-
-                
-                Spacer()
-                
-                PrimaryButton(title: "촬영 시작하기")
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.white)
+        
+        Group {
+            if vm.isCalibrating {
+                EyeTrackingCalibrationView(vm: vm)
+            } else {
+                GeometryReader { geometry in
+                    VStack(spacing: 0) {
+                        
+                        backButton
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom, 12)
+                        
+                        if !vm.isCapturing {
+                            descriptionText
+                        }
+                        
+                        Spacer()
+                        
+                        if !vm.isCapturing {
+                            Image("face_guide")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
+                                .frame(maxWidth: .infinity) // 가운데 정렬
+                        }
+                        
+                        Spacer()
+                        
+                        PrimaryButton(
+                            title: vm.isDoneCalibration ? (vm.isCapturing ? "촬영 마치기" : "촬영 시작하기") : "눈 추적 조정 시작",
+                            action: {
+                                
+                                if vm.isDoneCalibration {
+                                    vm.toggleCapture()
+                                } else {
+                                    vm.startCalibration()
+                                }
+                            }
+                        )
+                    }
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .appPadding()
                 }
             }
-            .appPadding()
         }
+        
     }
     
     
     private var backButton: some View {
         Button(
-            action: {},
+            action: {
+                overlayManager.hide() // Overaly 된 UI 요소들을 없애줌, CameraView 안에서 onDisappear 에서 실행하면 바로 안없어지고 잠시 남아있다가 사라짐
+                navigationManager.pop()
+            },
             label: {
                 Image(systemName: "chevron.left")
                     .frame(width: 24, height: 24)

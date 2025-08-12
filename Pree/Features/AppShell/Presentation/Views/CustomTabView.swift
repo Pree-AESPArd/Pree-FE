@@ -80,7 +80,7 @@ struct CustomTabView: View {
             } // :HStack
             
             Button(action:{
-                // ToDo: - 여기서 카메라 버튼 관련 처리하면 됨!!!
+                navigationManager.push(.camera)
             }){
                 Circle()
                     .frame(width: 80, height: 80)

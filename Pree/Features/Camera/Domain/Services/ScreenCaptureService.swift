@@ -17,7 +17,7 @@ public enum ScreenCaptureError: Error {
 }
 
 /// 화면 녹화 비즈니스 로직(UseCase)에서 의존할 추상화 인터페이스
-public protocol ScreenCaptureService {
+public protocol ScreenCaptureService{
     /// 캡처를 시작해서 CMSampleBuffer를 줄 때마다 handler 호출
     func startCapture(
 //        handler: @escaping (CMSampleBuffer, RPSampleBufferType) -> Void,

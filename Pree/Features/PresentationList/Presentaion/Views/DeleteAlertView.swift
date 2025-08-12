@@ -84,6 +84,6 @@ struct DeleteAlertView: View {
         },
         onDelete: {
             print("삭제됨")
-        },
+        }
     )
 }

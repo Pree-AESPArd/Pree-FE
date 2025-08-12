@@ -26,6 +26,7 @@ struct RootTabView: View {
                         switch path {
                         case .camera:
                             CameraView(vm: cameraViewModel)
+//                                .toolbarVisibility(.hidden, for: .tabBar)
                         case .home:
                             HomeView(vm: homeViewModel)
                         case .profile:
@@ -38,7 +39,9 @@ struct RootTabView: View {
                     } // : navigationDestination
             } // : NavigationStack
             
-            CustomTabView()
+            if navigationManager.path.last != .camera {
+                CustomTabView()
+            }
             
             // 모달 오버레이
             if modalManager.isShowingModal {

@@ -8,61 +8,57 @@
 import SwiftUI
 import RealityKit
 import ARKit
-import AVKit
+import Combine
 
 struct CameraView: View {
     @StateObject var vm: CameraViewModel
+    @EnvironmentObject var navigationManager: NavigationManager
     @StateObject private var overlayManager = OverlayWindowManager()
     
-    @State private var player: AVPlayer?
     
     var body: some View {
         
-        Group {
-            FrontCameraPreview()
-                .edgesIgnoringSafeArea(.all)
+        ZStack {
+            
+            FrontCameraPreview(arView: vm.arView)
+                .ignoresSafeArea()
+            
+            Circle()
+                .fill(.red.opacity(0.8))
+                .frame(width: 12, height: 12)
+                .position(vm.gazePoint)
+            
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = true // 화면 자동꺼짐 방지
             overlayManager.show {
-                OverlayView()
+                OverlayView(vm: vm, overlayManager: overlayManager)
+                    .environmentObject(navigationManager)
             }
+            vm.resumeTracking()
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+            vm.stopTracking()
         }
         
     }
 }
 
-
 struct FrontCameraPreview: UIViewRepresentable {
+    let arView: ARView
+    
+    
     func makeUIView(context: Context) -> ARView {
-        let arView = ARView(frame: .zero)
-        
-        // 1) 이 기기에서 Face Tracking이 지원되는지 확인
-        // TrueDepth 센서가 없는 기기 (iPhone 8) 이하는 걸러져야 함
-        guard ARFaceTrackingConfiguration.isSupported else {
-            // 지원 안 하면 그냥 빈 ARView 돌려줌
-            // TODO: 뒤로가기 구현
-            return arView
-        }
-        
-        // 2) ARFaceTrackingConfiguration 생성
-        let config = ARFaceTrackingConfiguration()
-        config.isLightEstimationEnabled = true  // 조명 정보도 받고 싶다면
-        
-        // 3) 세션 실행 (전면 카메라로)
-        arView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
-        
-        // (선택) 자동 세션 구성 끄기, 디버그 옵션 끄기
-        arView.automaticallyConfigureSession = false
-        arView.debugOptions = []
+        // The service already ran session.run(...) and is publishing gaze.
+        // You could even share that ARView instance if you like.
         
         return arView
     }
-    
-    func updateUIView(_ uiView: ARView, context: Context) {
-        // 화면 회전 등 업데이트 필요 시 처리
-    }
+    func updateUIView(_ uiView: ARView, context: Context) {}
 }
+
 
 
 

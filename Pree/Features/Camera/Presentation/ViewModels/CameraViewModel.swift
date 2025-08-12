@@ -7,23 +7,81 @@
 
 import SwiftUI
 import ReplayKit
+import Combine
+import RealityKit
 
 @MainActor
 final class CameraViewModel: ObservableObject {
     @Published var isCapturing = false
+    @Published var isCalibrating = false
+    @Published var isDoneCalibration: Bool = false
     @Published var videoURL: URL?
     @Published var errorMessage: String?
+    @Published var gazePoint: CGPoint = .zero // 시선이 닿은 화면 좌표 (UIKit 좌표계)
     
     private let startUseCase: StartScreenCaptureUseCase
     private let stopUseCase: StopScreenCaptureUseCase
     
+    private let eyeTrackingUseCase: EyeTrackingUseCase
+    
+    private var cancellables = Set<AnyCancellable>()
+    
+    let arView: ARView
+    
     public init(
         start: StartScreenCaptureUseCase,
-        stop:  StopScreenCaptureUseCase
+        stop:  StopScreenCaptureUseCase,
+        eyeTrackingUseCase: EyeTrackingUseCase
     ) {
         self.startUseCase = start
         self.stopUseCase  = stop
+        self.eyeTrackingUseCase = eyeTrackingUseCase
+        self.arView = ARView(frame: .zero)
+        self.eyeTrackingUseCase.gazePublisher
+                    .receive(on: DispatchQueue.main)            // UI 업데이트는 메인 스레드
+                    .assign(to: \.gazePoint, on: self)
+                    .store(in: &cancellables)
     }
+    
+    
+    func startCalibration() {
+        if !isCalibrating {
+            isCalibrating = true
+            
+        }
+    }
+    
+    
+    func stopTracking(){
+//        self.service.stopTracking()
+        self.eyeTrackingUseCase.stop()
+        
+    }
+    
+    func resumeTracking() {
+        do {
+            try eyeTrackingUseCase.start(in: arView)
+        } catch {
+            print("Could not restart face tracking:", error)
+        }
+    }
+    
+    
+    func processAndStoreCalibration(targets: [CGPoint], samples: [[CGPoint]]) {
+        // 직접 OffsetCalibration 모델을 생성합니다.
+        if let offsetModel = CalibrationServiceImpl(targets: targets, samples: samples) {
+            print("✅ Offset Calibration successful!")
+            
+            self.eyeTrackingUseCase.setCalibration(calibrationService: offsetModel)
+            
+            self.eyeTrackingUseCase.setFinalAdjustment(x: 15.0, y: -5.0) 
+            
+        } else {
+            print("❌ Offset Calibration failed.")
+            self.errorMessage = "Calibration failed. Please try again."
+        }
+    }
+    
     
     func toggleCapture() {
         if isCapturing {
