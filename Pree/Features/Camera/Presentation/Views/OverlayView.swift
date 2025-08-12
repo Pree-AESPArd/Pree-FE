@@ -29,8 +29,10 @@ struct OverlayView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 12)
                         
-                        if !vm.isCapturing {
+                        if vm.isCapturing {
                             descriptionText
+                        } else {
+                            timerText
                         }
                         
                         Spacer()
@@ -95,6 +97,23 @@ struct OverlayView: View {
             .cornerRadius(20)
     }
     
+    private var timerText: some View {
+        Text("\(vm.timerString)")
+            .font(.pretendardMedium(size: 20))
+            .foregroundStyle(Color.white)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color.preeRed)
+            .cornerRadius(4)
+    }
+    
 }
 
 
+
+#Preview {
+    let vm = AppDI.shared.makeCameraViewModel()
+    let overlayManager = OverlayWindowManager()
+    OverlayView(vm: vm, overlayManager: overlayManager)
+        .environmentObject(NavigationManager())
+}

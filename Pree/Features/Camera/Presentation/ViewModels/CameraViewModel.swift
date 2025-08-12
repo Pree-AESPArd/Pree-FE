@@ -15,9 +15,14 @@ final class CameraViewModel: ObservableObject {
     @Published var isCapturing = false
     @Published var isCalibrating = false
     @Published var isDoneCalibration: Bool = false
+    @Published var timerString: String = "00:00"
     @Published var videoURL: URL?
     @Published var errorMessage: String?
     @Published var gazePoint: CGPoint = .zero // 시선이 닿은 화면 좌표 (UIKit 좌표계)
+    
+    
+    private var recordingTimer: Timer?
+    private var recordingTime: TimeInterval = 0
     
     private let startUseCase: StartScreenCaptureUseCase
     private let stopUseCase: StopScreenCaptureUseCase
@@ -83,8 +88,34 @@ final class CameraViewModel: ObservableObject {
     }
     
     
+    private func startRecordingTimer() {
+        recordingTimer?.invalidate()
+        
+        recordingTime = 0
+        timerString = "00:00"
+        
+        recordingTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                
+                self.recordingTime += 1
+                let minutes = Int(self.recordingTime) / 60
+                let seconds = Int(self.recordingTime) % 60
+                self.timerString = String(format: "%02d:%02d", minutes, seconds)
+            }
+        }
+    }
+
+    
+    private func stopRecordingTimer() {
+        recordingTimer?.invalidate()
+        recordingTimer = nil
+    }
+    
     func toggleCapture() {
         if isCapturing {
+            stopRecordingTimer()
             stopUseCase.execute { result in
                 DispatchQueue.main.async {
                     switch result {
@@ -97,11 +128,15 @@ final class CameraViewModel: ObservableObject {
                 }
             }
         } else {
+            
             startUseCase.execute(
                 completion: { result in
                     switch result {
-                    case .success: self.isCapturing = true
-                    case .failure(let err): self.errorMessage = "\(err)"
+                    case .success:
+                        self.isCapturing = true
+                        self.startRecordingTimer()
+                    case .failure(let err):
+                        self.errorMessage = "\(err)"
                     }
                 })
         }
