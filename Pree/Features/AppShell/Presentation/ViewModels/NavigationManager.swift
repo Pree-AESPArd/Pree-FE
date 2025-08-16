@@ -14,6 +14,16 @@ enum ViewType: Hashable {
     case profile
     case presentationList
     case practiceResult
+    case completeRecording(url: URL)
+}
+
+// path에서 현재 completeView에 있는지 확인하기 위함
+// completeRecording은 파라미터 값을 받기 때문에 일반적인 if문 비교는 어렵고 깔끔하게 하기 위해 아래와 같이 helper가 필요함
+extension ViewType {
+    var isCompleteRecording: Bool {
+        if case .completeRecording = self { return true }
+        return false
+    }
 }
 
 final class NavigationManager: ObservableObject {

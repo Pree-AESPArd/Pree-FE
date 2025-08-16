@@ -71,8 +71,8 @@ public final class EyeTrackingServiceImpl: NSObject, EyeTrackingService, ARSessi
         let plane = setupVirtualPlane(in: arView)
         
         // 눈 모델(Entity) 준비
-        leftEyeEntity  = makeEyeContainer(color: .red.withAlphaComponent(0.4))
-        rightEyeEntity = makeEyeContainer(color: .blue.withAlphaComponent(0.4))
+        leftEyeEntity  = makeEyeContainer(color: .clear)
+        rightEyeEntity = makeEyeContainer(color: .clear)
         let faceEntity = AnchorEntity(.face)
         faceEntity.addChild(leftEyeEntity)
         faceEntity.addChild(rightEyeEntity)
@@ -143,16 +143,18 @@ public final class EyeTrackingServiceImpl: NSObject, EyeTrackingService, ARSessi
         // 1) 빈 컨테이너
         let container = Entity()
         
-        // 2) 눈 기하 + 머리 방향 offset(앞으로 0.075m)
-        var mat = UnlitMaterial()
-        mat.color = .init(tint: color)
-        let eyeball = ModelEntity(
-          mesh: .generateCylinder(height: 0.05, radius: 0.01),
-          materials: [mat]
-        )
-        eyeball.transform.rotation    = .init(angle: .pi/2, axis: [1,0,0])  // 기본적으로 y축 방향으로 위아래로 길게 세워진 원통을 x 축을 중심으로 라디안 90도 회전하면 z축 방향, 즉 눈이 보고 있는 방향으로 바뀜
-        eyeball.transform.translation = [0,0,0.075] // 얼굴 기준 위치에서 7.5cm 앞으로” 살짝 띄워서 렌더링
-        container.addChild(eyeball)
+        
+        // 시각적으로 보이게하는 디버깅용 모델이여서 주석 처리
+//        // 2) 눈 기하 + 머리 방향 offset(앞으로 0.075m)
+//        var mat = UnlitMaterial()
+//        mat.color = .init(tint: color)
+//        let eyeball = ModelEntity(
+//          mesh: .generateCylinder(height: 0.05, radius: 0.01),
+//          materials: [mat]
+//        )
+//        eyeball.transform.rotation    = .init(angle: .pi/2, axis: [1,0,0])  // 기본적으로 y축 방향으로 위아래로 길게 세워진 원통을 x 축을 중심으로 라디안 90도 회전하면 z축 방향, 즉 눈이 보고 있는 방향으로 바뀜
+//        eyeball.transform.translation = [0,0,0.075] // 얼굴 기준 위치에서 7.5cm 앞으로” 살짝 띄워서 렌더링
+//        container.addChild(eyeball)
         
         // 3) 타겟 노드 (local z=1m)
         let target = Entity()  // 빈노드, 단지 부모인 container(눈 컨테이너)의 로컬 좌표계를 기준으로 위치를 갖습니다.
