@@ -16,6 +16,9 @@ struct OverlayView: View {
     @ObservedObject var overlayManager: OverlayWindowManager
     @EnvironmentObject var navigationManager: NavigationManager
     
+    @State private var showPopWarningAlert: Bool = false
+    @State private var showFinishRecordAlert: Bool = false
+    
     var body: some View {
         
         Group {
@@ -25,7 +28,7 @@ struct OverlayView: View {
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
                         
-                        backButton
+                        popButton
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 12)
                         
@@ -56,32 +59,61 @@ struct OverlayView: View {
                             action: {
                                 
                                 if vm.isDoneCalibration {
-                                    vm.toggleCapture()
+                                    if vm.isCapturing {
+                                        // 촬영 종료 alert를 띄움
+                                        showFinishRecordAlert = true
+                                    } else {
+                                        // 촬영 시작
+                                        vm.toggleCapture()
+                                    }
                                 } else {
                                     vm.startCalibration()
                                 }
                             }
                         )
                     }
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Image(systemName: "chevron.left")
-                                .foregroundColor(.white)
-                        }
-                    }
                     .appPadding()
+                    // alert는 커스텀 스타일 적용 못함
+                    // text에 폰트나 색상 바꾸고 싶으면 confirmationDialog 사용
+                    .alert("뒤로가기", isPresented: $showPopWarningAlert) {
+                        Button("뒤로가기", role: .destructive) {
+                            // "뒤로가기" 버튼을 눌렀을 때 실행될 액션
+                            overlayManager.hide()
+                            navigationManager.pop()
+                        }
+                        Button("취소", role: .cancel) {
+                            // 취소 버튼은 자동으로 알림창을 닫습니다.
+                        }
+                    } message: {
+                        Text("뒤로가기를 누르면 영상이 저장되지 않습니다. 리포트를 확인하려면 촬영 마치기를 눌러주세요.")
+                    }
+                    .alert("촬영 마치기", isPresented: $showFinishRecordAlert) {
+                        Button("마치기", role: .destructive) {
+                            vm.toggleCapture()
+                        }
+                        Button("취소", role: .cancel) {
+                            
+                        }
+                    } message: {
+                        Text("촬영이 종료됩니다. 자동 저장 후 리포트가 바로 생성됩니다!")
+                    }
                 }
             }
+        
         }
         
     }
     
     
-    private var backButton: some View {
+    private var popButton: some View {
         Button(
             action: {
-                overlayManager.hide() // Overaly 된 UI 요소들을 없애줌, CameraView 안에서 onDisappear 에서 실행하면 바로 안없어지고 잠시 남아있다가 사라짐
-                navigationManager.pop()
+                if vm.isCapturing {
+                    showPopWarningAlert = true
+                } else {
+                    overlayManager.hide() // Overaly 된 UI 요소들을 없애줌, CameraView 안에서 onDisappear 에서 실행하면 바로 안없어지고 잠시 남아있다가 사라짐
+                    navigationManager.pop()
+                }
             },
             label: {
                 Image(systemName: "chevron.left")
