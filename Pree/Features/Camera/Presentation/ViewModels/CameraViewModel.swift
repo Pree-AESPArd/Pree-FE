@@ -189,6 +189,8 @@ final class CameraViewModel: ObservableObject {
     
     func toggleCapture() {
         if isCapturing {
+            self.isCapturing = false
+            
             stopRecordingTimer()
             stopAndResetEyeTrackingTimer()
             stopUseCase.execute { result in
@@ -199,7 +201,6 @@ final class CameraViewModel: ObservableObject {
                     case .failure(let err):
                         self.errorMessage = "\(err)"
                     }
-                    self.isCapturing = false
                 }
             }
         } else {
