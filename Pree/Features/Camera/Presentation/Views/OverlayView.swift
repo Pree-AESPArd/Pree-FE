@@ -97,9 +97,16 @@ struct OverlayView: View {
                     } message: {
                         Text("촬영이 종료됩니다. 자동 저장 후 리포트가 바로 생성됩니다!")
                     }
+                    // url이 생성되면 자동으로 화면 전환
+                    .onChange(of: vm.videoURL) {
+                        if let url = vm.videoURL {
+                            overlayManager.hide()
+                            navigationManager.push(.completeRecording(url: url))
+                        }
+                    }
                 }
             }
-        
+            
         }
         
     }

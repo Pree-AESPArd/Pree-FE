@@ -38,11 +38,6 @@ struct CameraView: View {
             }
             vm.resumeTracking()
         }
-        .onChange(of: vm.videoURL) {
-            if let url = vm.videoURL {
-                
-            }
-        }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false
             vm.stopTracking()

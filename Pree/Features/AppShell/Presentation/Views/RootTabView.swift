@@ -26,7 +26,7 @@ struct RootTabView: View {
                         switch path {
                         case .camera:
                             CameraView(vm: cameraViewModel)
-//                                .toolbarVisibility(.hidden, for: .tabBar)
+                            //                                .toolbarVisibility(.hidden, for: .tabBar)
                         case .home:
                             HomeView(vm: homeViewModel)
                         case .profile:
@@ -35,11 +35,14 @@ struct RootTabView: View {
                             PresentaionListView(vm: presnetationListViewModel)
                         case .practiceResult:
                             PracticeResultView(vm: practiceResultViewModel)
+                        case .completeRecording(let url):
+                            CompleteView(videoUrl: url)
                         }
                     } // : navigationDestination
             } // : NavigationStack
             
-            if navigationManager.path.last != .camera {
+            if !(navigationManager.path.last == .camera ||
+                  (navigationManager.path.last?.isCompleteRecording ?? false)) {
                 CustomTabView()
             }
             

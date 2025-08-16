@@ -9,6 +9,9 @@ import SwiftUI
 
 
 struct CompleteView: View {
+    
+    let videoUrl: URL
+    
     var body: some View {
         VStack(spacing: 20) {
             
@@ -18,6 +21,7 @@ struct CompleteView: View {
             waitngText
             
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private var waitngText: some View {
@@ -59,5 +63,6 @@ struct CircularLoadingView: View {
 
 
 #Preview {
-    CompleteView()
+    let url: URL = URL(string: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")!
+    CompleteView(videoUrl: url)
 }
