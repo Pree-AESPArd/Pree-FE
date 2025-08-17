@@ -76,6 +76,9 @@ struct RootTabView: View {
                 case .standardModal:
                     standardModalView()
                     
+                case .recordingCreationModal:
+                    PresentationListModalView()
+                    
                 case .none:
                     EmptyView()
                 }

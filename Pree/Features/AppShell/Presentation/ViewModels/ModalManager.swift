@@ -14,6 +14,8 @@ enum ModalType {
     case deleteAlert(onCancel: () -> Void, onDelete: () -> Void)
     // 평가 기준 표준 모달
     case standardModal
+    // 새 영상 녹화 생성 모달
+    case recordingCreationModal
 }
 
 // 앱 전체의 모달을 중앙 집중식으로 관리
@@ -40,6 +42,11 @@ final class ModalManager: ObservableObject {
     // 평가 기준 표준 모달을 표시
     func showStandardModal() {
         currentModal = .standardModal
+        isShowingModal = true
+    }
+    
+    func showRecordingCreationModal() {
+        currentModal = .recordingCreationModal
         isShowingModal = true
     }
     
