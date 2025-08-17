@@ -37,7 +37,7 @@ struct PresentationListModalView: View {
                     
                     Spacer()
                     
-                    PrimaryButton(title: "발표 영상 촬영하기", action: {})
+                    PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
                 }
                 .appPadding()
                 .safeAreaPadding(.bottom)
