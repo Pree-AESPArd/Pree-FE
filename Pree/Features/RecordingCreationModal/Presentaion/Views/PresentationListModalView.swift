@@ -47,7 +47,7 @@ struct PresentationListModalView: View {
                 .frame(height: geo.size.height * 0.5)
             }
         }
-    }
+    } // View
     
     
     private var dragBar: some View {
@@ -72,7 +72,9 @@ struct PresentationListModalView: View {
             Spacer()
             
             Button(
-                action: {},
+                action: {
+                    modalManager.showAddNewPresentationModal()
+                },
                 label: {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
@@ -100,7 +102,7 @@ struct PresentationListModalView: View {
                 .stroke(Color.blue200,lineWidth: 1)
                 .frame(width: 30, height: 18)
         }
-    }
+    } // numberTag
     
     private var presentaionSection: some View {
         VStack(spacing: 2) {
@@ -120,7 +122,7 @@ struct PresentationListModalView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 17)
-    }
+    } // presentaionSection
     
     
 } // PresentationListModalView

@@ -79,6 +79,10 @@ struct RootTabView: View {
                 case .recordingCreationModal:
                     PresentationListModalView()
                     
+                case .addNewPresentationModal:
+                    AddNewPresentationModalView()
+                        .transition(.move(edge: .bottom))
+                    
                 case .none:
                     EmptyView()
                 }
