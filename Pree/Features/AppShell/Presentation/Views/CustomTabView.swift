@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CustomTabView: View {
     @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject var modalManager: ModalManager
     
     var body: some View {
         ZStack{
@@ -80,7 +81,7 @@ struct CustomTabView: View {
             } // :HStack
             
             Button(action:{
-                navigationManager.push(.camera)
+                modalManager.showRecordingCreationModal()
             }){
                 Circle()
                     .frame(width: 80, height: 80)
