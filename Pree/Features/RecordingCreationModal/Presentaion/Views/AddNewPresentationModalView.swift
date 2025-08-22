@@ -10,10 +10,12 @@ import Combine
 
 struct AddNewPresentationModalView: View {
     @EnvironmentObject var modalManager: ModalManager
+    @StateObject var vm: AddNewPresentationModalViewModel
     
     @State private var isMinTimeFieldPressed: Bool = false
     @State private var isMaxTimeFieldPressed: Bool = false
     @State private var keyboardHeight: CGFloat = 0
+    
     
     private enum Section {
         case textField
@@ -73,7 +75,7 @@ struct AddNewPresentationModalView: View {
                 .frame(minHeight: geo.size.height * 0.5, maxHeight: geo.size.height * 0.6,)
             }
             .padding(.bottom, keyboardHeight)
-            // ✅ 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
+            // 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
             .onReceive(Publishers.keyboardHeight) { height in
                 // 애니메이션과 함께 부드럽게 올라가도록 설정
                 withAnimation {
@@ -106,7 +108,7 @@ struct AddNewPresentationModalView: View {
     private var textFeild: some View {
         TextField(
             "",
-            text: .constant(""),
+            text: $vm.titleText,
             prompt: Text("발표이름을 입력해주세요")
                 .font(.pretendardBold(size: 28))
                 .foregroundStyle(Color.textGray)
@@ -314,6 +316,6 @@ struct AddNewPresentationModalView: View {
 
 
 #Preview {
-    AddNewPresentationModalView()
+    AddNewPresentationModalView(vm: AddNewPresentationModalViewModel())
         .environmentObject(ModalManager.shared)
 }

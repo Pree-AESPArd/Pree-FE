@@ -44,7 +44,6 @@ final class AppDI {
         )
     }
   
-    
     func makeHomeViewModel() -> HomeViewModel {
         HomeViewModel()
     }
@@ -55,5 +54,9 @@ final class AppDI {
     
     func makePracticeResultViewModel()-> PracticeResultViewModel {
         PracticeResultViewModel()
+    }
+    
+    func makeAddNewPresentationModalViewModel() -> AddNewPresentationModalViewModel {
+        AddNewPresentationModalViewModel()
     }
 }
