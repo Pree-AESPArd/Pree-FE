@@ -105,13 +105,22 @@ struct HomeView: View {
             }
         }
         .sheet(isPresented: $modalManager.isShowingModal){
-            if case .recordingCreationModal = modalManager.currentModal {
+            switch modalManager.currentModal {
+                
+                
+            case .recordingCreationModal:
                 PresentationListModalView()
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
+                
+            case .addNewPresentationModal:
+                AddNewPresentationModalView()
+                    .presentationDetents([.fraction(0.7)])
+                    .presentationDragIndicator(.visible)
+            default:
+                EmptyView()
             }
         }
-        
     }
     
     //MARK: - view

@@ -31,66 +31,43 @@ struct AddNewPresentationModalView: View {
     
     var body: some View {
         
-        // 모달이 화면의 50% 차지하도록 GeometryReader 사용
-        GeometryReader { geo in
+        VStack(spacing: 0) {
             
-            VStack {
-                // VStack과 Spacer를 이용해서 모달이 화면 하단에 고정되도록 밀어냄
-                // GeometryReader는 그 안에 있는 콘텐츠를 기본적으로 상단에 배치
-                Spacer()
-                
-                VStack(spacing: 0) {
-                    
-                    dragBar
-                        .padding(.top, 5)
-                    
-                    modalToolbar
-                        .frame(maxWidth: .infinity, alignment: .leading)
+            
+            modalToolbar
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 15)
+            
+            ForEach(sections, id: \.self) { section in
+                switch section {
+                case .textField:
+                    textFeild
+                        .padding(.top, 16)
+                case .timeRange:
+                    timeRangeSection
                         .padding(.top, 15)
-                    
-                    ForEach(sections, id: \.self) { section in
-                        switch section {
-                        case .textField:
-                            textFeild
-                                .padding(.top, 16)
-                        case .timeRange:
-                            timeRangeSection
-                                .padding(.top, 15)
-                        case .options:
-                            optionSection
-                                .padding(.top, 32.5)
-                        }
-                    }
-                    
-                   Spacer()
-                    
-                    PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
+                case .options:
+                    optionSection
                         .padding(.top, 32.5)
                 }
-                .appPadding()
-                .safeAreaPadding(.bottom)
-                .padding(.bottom, 21)
-                .background(.white)
-                .cornerRadius(20)
-                .frame(minHeight: geo.size.height * 0.5, maxHeight: geo.size.height * 0.6,)
-            }
-            .padding(.bottom, keyboardHeight)
-            // 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
-            .onReceive(Publishers.keyboardHeight) { height in
-                // 애니메이션과 함께 부드럽게 올라가도록 설정
-                withAnimation {
-                    self.keyboardHeight = height
-                }
             }
             
+            Spacer()
+            
+            PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
+                .padding(.top, 32.5)
+        }
+        .appPadding()
+        .padding(.bottom, keyboardHeight)
+        // 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
+        .onReceive(Publishers.keyboardHeight) { height in
+            // 애니메이션과 함께 부드럽게 올라가도록 설정
+            withAnimation {
+                self.keyboardHeight = height
+            }
         }
     } // View
     
-    private var dragBar: some View {
-        RoundedRectangle(cornerRadius: 20)
-            .fill(Color(hex: "#F0F1F2"))
-            .frame(width: 36, height: 5)
-    }
     
     private var modalToolbar: some View {
         Button(
@@ -113,7 +90,7 @@ struct AddNewPresentationModalView: View {
                 .font(.pretendardBold(size: 28))
                 .foregroundStyle(Color.textGray)
         )
-            
+        
     }
     
     private var timeRangeSelector: some View {
@@ -238,7 +215,7 @@ struct AddNewPresentationModalView: View {
                         .frame(height: 8)
                     
                     if isMinTimeFieldPressed {
-                       minTimeField
+                        minTimeField
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
                         Button(
@@ -266,7 +243,7 @@ struct AddNewPresentationModalView: View {
                         .frame(height: 8)
                     
                     if isMaxTimeFieldPressed {
-                       maxTimeField
+                        maxTimeField
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
                         Button(

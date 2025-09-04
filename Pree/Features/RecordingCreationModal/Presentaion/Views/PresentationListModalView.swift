@@ -15,38 +15,24 @@ struct PresentationListModalView: View {
     
     var body: some View {
         
-                VStack(spacing: 0) {
-                    
-//                    dragBar
-//                        .padding(.top, 5)
-                    
-                    
-                    modalToolbar
-                        .padding(.top, 15)
-                    
-                    ScrollView {
-                        presentaionSection
-                            .padding(.top, 5)
-                    }
-                    
-                    Spacer()
-                    
-                    PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
-                }
-                .appPadding()
-//                .safeAreaPadding(.bottom)
-//                .padding(.bottom, 21)
-//                .background(.white)
-//                .cornerRadius(20)
-//                .frame(height: geo.size.height * 0.5)
+        VStack(spacing: 0) {
+            
+            modalToolbar
+                .padding(.top, 15)
+            
+            ScrollView {
+                presentaionSection
+                    .padding(.top, 5)
+            }
+            
+            Spacer()
+            
+            PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
+        }
+        .appPadding()
     } // View
     
     
-    private var dragBar: some View {
-        RoundedRectangle(cornerRadius: 20)
-            .fill(Color(hex: "#F0F1F2"))
-            .frame(width: 36, height: 5)
-    }
     
     private var modalToolbar: some View {
         HStack() {
