@@ -15,38 +15,30 @@ struct PresentationListModalView: View {
     
     var body: some View {
         
-        // 모달이 화면의 50% 차지하도록 GeometryReader 사용
-        GeometryReader { geo in
-            
-            VStack {
-                // VStack과 Spacer를 이용해서 모달이 화면 하단에 고정되도록 밀어냄
-                // GeometryReader는 그 안에 있는 콘텐츠를 기본적으로 상단에 배치
-                Spacer()
-                
                 VStack(spacing: 0) {
                     
-                    dragBar
-                        .padding(.top, 5)
+//                    dragBar
+//                        .padding(.top, 5)
                     
                     
                     modalToolbar
                         .padding(.top, 15)
                     
-                    presentaionSection
-                        .padding(.top, 5)
+                    ScrollView {
+                        presentaionSection
+                            .padding(.top, 5)
+                    }
                     
                     Spacer()
                     
                     PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
                 }
                 .appPadding()
-                .safeAreaPadding(.bottom)
-                .padding(.bottom, 21)
-                .background(.white)
-                .cornerRadius(20)
-                .frame(height: geo.size.height * 0.5)
-            }
-        }
+//                .safeAreaPadding(.bottom)
+//                .padding(.bottom, 21)
+//                .background(.white)
+//                .cornerRadius(20)
+//                .frame(height: geo.size.height * 0.5)
     } // View
     
     

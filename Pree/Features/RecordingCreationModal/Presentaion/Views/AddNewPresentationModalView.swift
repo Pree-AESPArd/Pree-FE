@@ -10,7 +10,7 @@ import Combine
 
 struct AddNewPresentationModalView: View {
     @EnvironmentObject var modalManager: ModalManager
-    @StateObject var vm: AddNewPresentationModalViewModel
+    @StateObject var vm: AddNewPresentationModalViewModel = AddNewPresentationModalViewModel()
     
     @State private var isMinTimeFieldPressed: Bool = false
     @State private var isMaxTimeFieldPressed: Bool = false
