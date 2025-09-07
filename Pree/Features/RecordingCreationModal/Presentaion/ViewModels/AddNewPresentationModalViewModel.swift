@@ -11,8 +11,10 @@ class AddNewPresentationModalViewModel: ObservableObject {
     //@Published var presentaion: Presentation
    
     @Published var titleText: String = ""
-    @Published var minMinitues: String = ""
-    @Published var maxMinitues: String = ""
+    @Published var minMinitue: String = "05"
+    @Published var minSecond: String = "00"
+    @Published var maxMinitue: String = "07"
+    @Published var maxSecond: String = "00"
     @Published var showRecordingTime: Bool = false
     @Published var showScreen: Bool = false
     @Published var debugMode: Bool = false

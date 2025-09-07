@@ -37,6 +37,7 @@ struct AddNewPresentationModalView: View {
             modalToolbar
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 15)
+                .appPadding()
             
             ScrollView {
                 
@@ -45,12 +46,14 @@ struct AddNewPresentationModalView: View {
                     case .textField:
                         textFeild
                             .padding(.top, 16)
+                            .appPadding()
                     case .timeRange:
                         timeRangeSection
                             .padding(.top, 15)
                     case .options:
                         optionSection
                             .padding(.top, 32.5)
+                        
                     }
                 }
             }
@@ -59,9 +62,9 @@ struct AddNewPresentationModalView: View {
             Spacer()
             
             PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
-                .padding(.top, 32.5)
+                .safeAreaPadding(.bottom)
+                .appPadding()
         }
-        .appPadding()
 //        .padding(.bottom, keyboardHeight)
 //        // 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
 //        .onReceive(Publishers.keyboardHeight) { height in
@@ -97,17 +100,22 @@ struct AddNewPresentationModalView: View {
         
     }
     
-    private var timeRangeSelector: some View {
+    enum TimeType {
+        case from
+        case to
+    }
+    
+    private func timeRangeSelector(min: String, sec: String, type: TimeType) -> some View {
         HStack(spacing: 4) {
             Image(systemName: "clock")
                 .foregroundStyle(Color.primary)
                 .frame(width: 16, height: 16)
             
-            Text("05:00")
+            Text("\(min):\(sec)")
                 .font(.pretendardMedium(size: 16))
                 .foregroundStyle(Color.primary)
             
-            Text("부터")
+            Text(type == .from ? "부터" : "까지")
                 .font(.pretendardMedium(size: 16))
                 .foregroundStyle(Color.textGray)
         }
@@ -125,15 +133,23 @@ struct AddNewPresentationModalView: View {
         )
     }
     
+    
+    private func timeTextField(text: Binding<String>) -> some View {
+        TextField(
+            "",
+            text: text,
+        )
+        .multilineTextAlignment(.center)
+        .keyboardType(.numberPad)
+        .frame(width: 44, height: 36)
+        .background(Color(hex: "#F0F1F2"))
+        .cornerRadius(4)
+    }
+    
     private var minTimeField: some View {
         HStack(spacing: 0) {
-            TextField(
-                "",
-                text: .constant(""),
-            )
-            .frame(width: 44, height: 36)
-            .background(Color(hex: "#F0F1F2"))
-            .cornerRadius(4)
+            
+            timeTextField(text: $vm.minMinitue)
             
             Spacer()
                 .frame(width: 2)
@@ -145,13 +161,7 @@ struct AddNewPresentationModalView: View {
             Spacer()
                 .frame(width: 2)
             
-            TextField(
-                "",
-                text: .constant(""),
-            )
-            .frame(width: 44, height: 36)
-            .background(Color(hex: "#F0F1F2"))
-            .cornerRadius(4)
+            timeTextField(text: $vm.minSecond)
             
             Spacer()
                 .frame(width: 2)
@@ -164,13 +174,8 @@ struct AddNewPresentationModalView: View {
     
     private var maxTimeField: some View {
         HStack(spacing: 0) {
-            TextField(
-                "",
-                text: .constant(""),
-            )
-            .frame(width: 44, height: 36)
-            .background(Color(hex: "#F0F1F2"))
-            .cornerRadius(4)
+            
+            timeTextField(text: $vm.maxMinitue)
             
             Spacer()
                 .frame(width: 2)
@@ -182,13 +187,7 @@ struct AddNewPresentationModalView: View {
             Spacer()
                 .frame(width: 2)
             
-            TextField(
-                "",
-                text: .constant(""),
-            )
-            .frame(width: 44, height: 36)
-            .background(Color(hex: "#F0F1F2"))
-            .cornerRadius(4)
+            timeTextField(text: $vm.maxSecond)
             
             Spacer()
                 .frame(width: 2)
@@ -227,7 +226,7 @@ struct AddNewPresentationModalView: View {
                                 isMinTimeFieldPressed = true
                             },
                             label: {
-                                timeRangeSelector
+                                timeRangeSelector(min: vm.minMinitue, sec: vm.minSecond, type: .from)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         )
@@ -255,7 +254,7 @@ struct AddNewPresentationModalView: View {
                                 isMaxTimeFieldPressed = true
                             },
                             label: {
-                                timeRangeSelector
+                                timeRangeSelector(min: vm.maxMinitue, sec: vm.maxSecond, type: .to)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         )
@@ -267,6 +266,7 @@ struct AddNewPresentationModalView: View {
             
             
         }
+        .appPadding()
     }
     
     
@@ -290,6 +290,7 @@ struct AddNewPresentationModalView: View {
             makeOption(title: "촬영 화면 보이게 하기", isOn: $vm.showScreen)
             makeOption(title: "개발 모드", isOn: $vm.debugMode)
         }
+        .appPadding()
     }
     
     
