@@ -104,12 +104,15 @@ struct HomeView: View {
                 }
             }
         }
+        .task {
+            await vm.loadPresentations()
+        }
         .sheet(isPresented: $modalManager.isShowingModal){
             switch modalManager.currentModal {
                 
                 
             case .recordingCreationModal:
-                PresentationListModalView()
+                PresentationListModalView(presentations: vm.presentations)
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
                 

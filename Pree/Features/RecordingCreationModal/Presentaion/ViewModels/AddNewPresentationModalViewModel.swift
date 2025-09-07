@@ -8,11 +8,14 @@
 import SwiftUI
 
 class AddNewPresentationModalViewModel: ObservableObject {
-    @Published var presentaion: Presentation = Presentation()
+    //@Published var presentaion: Presentation
    
     @Published var titleText: String = ""
     @Published var minMinitues: String = ""
     @Published var maxMinitues: String = ""
+    @Published var showRecordingTime: Bool = false
+    @Published var showScreen: Bool = false
+    @Published var debugMode: Bool = false
     
     @Published var errorMessage: ErrorMessage = ErrorMessage()
 

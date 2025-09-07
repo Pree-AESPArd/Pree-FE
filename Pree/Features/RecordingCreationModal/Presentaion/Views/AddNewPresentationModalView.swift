@@ -269,8 +269,8 @@ struct AddNewPresentationModalView: View {
         }
     }
     
-    @State private var isOn = true
-    private func makeOption(title: String) -> some View {
+    
+    private func makeOption(title: String, isOn value: Binding<Bool>) -> some View {
         HStack(spacing: 0) {
             Text(title)
                 .font(.pretendardMedium(size: 16))
@@ -278,7 +278,7 @@ struct AddNewPresentationModalView: View {
             
             Spacer()
             
-            Toggle("", isOn: $isOn )
+            Toggle("", isOn: value )
                 .toggleStyle(SwitchToggleStyle(tint: Color.primary))
             
         }
@@ -286,9 +286,9 @@ struct AddNewPresentationModalView: View {
     
     private var optionSection: some View {
         VStack(spacing: 32.5) {
-            makeOption(title: "촬영 시간 보이게 하기")
-            makeOption(title: "촬영 화면 보이게 하기")
-            makeOption(title: "개발 모드")
+            makeOption(title: "촬영 시간 보이게 하기", isOn: $vm.showRecordingTime)
+            makeOption(title: "촬영 화면 보이게 하기", isOn: $vm.showScreen)
+            makeOption(title: "개발 모드", isOn: $vm.debugMode)
         }
     }
     

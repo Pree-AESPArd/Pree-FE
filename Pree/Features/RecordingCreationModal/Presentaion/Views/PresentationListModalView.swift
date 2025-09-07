@@ -10,6 +10,7 @@ import SwiftUI
 struct PresentationListModalView: View {
     
     @EnvironmentObject var modalManager: ModalManager
+    let presentations: [Presentation]
     
     
     
@@ -21,8 +22,11 @@ struct PresentationListModalView: View {
                 .padding(.top, 15)
             
             ScrollView() {
-                presentaionSection
-                    .padding(.top, 5)
+                
+                ForEach(presentations, id: \.presentationId) { presentation in
+                    makePresentaionCard(presentation: presentation)
+                        .padding(.top, 5)
+                }
             }
             .scrollIndicators(.hidden)
             
@@ -70,30 +74,29 @@ struct PresentationListModalView: View {
     } // modalToolbar
     
     
-    private var numberTag: some View {
-        ZStack {
-            
-            Text("4개")
-                .font(.pretendardMedium(size: 12))
-                .foregroundStyle(Color.blue200)
-            
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.blue200,lineWidth: 1)
-                .frame(width: 30, height: 18)
-        }
-    } // numberTag
     
-    private var presentaionSection: some View {
+    private func makePresentaionCard(presentation: Presentation) -> some View {
         VStack(spacing: 2) {
             
             HStack(spacing: 4) {
-                Text("프리 테스트")
-                numberTag
+                Text(presentation.presentationName)
+            
+                // number tag
+                ZStack {
+                    
+                    Text("\(presentation.totalPractices) 개")
+                        .font(.pretendardMedium(size: 12))
+                        .foregroundStyle(Color.blue200)
+                    
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.blue200,lineWidth: 1)
+                        .frame(width: 30, height: 18)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
             
-            Text("1일 전")
+            Text("\(presentation.updatedAtText)일 전")
                 .font(.pretendardMedium(size: 14))
                 .foregroundStyle(Color.textGray)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -101,13 +104,13 @@ struct PresentationListModalView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 17)
-    } // presentaionSection
+    }
     
     
 } // PresentationListModalView
 
 
-#Preview {
-    PresentationListModalView()
-        .environmentObject(ModalManager.shared)
-}
+//#Preview {
+//    PresentationListModalView()
+//        .environmentObject(ModalManager.shared)
+//}
