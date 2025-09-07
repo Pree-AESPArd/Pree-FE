@@ -38,19 +38,23 @@ struct AddNewPresentationModalView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 15)
             
-            ForEach(sections, id: \.self) { section in
-                switch section {
-                case .textField:
-                    textFeild
-                        .padding(.top, 16)
-                case .timeRange:
-                    timeRangeSection
-                        .padding(.top, 15)
-                case .options:
-                    optionSection
-                        .padding(.top, 32.5)
+            ScrollView {
+                
+                ForEach(sections, id: \.self) { section in
+                    switch section {
+                    case .textField:
+                        textFeild
+                            .padding(.top, 16)
+                    case .timeRange:
+                        timeRangeSection
+                            .padding(.top, 15)
+                    case .options:
+                        optionSection
+                            .padding(.top, 32.5)
+                    }
                 }
             }
+            .scrollIndicators(.hidden)
             
             Spacer()
             
@@ -58,14 +62,14 @@ struct AddNewPresentationModalView: View {
                 .padding(.top, 32.5)
         }
         .appPadding()
-        .padding(.bottom, keyboardHeight)
-        // 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
-        .onReceive(Publishers.keyboardHeight) { height in
-            // 애니메이션과 함께 부드럽게 올라가도록 설정
-            withAnimation {
-                self.keyboardHeight = height
-            }
-        }
+//        .padding(.bottom, keyboardHeight)
+//        // 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
+//        .onReceive(Publishers.keyboardHeight) { height in
+//            // 애니메이션과 함께 부드럽게 올라가도록 설정
+//            withAnimation {
+//                self.keyboardHeight = height
+//            }
+//        }
     } // View
     
     

@@ -20,10 +20,11 @@ struct PresentationListModalView: View {
             modalToolbar
                 .padding(.top, 15)
             
-            ScrollView {
+            ScrollView() {
                 presentaionSection
                     .padding(.top, 5)
             }
+            .scrollIndicators(.hidden)
             
             Spacer()
             

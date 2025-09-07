@@ -8,10 +8,15 @@
 import Foundation
 
 struct Presentation: Codable {
-    var userId: String?
-    var presentationName: String?
-    var idealMinTime: Double?
-    var idealMaxTime: Double?
-    var showTimeOnScreen: Bool?
-    var showMeOnScreen: Bool?
+    let presentationId: String?
+    let presentationName: String
+    let idealMinTime: Double
+    let idealMaxTime: Double
+    let showTimeOnScreen: Bool
+    let showMeOnScreen: Bool
+    
+    let totalScore: Int
+    let totalPractices: Int
+    let createdAt: String?
+    let updatedAt: String?
 }
