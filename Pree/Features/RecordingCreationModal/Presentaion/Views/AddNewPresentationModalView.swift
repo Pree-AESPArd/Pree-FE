@@ -52,7 +52,7 @@ struct AddNewPresentationModalView: View {
                             .padding(.top, 15)
                     case .options:
                         optionSection
-                            .padding(.top, 32.5)
+                            .padding(.top, 9)
                         
                     }
                 }
@@ -61,7 +61,7 @@ struct AddNewPresentationModalView: View {
             
             Spacer()
             
-            PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
+            PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: vm.isValid)
                 .safeAreaPadding(.bottom)
                 .appPadding()
         }
@@ -90,13 +90,29 @@ struct AddNewPresentationModalView: View {
     } // modalToolbar
     
     private var textFeild: some View {
-        TextField(
-            "",
-            text: $vm.titleText,
-            prompt: Text("발표이름을 입력해주세요")
-                .font(.pretendardBold(size: 28))
-                .foregroundStyle(Color.textGray)
-        )
+        VStack(spacing: 6) {
+            TextField(
+                "",
+                text: $vm.titleText,
+                prompt: Text("발표이름을 입력해주세요")
+                    .font(.pretendardBold(size: 28))
+                    .foregroundStyle(Color.textGray)
+            )
+            .onChange(of: vm.titleText) { oldValue, newValue in
+//                if newValue.count > charLimit {
+//                    textInput = String(newValue.prefix(charLimit))
+//                }
+                //vm.validateTitleText()
+                vm.validateForm()
+            }
+            
+            if let message = vm.textFieldError {
+                Text(message)
+                    .font(.pretendardMedium(size: 12))
+                    .foregroundStyle(Color.preeRed)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
         
     }
     
@@ -150,6 +166,9 @@ struct AddNewPresentationModalView: View {
         HStack(spacing: 0) {
             
             timeTextField(text: $vm.minMinitue)
+                .onChange(of: vm.minMinitue) {
+                    vm.validateForm()
+                }
             
             Spacer()
                 .frame(width: 2)
@@ -162,6 +181,9 @@ struct AddNewPresentationModalView: View {
                 .frame(width: 2)
             
             timeTextField(text: $vm.minSecond)
+                .onChange(of: vm.minSecond) {
+                    vm.validateForm()
+                }
             
             Spacer()
                 .frame(width: 2)
@@ -176,6 +198,9 @@ struct AddNewPresentationModalView: View {
         HStack(spacing: 0) {
             
             timeTextField(text: $vm.maxMinitue)
+                .onChange(of: vm.maxMinitue) {
+                    vm.validateForm()
+                }
             
             Spacer()
                 .frame(width: 2)
@@ -188,6 +213,9 @@ struct AddNewPresentationModalView: View {
                 .frame(width: 2)
             
             timeTextField(text: $vm.maxSecond)
+                .onChange(of: vm.maxSecond) {
+                    vm.validateForm()
+                }
             
             Spacer()
                 .frame(width: 2)
@@ -264,7 +292,13 @@ struct AddNewPresentationModalView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 12)
             
-            
+            if let errorMessage = vm.timeError {
+                Text(errorMessage)
+                    .font(.pretendardMedium(size: 12))
+                    .foregroundStyle(Color.preeRed)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 9)
+            }
         }
         .appPadding()
     }
