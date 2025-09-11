@@ -13,6 +13,10 @@ enum FilterMode {
 }
 
 final class HomeViewModel: ObservableObject {
+    @Published var presentations: [Presentation] = []
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    
     @Published var filterMode: FilterMode = .recentMode
     @Published var showDeleteMode: Bool = false
     
@@ -22,4 +26,25 @@ final class HomeViewModel: ObservableObject {
     @Published var presentationListCount: Int = 1
     
     @Published var score: Double = 0.2
+    
+    private let fetchPresentationsUseCase: FetchPresentationsUseCase
+    
+    init(fetchPresentationsUseCase: FetchPresentationsUseCase) {
+        self.fetchPresentationsUseCase = fetchPresentationsUseCase
+    }
+    
+    
+    @MainActor
+    func loadPresentations() async {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            self.presentations = try await fetchPresentationsUseCase.execute()
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
+    }
 }

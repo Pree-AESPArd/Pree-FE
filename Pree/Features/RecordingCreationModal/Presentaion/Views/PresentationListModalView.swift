@@ -10,51 +10,58 @@ import SwiftUI
 struct PresentationListModalView: View {
     
     @EnvironmentObject var modalManager: ModalManager
+    @EnvironmentObject var navigationManager: NavigationManager
+    
+    // TODO: AppDI 로 인젝션
+    @StateObject var vm: PresentationListModalViewModel = PresentationListModalViewModel()
+    
+    let presentations: [Presentation]
     
     
     
     var body: some View {
         
-        // 모달이 화면의 50% 차지하도록 GeometryReader 사용
-        GeometryReader { geo in
+        VStack(spacing: 0) {
             
-            VStack {
-                // VStack과 Spacer를 이용해서 모달이 화면 하단에 고정되도록 밀어냄
-                // GeometryReader는 그 안에 있는 콘텐츠를 기본적으로 상단에 배치
-                Spacer()
-                
-                VStack(spacing: 0) {
-                    
-                    dragBar
-                        .padding(.top, 5)
-                    
-                    
-                    modalToolbar
-                        .padding(.top, 15)
-                    
-                    presentaionSection
-                        .padding(.top, 5)
-                    
-                    Spacer()
-                    
-                    PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
-                }
+            modalToolbar
+                .padding(.top, 15)
                 .appPadding()
-                .safeAreaPadding(.bottom)
-                .padding(.bottom, 21)
-                .background(.white)
-                .cornerRadius(20)
-                .frame(height: geo.size.height * 0.5)
+            
+            ScrollView() {
+                
+                ForEach(presentations, id: \.presentationId) { presentation in
+                    
+                    makePresentaionCard(presentation: presentation)
+                        .padding(.top, 5)
+                        .onTapGesture {
+                            vm.selectedPresentaion = presentation
+                            vm.validate()
+                        }
+                    
+                }
             }
+            .scrollIndicators(.hidden)
+            
+            Spacer()
+            
+            PrimaryButton(
+                title: "발표 영상 촬영하기",
+                action: {
+                    // modal 창 닫아주기
+                    modalManager.hideModal()
+                    
+                    // 영상 촬영 화면으로 넘어감
+                    navigationManager.push(.camera)
+                },
+                isActive: vm.isValid
+            )
+            .appPadding()
+            .safeAreaPadding(.bottom)
         }
+        
     } // View
     
     
-    private var dragBar: some View {
-        RoundedRectangle(cornerRadius: 20)
-            .fill(Color(hex: "#F0F1F2"))
-            .frame(width: 36, height: 5)
-    }
     
     private var modalToolbar: some View {
         HStack() {
@@ -91,44 +98,50 @@ struct PresentationListModalView: View {
     } // modalToolbar
     
     
-    private var numberTag: some View {
-        ZStack {
-            
-            Text("4개")
-                .font(.pretendardMedium(size: 12))
-                .foregroundStyle(Color.blue200)
-            
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.blue200,lineWidth: 1)
-                .frame(width: 30, height: 18)
-        }
-    } // numberTag
     
-    private var presentaionSection: some View {
+    private func makePresentaionCard(presentation: Presentation) -> some View {
         VStack(spacing: 2) {
             
             HStack(spacing: 4) {
-                Text("프리 테스트")
-                numberTag
+                Text(presentation.presentationName)
+            
+                // number tag
+                ZStack {
+                    
+                    Text("\(presentation.totalPractices) 개")
+                        .font(.pretendardMedium(size: 12))
+                        .foregroundStyle(Color.blue200)
+                    
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.blue200,lineWidth: 1)
+                        .frame(width: 30, height: 18)
+                }
             }
+            .appPadding()
             .frame(maxWidth: .infinity, alignment: .leading)
             
             
-            Text("1일 전")
+            Text("\(presentation.updatedAtText)일 전")
                 .font(.pretendardMedium(size: 14))
                 .foregroundStyle(Color.textGray)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .appPadding()
             
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 17)
-    } // presentaionSection
+        .contentShape(Rectangle()) // 탭 가능한 영역을 사각형으로 명시적으로 정의
+        .background(
+            vm.selectedPresentaion?.presentationId == presentation.presentationId ? Color(hex:"#E6EDFF") : Color.clear
+        )
+        
+    }
     
     
 } // PresentationListModalView
 
 
-#Preview {
-    PresentationListModalView()
-        .environmentObject(ModalManager.shared)
-}
+//#Preview {
+//    PresentationListModalView()
+//        .environmentObject(ModalManager.shared)
+//}

@@ -21,6 +21,7 @@ enum HomeMenu: Hashable, Identifiable {
 
 struct HomeView: View {
     @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject var modalManager: ModalManager
     @StateObject var vm: HomeViewModel
     @State var showPresentationList: Bool = false
     
@@ -101,6 +102,26 @@ struct HomeView: View {
                         menus.insert(.filter, at: 2)
                     }
                 }
+            }
+        }
+        .task {
+            await vm.loadPresentations()
+        }
+        .sheet(isPresented: $modalManager.isShowingModal){
+            switch modalManager.currentModal {
+                
+                
+            case .recordingCreationModal:
+                PresentationListModalView(presentations: vm.presentations)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                
+            case .addNewPresentationModal:
+                AddNewPresentationModalView()
+                    .presentationDetents([.fraction(0.7)])
+                    .presentationDragIndicator(.visible)
+            default:
+                EmptyView()
             }
         }
     }

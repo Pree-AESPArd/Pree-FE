@@ -76,14 +76,16 @@ struct RootTabView: View {
                 case .standardModal:
                     standardModalView()
                     
-                case .recordingCreationModal:
-                    PresentationListModalView()
-                    
-                case .addNewPresentationModal:
-                    AddNewPresentationModalView()
-                        .transition(.move(edge: .bottom))
+//                case .recordingCreationModal:
+//                    PresentationListModalView()
+//                    
+//                case .addNewPresentationModal:
+//                    AddNewPresentationModalView()
+//                        .transition(.move(edge: .bottom))
                     
                 case .none:
+                    EmptyView()
+                default:
                     EmptyView()
                 }
             }

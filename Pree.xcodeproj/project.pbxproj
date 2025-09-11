@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0CBCCBA12E324E1E0094475A /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 0CBCCBA02E324E1E0094475A /* .gitignore */; };
+		0CCF4B6F2E6D574800F36CF0 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 0CCF4B6E2E6D574800F36CF0 /* Alamofire */; };
 		1481E2ED2E3CA04A00ED27E9 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 1481E2EC2E3CA04A00ED27E9 /* DGCharts */; };
 /* End PBXBuildFile section */
 
@@ -95,6 +96,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1481E2ED2E3CA04A00ED27E9 /* DGCharts in Frameworks */,
+				0CCF4B6F2E6D574800F36CF0 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +173,7 @@
 			name = Pree;
 			packageProductDependencies = (
 				1481E2EC2E3CA04A00ED27E9 /* DGCharts */,
+				0CCF4B6E2E6D574800F36CF0 /* Alamofire */,
 			);
 			productName = Pree;
 			productReference = 0CBCCB732E324DF90094475A /* Pree.app */;
@@ -256,6 +259,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */,
+				0CCF4B6D2E6D574800F36CF0 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0CBCCB742E324DF90094475A /* Products */;
@@ -645,6 +649,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0CCF4B6D2E6D574800F36CF0 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 		1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/danielgindi/Charts.git";
@@ -656,6 +668,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0CCF4B6E2E6D574800F36CF0 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0CCF4B6D2E6D574800F36CF0 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
 		1481E2EC2E3CA04A00ED27E9 /* DGCharts */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */;
