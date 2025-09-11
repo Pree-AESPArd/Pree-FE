@@ -10,6 +10,7 @@ import Combine
 
 struct AddNewPresentationModalView: View {
     @EnvironmentObject var modalManager: ModalManager
+    @EnvironmentObject var navigationManager: NavigationManager
     @StateObject var vm: AddNewPresentationModalViewModel = AddNewPresentationModalViewModel()
     
     @State private var isMinTimeFieldPressed: Bool = false
@@ -61,18 +62,25 @@ struct AddNewPresentationModalView: View {
             
             Spacer()
             
-            PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: vm.isValid)
-                .safeAreaPadding(.bottom)
-                .appPadding()
+            PrimaryButton(
+                title: "발표 영상 촬영하기",
+                action: {
+                    modalManager.hideModal()
+                    vm.startRecording(navigationManager: navigationManager)
+                },
+                isActive: vm.isValid
+            )
+            .safeAreaPadding(.bottom)
+            .appPadding()
         }
-//        .padding(.bottom, keyboardHeight)
-//        // 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
-//        .onReceive(Publishers.keyboardHeight) { height in
-//            // 애니메이션과 함께 부드럽게 올라가도록 설정
-//            withAnimation {
-//                self.keyboardHeight = height
-//            }
-//        }
+        //        .padding(.bottom, keyboardHeight)
+        //        // 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
+        //        .onReceive(Publishers.keyboardHeight) { height in
+        //            // 애니메이션과 함께 부드럽게 올라가도록 설정
+        //            withAnimation {
+        //                self.keyboardHeight = height
+        //            }
+        //        }
     } // View
     
     
@@ -99,9 +107,9 @@ struct AddNewPresentationModalView: View {
                     .foregroundStyle(Color.textGray)
             )
             .onChange(of: vm.titleText) { oldValue, newValue in
-//                if newValue.count > charLimit {
-//                    textInput = String(newValue.prefix(charLimit))
-//                }
+                //                if newValue.count > charLimit {
+                //                    textInput = String(newValue.prefix(charLimit))
+                //                }
                 //vm.validateTitleText()
                 vm.validateForm()
             }
@@ -320,8 +328,8 @@ struct AddNewPresentationModalView: View {
     
     private var optionSection: some View {
         VStack(spacing: 32.5) {
-            makeOption(title: "촬영 시간 보이게 하기", isOn: $vm.showRecordingTime)
-            makeOption(title: "촬영 화면 보이게 하기", isOn: $vm.showScreen)
+            makeOption(title: "촬영 시간 보이게 하기", isOn: $vm.showTimeOnScreen)
+            makeOption(title: "촬영 화면 보이게 하기", isOn: $vm.showMeOnScreen)
             makeOption(title: "개발 모드", isOn: $vm.debugMode)
         }
         .appPadding()
@@ -331,7 +339,7 @@ struct AddNewPresentationModalView: View {
 } // AddNewPresentationModalView
 
 
-#Preview {
-    AddNewPresentationModalView(vm: AddNewPresentationModalViewModel())
-        .environmentObject(ModalManager.shared)
-}
+//#Preview {
+//    AddNewPresentationModalView(vm: AddNewPresentationModalViewModel())
+//        .environmentObject(ModalManager.shared)
+//}
