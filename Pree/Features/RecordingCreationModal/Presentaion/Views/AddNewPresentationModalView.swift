@@ -11,6 +11,8 @@ import Combine
 struct AddNewPresentationModalView: View {
     @EnvironmentObject var modalManager: ModalManager
     @EnvironmentObject var navigationManager: NavigationManager
+    
+    // TODO: AppDI 로 인젝션
     @StateObject var vm: AddNewPresentationModalViewModel = AddNewPresentationModalViewModel()
     
     @State private var isMinTimeFieldPressed: Bool = false

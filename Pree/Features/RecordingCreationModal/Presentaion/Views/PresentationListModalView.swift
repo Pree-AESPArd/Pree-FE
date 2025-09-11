@@ -10,6 +10,11 @@ import SwiftUI
 struct PresentationListModalView: View {
     
     @EnvironmentObject var modalManager: ModalManager
+    @EnvironmentObject var navigationManager: NavigationManager
+    
+    // TODO: AppDI 로 인젝션
+    @StateObject var vm: PresentationListModalViewModel = PresentationListModalViewModel()
+    
     let presentations: [Presentation]
     
     
@@ -20,22 +25,40 @@ struct PresentationListModalView: View {
             
             modalToolbar
                 .padding(.top, 15)
+                .appPadding()
             
             ScrollView() {
                 
                 ForEach(presentations, id: \.presentationId) { presentation in
+                    
                     makePresentaionCard(presentation: presentation)
                         .padding(.top, 5)
+                        .onTapGesture {
+                            vm.selectedPresentaion = presentation
+                            vm.validate()
+                        }
+                    
                 }
             }
             .scrollIndicators(.hidden)
             
             Spacer()
             
-            PrimaryButton(title: "발표 영상 촬영하기", action: {}, isActive: false)
-                .safeAreaPadding(.bottom)
+            PrimaryButton(
+                title: "발표 영상 촬영하기",
+                action: {
+                    // modal 창 닫아주기
+                    modalManager.hideModal()
+                    
+                    // 영상 촬영 화면으로 넘어감
+                    navigationManager.push(.camera)
+                },
+                isActive: vm.isValid
+            )
+            .appPadding()
+            .safeAreaPadding(.bottom)
         }
-        .appPadding()
+        
     } // View
     
     
@@ -94,6 +117,7 @@ struct PresentationListModalView: View {
                         .frame(width: 30, height: 18)
                 }
             }
+            .appPadding()
             .frame(maxWidth: .infinity, alignment: .leading)
             
             
@@ -101,10 +125,16 @@ struct PresentationListModalView: View {
                 .font(.pretendardMedium(size: 14))
                 .foregroundStyle(Color.textGray)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .appPadding()
             
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 17)
+        .contentShape(Rectangle()) // 탭 가능한 영역을 사각형으로 명시적으로 정의
+        .background(
+            vm.selectedPresentaion?.presentationId == presentation.presentationId ? Color(hex:"#E6EDFF") : Color.clear
+        )
+        
     }
     
     
