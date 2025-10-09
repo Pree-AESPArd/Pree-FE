@@ -97,10 +97,7 @@ class AddNewPresentationModalViewModel: ObservableObject {
         
         let presentation: CreatePresentationRequest = CreatePresentationRequest(presentationName: titleText, idealMinTime: Double(minTime), idealMaxTime: Double(maxTime), showTimeOnScreen: showTimeOnScreen, showMeOnScreen: showMeOnScreen)
         
-        
-//        navigatonManager.push(to: .recording(presentation: presentation))
-        
-        navigationManager.push(.camera)
+        navigationManager.push(.camera(presentation: presentation))
         
         
     }

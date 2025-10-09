@@ -218,4 +218,10 @@ final class CameraViewModel: ObservableObject {
                 })
         }
     }
+    
+    
+    func createPresentaion(newPresentation: CreatePresentationRequest) {
+        
+    }
+    
 }

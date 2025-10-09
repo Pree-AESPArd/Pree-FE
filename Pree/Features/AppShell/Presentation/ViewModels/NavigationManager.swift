@@ -10,7 +10,7 @@ import SwiftUI
 
 enum ViewType: Hashable {
     case home
-    case camera
+    case camera(presentation: CreatePresentationRequest? = nil)
     case profile
     case presentationList
     case practiceResult

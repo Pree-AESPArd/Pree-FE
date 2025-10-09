@@ -51,7 +51,7 @@ struct PresentationListModalView: View {
                     modalManager.hideModal()
                     
                     // 영상 촬영 화면으로 넘어감
-                    navigationManager.push(.camera)
+                    navigationManager.push(.camera())
                 },
                 isActive: vm.isValid
             )

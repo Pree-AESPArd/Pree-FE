@@ -15,6 +15,7 @@ struct CameraView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @StateObject private var overlayManager = OverlayWindowManager()
     
+    let newPresentation: CreatePresentationRequest?
     
     var body: some View {
         
@@ -37,6 +38,10 @@ struct CameraView: View {
                     .environmentObject(navigationManager)
             }
             vm.resumeTracking()
+            
+            // 새롭게 발표를 생성할시 서버에 전송
+            guard let newPresentation else { return }
+            vm.createPresentaion(newPresentation: newPresentation)
         }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false
@@ -63,8 +68,8 @@ struct FrontCameraPreview: UIViewRepresentable {
 
 
 
-#Preview {
-    let vm = AppDI.shared.makeCameraViewModel()
-    CameraView(vm: vm)
-        .environmentObject(NavigationManager())
-}
+//#Preview {
+//    let vm = AppDI.shared.makeCameraViewModel()
+//    CameraView(vm: vm)
+//        .environmentObject(NavigationManager())
+//}

@@ -66,7 +66,12 @@ final class AppDI {
         PracticeResultViewModel()
     }
     
+    func makePresentationListModalViewModel() -> PresentationListModalViewModel {
+        PresentationListModalViewModel()
+    }
+    
     func makeAddNewPresentationModalViewModel() -> AddNewPresentationModalViewModel {
         AddNewPresentationModalViewModel()
     }
+    
 }

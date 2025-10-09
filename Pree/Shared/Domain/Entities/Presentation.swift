@@ -17,9 +17,11 @@ struct Presentation: Codable, Equatable {
     
     let totalScore: Int
     let totalPractices: Int
+    let toggleFavorite: Bool
     let updatedAtText: String
     let createdAt: String?
     let updatedAt: String?
+
 }
 
 
@@ -37,6 +39,7 @@ extension Presentation {
                 showMeOnScreen: true,
                 totalScore: 95,
                 totalPractices: 5,
+                toggleFavorite: false,
                 updatedAtText: "3",
                 createdAt: "2025-09-01T10:00:00Z",
                 updatedAt: "2025-09-01T10:00:00Z"
@@ -50,6 +53,7 @@ extension Presentation {
                 showMeOnScreen: true,
                 totalScore: 88,
                 totalPractices: 2,
+                toggleFavorite: false,
                 updatedAtText: "1",
                 createdAt: "2025-08-25T15:30:00Z",
                 updatedAt: "2025-08-25T15:30:00Z"

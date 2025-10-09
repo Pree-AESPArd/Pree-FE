@@ -24,8 +24,8 @@ struct RootTabView: View {
                 HomeView(vm: homeViewModel)
                     .navigationDestination(for: ViewType.self) { path in
                         switch path {
-                        case .camera:
-                            CameraView(vm: cameraViewModel)
+                        case .camera(let presentation):
+                            CameraView(vm: cameraViewModel, newPresentation: presentation)
                             //                                .toolbarVisibility(.hidden, for: .tabBar)
                         case .home:
                             HomeView(vm: homeViewModel)
@@ -41,7 +41,7 @@ struct RootTabView: View {
                     } // : navigationDestination
             } // : NavigationStack
             
-            if !(navigationManager.path.last == .camera ||
+            if !(navigationManager.path.last == .camera() ||
                   (navigationManager.path.last?.isCompleteRecording ?? false)) {
                 CustomTabView()
             }

@@ -110,12 +110,13 @@ struct HomeView: View {
         .sheet(isPresented: $modalManager.isShowingModal){
             switch modalManager.currentModal {
                 
-                
+            // 영상 촬영 위한 발표 선택 모달
             case .recordingCreationModal:
                 PresentationListModalView(presentations: vm.presentations)
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
                 
+            // 새 발표 만드는 모달
             case .addNewPresentationModal:
                 AddNewPresentationModalView()
                     .presentationDetents([.fraction(0.7)])
