@@ -8,7 +8,7 @@
 import ReplayKit
 import Foundation
 
-public final class StopScreenCaptureUseCase {
+public final class StopScreenCaptureUseCase: StopScreenCaptureUseCaseProtocol {
   private let service: ScreenCaptureService
 
   public init(service: ScreenCaptureService) {

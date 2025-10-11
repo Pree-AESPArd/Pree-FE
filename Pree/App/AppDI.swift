@@ -27,6 +27,7 @@ final class AppDI {
     let stopCaptureUseCase: StopScreenCaptureUseCase
     let eyeTrackingUseCase: EyeTrackingUseCase
     private let fetchPresentationUseCase: FetchPresentationsUseCase
+    private let createPresentationUseCase: CreatePresentationUseCase
     
     
     private init() {
@@ -43,6 +44,7 @@ final class AppDI {
         self.stopCaptureUseCase  = StopScreenCaptureUseCase(service: screenCaptureService)
         self.eyeTrackingUseCase = EyeTrackingUseCase(service: eyeTrackingService)
         self.fetchPresentationUseCase = FetchPresentationsUseCase(presentationRepository: presentationRepository)
+        self.createPresentationUseCase = CreatePresentationUseCase(presentationRepository: presentationRepository)
     }
     
     // 3) ViewModel 팩토리
@@ -50,7 +52,8 @@ final class AppDI {
         CameraViewModel(
             start: startCaptureUseCase,
             stop:  stopCaptureUseCase,
-            eyeTrackingUseCase: eyeTrackingUseCase
+            eyeTrackingUseCase: eyeTrackingUseCase,
+            createPresentationUseCase: createPresentationUseCase
         )
     }
   
@@ -66,7 +69,12 @@ final class AppDI {
         PracticeResultViewModel()
     }
     
+    func makePresentationListModalViewModel() -> PresentationListModalViewModel {
+        PresentationListModalViewModel()
+    }
+    
     func makeAddNewPresentationModalViewModel() -> AddNewPresentationModalViewModel {
         AddNewPresentationModalViewModel()
     }
+    
 }

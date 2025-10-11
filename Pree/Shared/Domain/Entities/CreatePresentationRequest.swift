@@ -7,10 +7,17 @@
 
 import Foundation
 
-struct CreatePresentationRequest: Encodable {
+struct CreatePresentationRequest: Encodable, Hashable{
     let presentationName: String
     let idealMinTime: Double
     let idealMaxTime: Double
     let showTimeOnScreen: Bool
     let showMeOnScreen: Bool
+}
+
+
+struct ResponseForNewPresentation: Codable {
+    var presentationId: String?
+    var presentationName: String?
+    var createdAt: String?
 }

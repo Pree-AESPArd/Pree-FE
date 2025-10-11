@@ -68,21 +68,15 @@ struct AddNewPresentationModalView: View {
                 title: "발표 영상 촬영하기",
                 action: {
                     modalManager.hideModal()
-                    vm.startRecording(navigationManager: navigationManager)
+                    let presentation = vm.startRecording()
+                    navigationManager.push(.camera(presentation: presentation))
+                    
                 },
                 isActive: vm.isValid
             )
             .safeAreaPadding(.bottom)
             .appPadding()
         }
-        //        .padding(.bottom, keyboardHeight)
-        //        // 키보드 높이가 변할 때마다 keyboardHeight 상태를 업데이트
-        //        .onReceive(Publishers.keyboardHeight) { height in
-        //            // 애니메이션과 함께 부드럽게 올라가도록 설정
-        //            withAnimation {
-        //                self.keyboardHeight = height
-        //            }
-        //        }
     } // View
     
     

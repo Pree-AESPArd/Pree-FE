@@ -19,4 +19,12 @@ struct MockAPIService: APIServiceProtocol {
         
         return mockData
     }
+    
+    func createPresentation(createPresentationRequest presentation: CreatePresentationRequest) async throws -> ResponseForNewPresentation {
+        return ResponseForNewPresentation(
+            presentationId: nil,
+            presentationName: nil,
+            createdAt: nil
+        )
+    }
 }

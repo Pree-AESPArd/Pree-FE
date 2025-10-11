@@ -8,6 +8,6 @@
 import CoreGraphics
 
 /// '날것의' 시선 좌표를 보정된 좌표로 매핑하는 역할을 정의하는 프로토콜
-protocol CalibrationService {
+public protocol CalibrationService {
     func calibratedPoint(for rawPoint: CGPoint) -> CGPoint
 }

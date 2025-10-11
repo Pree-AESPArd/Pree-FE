@@ -33,24 +33,27 @@ final class CameraViewModel: ObservableObject {
     private let screenBounds = UIScreen.main.bounds // 화면 경계
     private let edgeThreshold: CGFloat = 20 // 가장 자리 얼마 만큼 공간을 타이머가 멈추는 공간으로 설정할건지
     
-    private let startUseCase: StartScreenCaptureUseCase
-    private let stopUseCase: StopScreenCaptureUseCase
+    private let startUseCase: StartScreenCaptureUseCaseProtocol
+    private let stopUseCase: StopScreenCaptureUseCaseProtocol
     
-    private let eyeTrackingUseCase: EyeTrackingUseCase
+    private let createPresentationUseCase: CreatePresentationUseCase
     
+    private let eyeTrackingUseCase: EyeTrackingUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
     let arView: ARView
     
     public init(
-        start: StartScreenCaptureUseCase,
-        stop:  StopScreenCaptureUseCase,
-        eyeTrackingUseCase: EyeTrackingUseCase
+        start: StartScreenCaptureUseCaseProtocol,
+        stop:  StopScreenCaptureUseCaseProtocol,
+        eyeTrackingUseCase: EyeTrackingUseCaseProtocol,
+        createPresentationUseCase: CreatePresentationUseCase
     ) {
         self.startUseCase = start
         self.stopUseCase  = stop
         self.eyeTrackingUseCase = eyeTrackingUseCase
         self.arView = ARView(frame: .zero)
+        self.createPresentationUseCase = createPresentationUseCase
         self.eyeTrackingUseCase.gazePublisher
                     .receive(on: DispatchQueue.main)            // UI 업데이트는 메인 스레드
                     .assign(to: \.gazePoint, on: self)
@@ -218,4 +221,16 @@ final class CameraViewModel: ObservableObject {
                 })
         }
     }
+    
+    
+    func createPresentaion(newPresentation: CreatePresentationRequest) async {
+        // TODO: 에러 뜨면 화면에 경고창 띄우고 뒤로가기 해야 함
+        do {
+            let response = try await createPresentationUseCase.execute(CreatePresentationRequest: newPresentation)
+            debugPrint(response)
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+    
 }

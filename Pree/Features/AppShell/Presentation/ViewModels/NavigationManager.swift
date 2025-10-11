@@ -10,7 +10,7 @@ import SwiftUI
 
 enum ViewType: Hashable {
     case home
-    case camera
+    case camera(presentation: CreatePresentationRequest? = nil)
     case profile
     case presentationList
     case practiceResult
@@ -22,6 +22,11 @@ enum ViewType: Hashable {
 extension ViewType {
     var isCompleteRecording: Bool {
         if case .completeRecording = self { return true }
+        return false
+    }
+    
+    var isCamera: Bool {
+        if case .camera = self { return true }
         return false
     }
 }
