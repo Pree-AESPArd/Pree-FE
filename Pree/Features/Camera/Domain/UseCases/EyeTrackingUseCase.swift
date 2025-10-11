@@ -10,7 +10,7 @@ import RealityKit
 import Combine
 
 
-final class EyeTrackingUseCase {
+final class EyeTrackingUseCase: EyeTrackingUseCaseProtocol {
     
     private let eyeTrackingService: EyeTrackingService
     private var calibrationService: CalibrationService?

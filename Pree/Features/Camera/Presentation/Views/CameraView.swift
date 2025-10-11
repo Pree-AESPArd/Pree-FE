@@ -39,13 +39,30 @@ struct CameraView: View {
             }
             vm.resumeTracking()
             
+        }
+        .task {
             // 새롭게 발표를 생성할시 서버에 전송
             guard let newPresentation else { return }
-            vm.createPresentaion(newPresentation: newPresentation)
+            await vm.createPresentaion(newPresentation: newPresentation)
         }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false
             vm.stopTracking()
+        }
+        .alert("오류 발생", isPresented: Binding(
+            get: { vm.errorMessage != nil },
+            set: { _ in vm.errorMessage = nil }
+        )) {
+            Button("확인") {
+                // 경고창이 닫힐 때 필요한 추가 로직 (예: 뒤로가기)
+                // 현재는 경고창이 사라지면 에러 메시지를 nil로 만듭니다.
+                navigationManager.path.removeLast()
+            }
+        } message: {
+            // 경고창에 표시될 메시지
+            if let errorMessage = vm.errorMessage {
+                Text(errorMessage)
+            }
         }
         
     }

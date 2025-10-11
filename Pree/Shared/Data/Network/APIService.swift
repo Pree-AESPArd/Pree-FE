@@ -34,7 +34,7 @@ struct APIService {
             .value
     }
     
-    func createPresentation(createPresentationRequest presentation: CreatePresentationRequest) async throws -> Void {
+    func createPresentation(createPresentationRequest presentation: CreatePresentationRequest) async throws -> ResponseForNewPresentation {
         
         // HTTP Headers 설정 (필요한 경우)
         // 예를 들어, 인증 토큰을 전달할 때 사용
@@ -47,7 +47,7 @@ struct APIService {
         // Alamofire를 사용하여 POST 요청을 보냅니다.
         // 'requestData'는 인코딩되어 HTTP Body에 담깁니다.
         // '.validate()'는 응답 코드가 200-299 사이가 아닐 경우 에러를 발생시킵니다.
-        try await AF.request("\(url)/presentations",
+        let response = try await AF.request("\(url)/presentations",
                              method: .post,
                              parameters: presentation,
                              encoder: JSONParameterEncoder.default,
@@ -55,6 +55,9 @@ struct APIService {
         .validate(statusCode: 200..<300)
         .serializingDecodable(ResponseForNewPresentation.self)
         .value
+        
+        
+        return response
         
     }
     

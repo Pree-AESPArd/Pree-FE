@@ -88,16 +88,17 @@ class AddNewPresentationModalViewModel: ObservableObject {
         isValid = textFieldError == nil && timeError == nil
     }
     
-    func startRecording(navigationManager: NavigationManager) {
+    func startRecording() -> CreatePresentationRequest {
         
         guard let (minTime, maxTime) = timeStringToInt() else {
             timeError = "유효한 숫자를 입력해주세요"
-            return
+            // TODO: 여기 nil 반환시 값을 에러 처리
+            return CreatePresentationRequest(presentationName: "", idealMinTime: 0, idealMaxTime: 0, showTimeOnScreen: false, showMeOnScreen: false)
         }
         
         let presentation: CreatePresentationRequest = CreatePresentationRequest(presentationName: titleText, idealMinTime: Double(minTime), idealMaxTime: Double(maxTime), showTimeOnScreen: showTimeOnScreen, showMeOnScreen: showMeOnScreen)
         
-        navigationManager.push(.camera(presentation: presentation))
+        return presentation
         
         
     }

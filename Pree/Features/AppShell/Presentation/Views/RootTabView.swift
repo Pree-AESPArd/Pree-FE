@@ -41,8 +41,8 @@ struct RootTabView: View {
                     } // : navigationDestination
             } // : NavigationStack
             
-            if !(navigationManager.path.last == .camera() ||
-                  (navigationManager.path.last?.isCompleteRecording ?? false)) {
+            if !((navigationManager.path.last?.isCamera ?? false) ||
+                 (navigationManager.path.last?.isCompleteRecording ?? false)) {
                 CustomTabView()
             }
             

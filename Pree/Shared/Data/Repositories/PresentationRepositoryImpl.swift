@@ -19,4 +19,9 @@ struct PresentationRepositoryImpl: PresentationRepository {
         // TODO: DTO로 변경
         return presentaions
     }
+    
+    func createPresentation(createPresentationRequest: CreatePresentationRequest) async throws -> ResponseForNewPresentation {
+        let response = try await apiService.createPresentation(createPresentationRequest: createPresentationRequest)
+        return response
+    }
 }

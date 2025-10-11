@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 import ReplayKit
 
-public final class StartScreenCaptureUseCase {
+public final class StartScreenCaptureUseCase: StartScreenCaptureUseCaseProtocol {
   private let service: ScreenCaptureService
 
   public init(service: ScreenCaptureService) {

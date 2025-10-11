@@ -68,7 +68,9 @@ struct AddNewPresentationModalView: View {
                 title: "발표 영상 촬영하기",
                 action: {
                     modalManager.hideModal()
-                    vm.startRecording(navigationManager: navigationManager)
+                    let presentation = vm.startRecording()
+                    navigationManager.push(.camera(presentation: presentation))
+                    
                 },
                 isActive: vm.isValid
             )

@@ -24,6 +24,11 @@ extension ViewType {
         if case .completeRecording = self { return true }
         return false
     }
+    
+    var isCamera: Bool {
+        if case .camera = self { return true }
+        return false
+    }
 }
 
 final class NavigationManager: ObservableObject {
