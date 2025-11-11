@@ -22,6 +22,7 @@ struct CompleteView: View {
             
         }
         .navigationBarBackButtonHidden(true)
+        
     }
     
     private var waitngText: some View {
