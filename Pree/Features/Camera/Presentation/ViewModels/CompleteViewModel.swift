@@ -11,15 +11,19 @@ import Photos
 
 final class CompleteViewModel: ObservableObject {
     let videoURL: URL
+    let eyeTrackingRate: Int
     
-    init(videoURL: URL) {
+    init(videoURL: URL, eyeTrackingRate: Int) {
         self.videoURL = videoURL
+        self.eyeTrackingRate = eyeTrackingRate
     }
     
     @Published var isLoading: Bool = true
     @Published var errorMessage: String? = nil
     @Published var isSaveComplete: Bool = false
     @Published var isUploadComplete: Bool = false
+    
+    private var videoKey: String = "";
     
     // TODO: AppDI를 통해 주입받도록 수정
     // private let uploadAudioUseCase: UploadAudioUseCaseProtocol
@@ -31,13 +35,15 @@ final class CompleteViewModel: ObservableObject {
         Task {
             do {
                 // 1. 갤러리에 비디오 저장 (동시에 진행)
-                async let saveResult: Void = saveVideoToGallery()
+                async let saveResult: String = saveVideoToGallery()
                 
                 // 2. 오디오 추출 및 업로드 (동시에 진행)
                 async let uploadResult: Void = extractAndUploadAudio()
                 
                 // 두 작업이 모두 끝날 때까지 기다림
-                try await _ = (saveResult, uploadResult)
+                let (savedVideoID, _) = try await (saveResult, uploadResult)
+                
+                videoKey = savedVideoID
                 
                 // 모든 작업 완료
                 self.isLoading = false
@@ -52,19 +58,29 @@ final class CompleteViewModel: ObservableObject {
     }
     
     
-    private func saveVideoToGallery() async throws {
+    private func saveVideoToGallery() async throws -> String {
         let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
         
         guard status == .authorized else {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "저장 권한이 필요합니다."])
         }
         
+        var placeholder: PHObjectPlaceholder?
+        
         try await PHPhotoLibrary.shared().performChanges {
-            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.videoURL)
+            let request = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.videoURL)
+            
+            placeholder = request?.placeholderForCreatedAsset
         }
+        
+        guard let localIdentifier = placeholder?.localIdentifier else {
+            throw NSError(domain: "PhotoLibraryError", code: 10, userInfo: [NSLocalizedDescriptionKey: "비디오 저장 후 ID를 가져오는데 실패했습니다."])
+        }
+        
+        return localIdentifier
     }
     
-    
+    // TODO: 함수 이름 바꾸기, 오디오만 보내는게 아니니
     private func extractAndUploadAudio() async throws {
         // 1. 오디오 추출
         let audioURL = try await extractAudioFromVideo()
@@ -119,6 +135,7 @@ final class CompleteViewModel: ObservableObject {
     /// 추출된 오디오 파일을 서버로 업로드합니다.
     private func uploadAudio(url: URL) async throws {
         // TODO: 여기서 실제 UseCase를 호출하여 서버로 업로드합니다.
+        // TODO: practice도 같이 업로드
         // 예: try await uploadAudioUseCase.execute(fileURL: url)
         
         // --- 데모용 임시 코드 ---
@@ -127,6 +144,14 @@ final class CompleteViewModel: ObservableObject {
         try await Task.sleep(nanoseconds: 2_000_000_000) // 2초
         print("오디오 업로드 성공")
         // --- 데모용 임시 코드 끝 ---
+    }
+    
+    private func createPracticeModel() -> CreatePracticeAfterCreatePresentation {
+        return CreatePracticeAfterCreatePresentation.init(
+            userId: "userId",
+            videoKey: videoKey,
+            eyePercentage: eyeTrackingRate,
+        )
     }
     
 }

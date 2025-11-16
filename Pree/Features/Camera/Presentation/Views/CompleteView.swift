@@ -9,8 +9,7 @@ import SwiftUI
 
 
 struct CompleteView: View {
-    
-    let videoUrl: URL
+    @StateObject var vm: CompleteViewModel
     
     var body: some View {
         VStack(spacing: 20) {
@@ -22,6 +21,9 @@ struct CompleteView: View {
             
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            vm.processVideo()
+        }
         
     }
     

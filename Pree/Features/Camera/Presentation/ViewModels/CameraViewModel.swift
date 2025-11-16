@@ -21,6 +21,7 @@ final class CameraViewModel: ObservableObject {
     @Published var videoURL: URL?
     @Published var errorMessage: String?
     @Published var gazePoint: CGPoint = .zero // 시선이 닿은 화면 좌표 (UIKit 좌표계)
+    @Published var eyeTrackingRate: Int?;
     
     
     private var recordingTimer: Timer?
@@ -190,10 +191,22 @@ final class CameraViewModel: ObservableObject {
         eyeTrackingTimerString = "00:00"
     }
     
+    private func calculateEyeTrackingRate() -> Void {
+        // 👇 시작: 녹화 중단 시 비율 계산
+        var rate: Int = 0
+        if recordingTime > 0 { // 0으로 나누기 방지
+            // (시선 추적 시간 / 총 녹화 시간) * 100
+            rate = Int((eyeTrackingTime / recordingTime) * 100)
+        }
+        // 0% ~ 100% 사이로 값을 보정
+        self.eyeTrackingRate = max(0, min(100, rate))
+    }
+    
     func toggleCapture() {
         if isCapturing {
             self.isCapturing = false
             
+            calculateEyeTrackingRate() // 시선 비율 계산
             stopRecordingTimer()
             stopAndResetEyeTrackingTimer()
             stopUseCase.execute { result in
@@ -203,6 +216,7 @@ final class CameraViewModel: ObservableObject {
                         self.videoURL = url
                     case .failure(let err):
                         self.errorMessage = "\(err)"
+                        self.eyeTrackingRate = nil
                     }
                 }
             }
@@ -213,6 +227,7 @@ final class CameraViewModel: ObservableObject {
                     switch result {
                     case .success:
                         self.isCapturing = true
+                        self.eyeTrackingRate = nil
                         self.startRecordingTimer()
                         self.resumeEyeTrackingTimer()
                     case .failure(let err):

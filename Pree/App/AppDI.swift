@@ -77,4 +77,8 @@ final class AppDI {
         AddNewPresentationModalViewModel()
     }
     
+    func makeCompleteViewModel(videoUrl: URL, eyeTrackingRate: Int) -> CompleteViewModel {
+        CompleteViewModel(videoURL: videoUrl, eyeTrackingRate: eyeTrackingRate)
+    }
+    
 }

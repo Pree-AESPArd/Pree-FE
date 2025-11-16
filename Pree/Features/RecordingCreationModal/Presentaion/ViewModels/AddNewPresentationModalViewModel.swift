@@ -96,6 +96,7 @@ class AddNewPresentationModalViewModel: ObservableObject {
             return CreatePresentationRequest(presentationName: "", idealMinTime: 0, idealMaxTime: 0, showTimeOnScreen: false, showMeOnScreen: false)
         }
         
+        // 발표 객체 생성
         let presentation: CreatePresentationRequest = CreatePresentationRequest(presentationName: titleText, idealMinTime: Double(minTime), idealMaxTime: Double(maxTime), showTimeOnScreen: showTimeOnScreen, showMeOnScreen: showMeOnScreen)
         
         return presentation
