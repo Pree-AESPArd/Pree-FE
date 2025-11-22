@@ -23,11 +23,12 @@ final class AppDI {
     private let presentationRepository: PresentationRepository
     
     // 2) UseCases
-    let startCaptureUseCase: StartScreenCaptureUseCase
-    let stopCaptureUseCase: StopScreenCaptureUseCase
-    let eyeTrackingUseCase: EyeTrackingUseCase
-    private let fetchPresentationUseCase: FetchPresentationsUseCase
-    private let createPresentationUseCase: CreatePresentationUseCase
+    private let startCaptureUseCase: StartScreenCaptureUseCaseProtocol
+    private let stopCaptureUseCase: StopScreenCaptureUseCaseProtocol
+    private let eyeTrackingUseCase: EyeTrackingUseCaseProtocol
+    private let fetchPresentationUseCase: FetchPresentationsUseCaseProtocol
+    private let createPresentationUseCase: CreatePresentationUseCaseProtocol
+    private let uploadPracticeUseCase: UploadPracticeUseCaseProtocol
     
     
     private init() {
@@ -45,15 +46,17 @@ final class AppDI {
         self.eyeTrackingUseCase = EyeTrackingUseCase(service: eyeTrackingService)
         self.fetchPresentationUseCase = FetchPresentationsUseCase(presentationRepository: presentationRepository)
         self.createPresentationUseCase = CreatePresentationUseCase(presentationRepository: presentationRepository)
+        self.uploadPracticeUseCase = UploadPracticeUseCase(apiService: apiService)
     }
     
     // 3) ViewModel 팩토리
-    func makeCameraViewModel() -> CameraViewModel {
+    func makeCameraViewModel(newPresentation: CreatePresentationRequest?) -> CameraViewModel {
         CameraViewModel(
             start: startCaptureUseCase,
             stop:  stopCaptureUseCase,
             eyeTrackingUseCase: eyeTrackingUseCase,
-            createPresentationUseCase: createPresentationUseCase
+            createPresentationUseCase: createPresentationUseCase,
+            newPresentation: newPresentation
         )
     }
   
@@ -77,8 +80,13 @@ final class AppDI {
         AddNewPresentationModalViewModel()
     }
     
-    func makeCompleteViewModel(videoUrl: URL, eyeTrackingRate: Int) -> CompleteViewModel {
-        CompleteViewModel(videoURL: videoUrl, eyeTrackingRate: eyeTrackingRate)
+    func makeCompleteViewModel(videoUrl: URL, eyeTrackingRate: Int, practiceMode: PracticeMode, ) -> CompleteViewModel {
+        CompleteViewModel(
+            videoURL: videoUrl,
+            eyeTrackingRate: eyeTrackingRate,
+            practiceMode: practiceMode,
+            uploadUseCase: uploadPracticeUseCase
+        )
     }
     
 }

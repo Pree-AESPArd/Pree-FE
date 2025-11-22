@@ -12,10 +12,21 @@ import Photos
 final class CompleteViewModel: ObservableObject {
     let videoURL: URL
     let eyeTrackingRate: Int
+//    var isNewPresentationPractice: Bool
+    let practiceMode: PracticeMode
+    let uploadUseCase: UploadPracticeUseCaseProtocol
     
-    init(videoURL: URL, eyeTrackingRate: Int) {
+    init(
+        videoURL: URL,
+        eyeTrackingRate: Int,
+        practiceMode: PracticeMode,
+        uploadUseCase: UploadPracticeUseCaseProtocol
+    ) {
         self.videoURL = videoURL
         self.eyeTrackingRate = eyeTrackingRate
+//        self.isNewPresentationPractice = isNewPresentationPractice
+        self.practiceMode = practiceMode
+        self.uploadUseCase = uploadUseCase
     }
     
     @Published var isLoading: Bool = true
@@ -23,12 +34,14 @@ final class CompleteViewModel: ObservableObject {
     @Published var isSaveComplete: Bool = false
     @Published var isUploadComplete: Bool = false
     
+    
     private var videoKey: String = "";
     
     // TODO: AppDI를 통해 주입받도록 수정
     // private let uploadAudioUseCase: UploadAudioUseCaseProtocol
     
     
+    // TODO: 데이터를 어떤 순서로 어떻게 보낼건지 서버랑 합의해야함
     func processVideo() {
         isLoading = true
         
@@ -44,8 +57,16 @@ final class CompleteViewModel: ObservableObject {
                 let (savedVideoID, _) = try await (saveResult, uploadResult)
                 
                 videoKey = savedVideoID
+                // TODO: 새 발표의 영상인지 기존 발표의 영상인지에 따라 보내는게 달라짐
+//                try await uploadPracticeUseCase.execute(
+//                    mode: practiceMode,
+//                    videoKey: videoKey,
+//                    eyeTrackingRate: eyeTrackingRate,
+//                    audioURL: audioURL
+//                )
                 
                 // 모든 작업 완료
+//                try? FileManager.default.removeItem(at: audioURL)
                 self.isLoading = false
                 self.isSaveComplete = true
                 self.isUploadComplete = true // 리포트 화면 이동 트리거

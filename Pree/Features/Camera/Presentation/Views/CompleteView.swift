@@ -65,7 +65,7 @@ struct CircularLoadingView: View {
 
 
 
-#Preview {
-    let url: URL = URL(string: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")!
-    CompleteView(videoUrl: url)
-}
+//#Preview {
+//    let url: URL = URL(string: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")!
+//    CompleteView(videoUrl: url)
+//}

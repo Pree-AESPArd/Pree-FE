@@ -10,7 +10,7 @@ import ReplayKit
 import RealityKit
 import Combine
 
-public protocol EyeTrackingUseCaseProtocol {
+protocol EyeTrackingUseCaseProtocol {
     func setCalibration(calibrationService: CalibrationService)
     func start(in arView: ARView) throws
     func stop()

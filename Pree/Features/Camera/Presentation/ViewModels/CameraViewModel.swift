@@ -23,6 +23,21 @@ final class CameraViewModel: ObservableObject {
     @Published var gazePoint: CGPoint = .zero // 시선이 닿은 화면 좌표 (UIKit 좌표계)
     @Published var eyeTrackingRate: Int?;
     
+    // 새로 발표 생성하고 만드는 영상인지 기존 발표 영상 녹화인지
+    let newPresentation: CreatePresentationRequest?
+    
+    var currentPracticeMode: PracticeMode {
+        if let newPresentation = self.newPresentation {
+            // 새 발표 생성 모드
+            // TODO: 실제 User ID를 어디선가 가져와야 함 (UserManager 등)
+            return .newCreation(userId: "temp_user_id")
+        } else {
+            // 기존 발표 추가 모드
+            // TODO: 기존 발표라면 init에서 presentationId를 받아왔어야 함
+            return .additional(presentationId: "temp_presentation_id")
+        }
+    }
+    
     
     private var recordingTimer: Timer?
     private var recordingTime: TimeInterval = 0
@@ -37,7 +52,7 @@ final class CameraViewModel: ObservableObject {
     private let startUseCase: StartScreenCaptureUseCaseProtocol
     private let stopUseCase: StopScreenCaptureUseCaseProtocol
     
-    private let createPresentationUseCase: CreatePresentationUseCase
+    private let createPresentationUseCase: CreatePresentationUseCaseProtocol
     
     private let eyeTrackingUseCase: EyeTrackingUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
@@ -48,13 +63,15 @@ final class CameraViewModel: ObservableObject {
         start: StartScreenCaptureUseCaseProtocol,
         stop:  StopScreenCaptureUseCaseProtocol,
         eyeTrackingUseCase: EyeTrackingUseCaseProtocol,
-        createPresentationUseCase: CreatePresentationUseCase
+        createPresentationUseCase: CreatePresentationUseCaseProtocol,
+        newPresentation: CreatePresentationRequest?
     ) {
         self.startUseCase = start
         self.stopUseCase  = stop
         self.eyeTrackingUseCase = eyeTrackingUseCase
         self.arView = ARView(frame: .zero)
         self.createPresentationUseCase = createPresentationUseCase
+        self.newPresentation = newPresentation
         self.eyeTrackingUseCase.gazePublisher
                     .receive(on: DispatchQueue.main)            // UI 업데이트는 메인 스레드
                     .assign(to: \.gazePoint, on: self)
@@ -238,10 +255,11 @@ final class CameraViewModel: ObservableObject {
     }
     
     
-    func createPresentaion(newPresentation: CreatePresentationRequest) async {
+    func createPresentaionIfNotNull() async {
         // TODO: 에러 뜨면 화면에 경고창 띄우고 뒤로가기 해야 함
+        guard let presentation = newPresentation else {return}
         do {
-            let response = try await createPresentationUseCase.execute(CreatePresentationRequest: newPresentation)
+            let response = try await createPresentationUseCase.execute(CreatePresentationRequest: presentation)
             debugPrint(response)
         } catch {
             self.errorMessage = error.localizedDescription

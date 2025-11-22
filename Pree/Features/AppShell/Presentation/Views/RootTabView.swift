@@ -14,7 +14,7 @@ struct RootTabView: View {
     @StateObject private var modalManager = ModalManager.shared
     
     let homeViewModel = AppDI.shared.makeHomeViewModel()
-    let cameraViewModel = AppDI.shared.makeCameraViewModel()
+//    let cameraViewModel = AppDI.shared.makeCameraViewModel()
     let presnetationListViewModel = AppDI.shared.makePresnetationListViewModel()
     let practiceResultViewModel = AppDI.shared.makePracticeResultViewModel()
     
@@ -25,7 +25,8 @@ struct RootTabView: View {
                     .navigationDestination(for: ViewType.self) { path in
                         switch path {
                         case .camera(let presentation):
-                            CameraView(vm: cameraViewModel, newPresentation: presentation)
+                            let cameraViewModel = AppDI.shared.makeCameraViewModel(newPresentation: presentation)
+                            CameraView(vm: cameraViewModel)
                             //                                .toolbarVisibility(.hidden, for: .tabBar)
                         case .home:
                             HomeView(vm: homeViewModel)
@@ -35,8 +36,12 @@ struct RootTabView: View {
                             PresentaionListView(vm: presnetationListViewModel)
                         case .practiceResult:
                             PracticeResultView(vm: practiceResultViewModel)
-                        case .completeRecording(let url, let eyeTrackingRate):
-                            CompleteView(vm: AppDI.shared.makeCompleteViewModel(videoUrl: url, eyeTrackingRate: eyeTrackingRate))
+                        case .completeRecording(let url, let eyeTrackingRate, let mode):
+                            let completeViewModel = AppDI.shared.makeCompleteViewModel(
+                                videoUrl: url,
+                                eyeTrackingRate: eyeTrackingRate,
+                                practiceMode: mode)
+                            CompleteView(vm: completeViewModel)
                         }
                     } // : navigationDestination
             } // : NavigationStack

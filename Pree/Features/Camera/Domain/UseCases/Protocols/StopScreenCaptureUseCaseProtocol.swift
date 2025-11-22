@@ -10,6 +10,6 @@ import ReplayKit
 import RealityKit
 import Combine
 
-public protocol StopScreenCaptureUseCaseProtocol {
+protocol StopScreenCaptureUseCaseProtocol {
     func execute(completion: @escaping (Result<URL, ScreenCaptureError>) -> Void)
 }

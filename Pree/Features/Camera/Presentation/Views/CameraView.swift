@@ -10,12 +10,15 @@ import RealityKit
 import ARKit
 import Combine
 
+// TODO: 1. 새 연습 생성과 발표 생성 후 새 연습 생성 분기 처리하기
+// TODO: 2. CameraView에 데이터 넘기지 말고 viewmodel에 넣어서 viewmodel을 넘기기
+
 struct CameraView: View {
     @StateObject var vm: CameraViewModel
     @EnvironmentObject var navigationManager: NavigationManager
     @StateObject private var overlayManager = OverlayWindowManager()
     
-    let newPresentation: CreatePresentationRequest?
+//    let newPresentation: CreatePresentationRequest?
     
     var body: some View {
         
@@ -42,8 +45,8 @@ struct CameraView: View {
         }
         .task {
             // 새롭게 발표를 생성할시 서버에 전송
-            guard let newPresentation else { return }
-            await vm.createPresentaion(newPresentation: newPresentation)
+            // 새로운 발표가 아니라 기존 발표에서 새 영상 찍는거면 아무것도 안함
+            await vm.createPresentaionIfNotNull()
         }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false

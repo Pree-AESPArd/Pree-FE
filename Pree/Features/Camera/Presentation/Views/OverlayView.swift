@@ -101,7 +101,7 @@ struct OverlayView: View {
                     .onChange(of: vm.videoURL) {
                         if let url = vm.videoURL, let rate = vm.eyeTrackingRate {
                             overlayManager.hide()
-                            navigationManager.push(.completeRecording(url: url, eyeTrackingRate: rate))
+                            navigationManager.push(.completeRecording(url: url, eyeTrackingRate: rate, mode: vm.currentPracticeMode))
                         }
                     }
                 }
