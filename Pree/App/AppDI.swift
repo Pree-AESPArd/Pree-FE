@@ -46,7 +46,7 @@ final class AppDI {
         self.eyeTrackingUseCase = EyeTrackingUseCase(service: eyeTrackingService)
         self.fetchPresentationUseCase = FetchPresentationsUseCase(presentationRepository: presentationRepository)
         self.createPresentationUseCase = CreatePresentationUseCase(presentationRepository: presentationRepository)
-        self.uploadPracticeUseCase = UploadPracticeUseCase(apiService: apiService)
+        self.uploadPracticeUseCase = UploadPracticeUseCase()
     }
     
     // 3) ViewModel 팩토리

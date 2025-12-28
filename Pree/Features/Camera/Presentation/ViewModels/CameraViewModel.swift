@@ -259,7 +259,7 @@ final class CameraViewModel: ObservableObject {
         // TODO: 에러 뜨면 화면에 경고창 띄우고 뒤로가기 해야 함
         guard let presentation = newPresentation else {return}
         do {
-            let response = try await createPresentationUseCase.execute(CreatePresentationRequest: presentation)
+            let response = try await createPresentationUseCase.execute(presentation: presentation)
             debugPrint(response)
         } catch {
             self.errorMessage = error.localizedDescription

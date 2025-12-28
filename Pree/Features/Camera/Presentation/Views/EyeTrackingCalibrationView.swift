@@ -143,7 +143,7 @@ struct EyeTrackingCalibrationView: View {
 
 
 
-#Preview {
-    let vm = AppDI.shared.makeCameraViewModel()
-    EyeTrackingCalibrationView(vm: vm)
-}
+//#Preview {
+//    let vm = AppDI.shared.makeCameraViewModel()
+//    EyeTrackingCalibrationView(vm: vm)
+//}

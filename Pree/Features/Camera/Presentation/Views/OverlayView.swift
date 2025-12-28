@@ -165,9 +165,9 @@ struct OverlayView: View {
 
 
 
-#Preview {
-    let vm = AppDI.shared.makeCameraViewModel()
-    let overlayManager = OverlayWindowManager()
-    OverlayView(vm: vm, overlayManager: overlayManager)
-        .environmentObject(NavigationManager())
-}
+//#Preview {
+//    let vm = AppDI.shared.makeCameraViewModel()
+//    let overlayManager = OverlayWindowManager()
+//    OverlayView(vm: vm, overlayManager: overlayManager)
+//        .environmentObject(NavigationManager())
+//}
