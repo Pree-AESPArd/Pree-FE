@@ -25,8 +25,8 @@ struct RootTabView: View {
                     .navigationDestination(for: ViewType.self) { path in
                         switch path {
                         case .camera(let presentation):
-                            let cameraViewModel = AppDI.shared.makeCameraViewModel(newPresentation: presentation)
-                            CameraView(vm: cameraViewModel)
+                            //let cameraViewModel = AppDI.shared.makeCameraViewModel(newPresentation: presentation) 이 방식 쓰면 매번 재실행되면서 새로운 ARView와 ARSession 만들어져서 메모리 에러 남
+                            CameraView(presentation: presentation)
                             //                                .toolbarVisibility(.hidden, for: .tabBar)
                         case .home:
                             HomeView(vm: homeViewModel)
@@ -37,11 +37,7 @@ struct RootTabView: View {
                         case .practiceResult:
                             PracticeResultView(vm: practiceResultViewModel)
                         case .completeRecording(let url, let eyeTrackingRate, let mode):
-                            let completeViewModel = AppDI.shared.makeCompleteViewModel(
-                                videoUrl: url,
-                                eyeTrackingRate: eyeTrackingRate,
-                                practiceMode: mode)
-                            CompleteView(vm: completeViewModel)
+                            CompleteView(videoUrl: url, eyeTrackingRate: rate, practiceMode: mode)
                         }
                     } // : navigationDestination
             } // : NavigationStack

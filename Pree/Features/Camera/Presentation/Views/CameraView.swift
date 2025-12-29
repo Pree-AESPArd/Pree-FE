@@ -10,15 +10,17 @@ import RealityKit
 import ARKit
 import Combine
 
-// TODO: 1. 새 연습 생성과 발표 생성 후 새 연습 생성 분기 처리하기
-// TODO: 2. CameraView에 데이터 넘기지 말고 viewmodel에 넣어서 viewmodel을 넘기기
-
 struct CameraView: View {
     @StateObject var vm: CameraViewModel
     @EnvironmentObject var navigationManager: NavigationManager
     @StateObject private var overlayManager = OverlayWindowManager()
     
-//    let newPresentation: CreatePresentationRequest?
+    // viewmodel을 RootTabView가 아니라 View에서 만드는 이유:
+    // 생명주기를 SwiftUI가 직접 관리하면서 화면이 떠 있는 동안 한번만 ViewModel이 생성되게 하기 위해서
+    // navigationDestination의 클로저는 화면 상태가 변경되어 다시 그려질때 재실행 가능성 높음
+    init(presentation: CreatePresentationRequest?) {
+        _vm = StateObject(wrappedValue: AppDI.shared.makeCameraViewModel(newPresentation: presentation))
+    }
     
     var body: some View {
         

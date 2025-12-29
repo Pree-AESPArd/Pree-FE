@@ -57,11 +57,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0C8C03312E37753B003FD18F /* Docs */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Docs;
-			sourceTree = "<group>";
-		};
 		0CBCCB752E324DF90094475A /* Pree */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -120,7 +115,6 @@
 		0CBCCB6A2E324DF90094475A = {
 			isa = PBXGroup;
 			children = (
-				0C8C03312E37753B003FD18F /* Docs */,
 				0CBCCBA92E324F530094475A /* Config */,
 				0CBCCBA02E324E1E0094475A /* .gitignore */,
 				0CBCCB752E324DF90094475A /* Pree */,
@@ -166,7 +160,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				0C8C03312E37753B003FD18F /* Docs */,
 				0CBCCB752E324DF90094475A /* Pree */,
 				0CBCCBA92E324F530094475A /* Config */,
 			);

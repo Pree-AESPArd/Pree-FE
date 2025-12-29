@@ -51,7 +51,11 @@ struct PresentationListModalView: View {
                     modalManager.hideModal()
                     
                     // 영상 촬영 화면으로 넘어감
-                    navigationManager.push(.camera())
+//                    navigationManager.push(.camera())
+                    // 모달이 완전히 닫힌 후 카메라를 띄우도록 약간의 딜레이
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            navigationManager.push(.camera())
+                        }
                 },
                 isActive: vm.isValid
             )
