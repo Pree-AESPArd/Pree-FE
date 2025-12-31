@@ -37,7 +37,7 @@ struct RootTabView: View {
                         case .practiceResult:
                             PracticeResultView(vm: practiceResultViewModel)
                         case .completeRecording(let url, let eyeTrackingRate, let mode):
-                            CompleteView(videoUrl: url, eyeTrackingRate: rate, practiceMode: mode)
+                            CompleteView(videoUrl: url, eyeTrackingRate: eyeTrackingRate, practiceMode: mode)
                         }
                     } // : navigationDestination
             } // : NavigationStack
