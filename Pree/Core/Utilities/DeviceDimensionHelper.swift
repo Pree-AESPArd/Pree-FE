@@ -10,32 +10,136 @@ import UIKit
 struct DeviceDimensionHelper {
     
     // 기기의 물리적 가로, 세로 길이 (단위: 미터)
-    // 최신 아이폰 모델들의 대략적인 화면 크기입니다.
-    // 정확도를 높이려면 더 많은 모델을 추가해야 합니다.
     static func getPhysicalSize() -> CGSize {
         let modelName = UIDevice.modelName
         
         switch modelName {
-        
-        // iPhone 16
-        case "iPhone17,3":
+            
+        // MARK: - iPhone 17 Series & Air
+        case "iPhone18,2": // iPhone 17 Pro Max
+            return CGSize(width: 0.0780, height: 0.1634)
+            
+        case "iPhone18,1": // iPhone 17 Pro
+            return CGSize(width: 0.0719, height: 0.1500)
+            
+        case "iPhone18,3": // iPhone 17
+            return CGSize(width: 0.0715, height: 0.1496)
+            
+        case "iPhone18,4": // iPhone Air
+            return CGSize(width: 0.0747, height: 0.1562)
+
+            
+        // MARK: - iPhone 16 Series
+        case "iPhone17,2": // iPhone 16 Pro Max
+            return CGSize(width: 0.0776, height: 0.1630)
+            
+        case "iPhone17,1": // iPhone 16 Pro
+            return CGSize(width: 0.0715, height: 0.1496)
+            
+        case "iPhone17,4": // iPhone 16 Plus
+            return CGSize(width: 0.0778, height: 0.1609)
+            
+        case "iPhone17,3": // iPhone 16
             return CGSize(width: 0.0716, height: 0.1476)
             
-        // iPhone 14 Pro, 15 Pro, 16 Pro (6.1 inch)
-        case "iPhone15,2", "iPhone16,1", "iPhone17,1":
-            return CGSize(width: 0.0715, height: 0.1475)
+        case "iPhone17,5": // iPhone 16e
+            return CGSize(width: 0.0716, height: 0.1476)
             
-        // iPhone 14 Pro Max, 15 Pro Max (6.7 inch)
-        case "iPhone15,3", "iPhone16,2":
+            
+        // MARK: - iPhone 15 Series
+        case "iPhone16,2": // iPhone 15 Pro Max
+            return CGSize(width: 0.0767, height: 0.1599)
+            
+        case "iPhone16,1": // iPhone 15 Pro
+            return CGSize(width: 0.0706, height: 0.1466)
+            
+        case "iPhone15,5": // iPhone 15 Plus
+            return CGSize(width: 0.0778, height: 0.1609)
+            
+        case "iPhone15,4": // iPhone 15
+            return CGSize(width: 0.0716, height: 0.1476)
+            
+            
+        // MARK: - iPhone 14 Series
+        case "iPhone15,3": // iPhone 14 Pro Max
             return CGSize(width: 0.0776, height: 0.1607)
             
-        // iPhone 13, 14 (6.1 inch)
-        case "iPhone14,5", "iPhone14,7":
+        case "iPhone15,2": // iPhone 14 Pro
+            return CGSize(width: 0.0715, height: 0.1475)
+            
+        case "iPhone14,8": // iPhone 14 Plus
+            return CGSize(width: 0.0781, height: 0.1608)
+            
+        case "iPhone14,7": // iPhone 14
             return CGSize(width: 0.0715, height: 0.1467)
             
-        // 기본값 (iPhone 14 Pro 기준) - 알 수 없는 기기일 때 사용
+            
+        // MARK: - iPhone 13 Series
+        case "iPhone14,3": // iPhone 13 Pro Max
+            return CGSize(width: 0.0781, height: 0.1608)
+            
+        case "iPhone14,2": // iPhone 13 Pro
+            return CGSize(width: 0.0715, height: 0.1467)
+            
+        case "iPhone14,5": // iPhone 13
+            return CGSize(width: 0.0715, height: 0.1467)
+            
+        case "iPhone14,4": // iPhone 13 Mini
+            return CGSize(width: 0.0642, height: 0.1315)
+            
+            
+        // MARK: - iPhone 12 Series
+        case "iPhone13,4": // iPhone 12 Pro Max
+            return CGSize(width: 0.0781, height: 0.1608)
+            
+        case "iPhone13,3": // iPhone 12 Pro
+            return CGSize(width: 0.0715, height: 0.1467)
+            
+        case "iPhone13,2": // iPhone 12
+            return CGSize(width: 0.0715, height: 0.1467)
+            
+        case "iPhone13,1": // iPhone 12 Mini
+            return CGSize(width: 0.0642, height: 0.1315)
+            
+            
+        // MARK: - iPhone 11 Series
+        case "iPhone12,5": // iPhone 11 Pro Max
+            return CGSize(width: 0.0778, height: 0.1580)
+            
+        case "iPhone12,3": // iPhone 11 Pro
+            return CGSize(width: 0.0714, height: 0.1440)
+            
+        case "iPhone12,1": // iPhone 11
+            return CGSize(width: 0.0757, height: 0.1509)
+            
+            
+        // MARK: - X / XS / XR Series
+        case "iPhone11,6", "iPhone11,4": // iPhone XS Max
+            return CGSize(width: 0.0774, height: 0.1575)
+            
+        case "iPhone11,2": // iPhone XS
+            return CGSize(width: 0.0709, height: 0.1436)
+            
+        case "iPhone11,8": // iPhone XR
+            return CGSize(width: 0.0757, height: 0.1509)
+            
+        case "iPhone10,3", "iPhone10,6": // iPhone X
+            return CGSize(width: 0.0709, height: 0.1436)
+            
+            
+        // MARK: - SE Series
+        case "iPhone14,6": // iPhone SE (3rd generation)
+            return CGSize(width: 0.0673, height: 0.1384)
+            
+        case "iPhone12,8": // iPhone SE (2nd generation)
+            return CGSize(width: 0.0673, height: 0.1384)
+            
+            
+        // MARK: - Default (Unknown Device)
         default:
-            return CGSize(width: 0.0715, height: 0.1475)
+            // 알 수 없는 기기일 경우, 가장 일반적인 크기(15/16 Pro급)를 기본값으로 사용
+            //print("⚠️ 알 수 없는 기기 모델: \(modelName). 기본값을 사용합니다.")
+            return CGSize(width: 0.0715, height: 0.1496)
         }
     }
 }
