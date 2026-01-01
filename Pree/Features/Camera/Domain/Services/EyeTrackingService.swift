@@ -20,5 +20,4 @@ public protocol EyeTrackingService {
     /// A Combine publisher that emits every time the user’s gaze moves on‐screen.
     var gazePublisher: AnyPublisher<CGPoint, Never> { get }
     
-    var currentFaceAnchor: ARFaceAnchor? { get } // ML 때문에 추가
 }
