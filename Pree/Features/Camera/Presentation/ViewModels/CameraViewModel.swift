@@ -21,6 +21,22 @@ final class CameraViewModel: ObservableObject {
     @Published var videoURL: URL?
     @Published var errorMessage: String?
     @Published var gazePoint: CGPoint = .zero // 시선이 닿은 화면 좌표 (UIKit 좌표계)
+    @Published var eyeTrackingRate: Int?;
+    
+    // 새로 발표 생성하고 만드는 영상인지 기존 발표 영상 녹화인지
+    let newPresentation: CreatePresentationRequest?
+    
+    var currentPracticeMode: PracticeMode {
+        if let newPresentation = self.newPresentation {
+            // 새 발표 생성 모드
+            // TODO: 실제 User ID를 어디선가 가져와야 함 (UserManager 등)
+            return .newCreation(userId: "temp_user_id")
+        } else {
+            // 기존 발표 추가 모드
+            // TODO: 기존 발표라면 init에서 presentationId를 받아왔어야 함
+            return .additional(presentationId: "temp_presentation_id")
+        }
+    }
     
     
     private var recordingTimer: Timer?
@@ -36,7 +52,7 @@ final class CameraViewModel: ObservableObject {
     private let startUseCase: StartScreenCaptureUseCaseProtocol
     private let stopUseCase: StopScreenCaptureUseCaseProtocol
     
-    private let createPresentationUseCase: CreatePresentationUseCase
+    private let createPresentationUseCase: CreatePresentationUseCaseProtocol
     
     private let eyeTrackingUseCase: EyeTrackingUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
@@ -47,13 +63,15 @@ final class CameraViewModel: ObservableObject {
         start: StartScreenCaptureUseCaseProtocol,
         stop:  StopScreenCaptureUseCaseProtocol,
         eyeTrackingUseCase: EyeTrackingUseCaseProtocol,
-        createPresentationUseCase: CreatePresentationUseCase
+        createPresentationUseCase: CreatePresentationUseCaseProtocol,
+        newPresentation: CreatePresentationRequest?
     ) {
         self.startUseCase = start
         self.stopUseCase  = stop
         self.eyeTrackingUseCase = eyeTrackingUseCase
         self.arView = ARView(frame: .zero)
         self.createPresentationUseCase = createPresentationUseCase
+        self.newPresentation = newPresentation
         self.eyeTrackingUseCase.gazePublisher
                     .receive(on: DispatchQueue.main)            // UI 업데이트는 메인 스레드
                     .assign(to: \.gazePoint, on: self)
@@ -91,18 +109,21 @@ final class CameraViewModel: ObservableObject {
         }
     }
     
-    
+    // 사용자가 9개 점을 다 보고 났을 때 한 번 실행되는 로직
+    // 수집된 시선 데이터(samples)와 정답(targets)을 가지고 CalibrationServiceImpl을 만듬
     func processAndStoreCalibration(targets: [CGPoint], samples: [[CGPoint]]) {
-        // 직접 OffsetCalibration 모델을 생성합니다.
+        // 1. 여기서 오차 계산 (이상치 제거, 평균 계산 등)
         if let offsetModel = CalibrationServiceImpl(targets: targets, samples: samples) {
-            print("✅ Offset Calibration successful!")
             
+            // 2. 계산된 모델을 UseCase에 장착!
+            // 이 모델을 사용해 좌표를 수정하게 됨
             self.eyeTrackingUseCase.setCalibration(calibrationService: offsetModel)
             
-            self.eyeTrackingUseCase.setFinalAdjustment(x: 15.0, y: -5.0) 
+            // 3. 수동 오프셋도 추가 적용
+            self.eyeTrackingUseCase.setFinalAdjustment(x: 0, y: 0)
             
         } else {
-            print("❌ Offset Calibration failed.")
+            //print("❌ Offset Calibration failed.")
             self.errorMessage = "Calibration failed. Please try again."
         }
     }
@@ -190,10 +211,22 @@ final class CameraViewModel: ObservableObject {
         eyeTrackingTimerString = "00:00"
     }
     
+    private func calculateEyeTrackingRate() -> Void {
+        // 시작: 녹화 중단 시 비율 계산
+        var rate: Int = 0
+        if recordingTime > 0 { // 0으로 나누기 방지
+            // (시선 추적 시간 / 총 녹화 시간) * 100
+            rate = Int((eyeTrackingTime / recordingTime) * 100)
+        }
+        // 0% ~ 100% 사이로 값을 보정
+        self.eyeTrackingRate = max(0, min(100, rate))
+    }
+    
     func toggleCapture() {
         if isCapturing {
             self.isCapturing = false
             
+            calculateEyeTrackingRate() // 시선 비율 계산
             stopRecordingTimer()
             stopAndResetEyeTrackingTimer()
             stopUseCase.execute { result in
@@ -203,6 +236,7 @@ final class CameraViewModel: ObservableObject {
                         self.videoURL = url
                     case .failure(let err):
                         self.errorMessage = "\(err)"
+                        self.eyeTrackingRate = nil
                     }
                 }
             }
@@ -213,6 +247,7 @@ final class CameraViewModel: ObservableObject {
                     switch result {
                     case .success:
                         self.isCapturing = true
+                        self.eyeTrackingRate = nil
                         self.startRecordingTimer()
                         self.resumeEyeTrackingTimer()
                     case .failure(let err):
@@ -223,14 +258,16 @@ final class CameraViewModel: ObservableObject {
     }
     
     
-    func createPresentaion(newPresentation: CreatePresentationRequest) async {
+    func createPresentaionIfNotNull() async {
         // TODO: 에러 뜨면 화면에 경고창 띄우고 뒤로가기 해야 함
+        guard let presentation = newPresentation else {return}
         do {
-            let response = try await createPresentationUseCase.execute(CreatePresentationRequest: newPresentation)
+            let response = try await createPresentationUseCase.execute(presentation: presentation)
             debugPrint(response)
         } catch {
             self.errorMessage = error.localizedDescription
         }
     }
+    
     
 }

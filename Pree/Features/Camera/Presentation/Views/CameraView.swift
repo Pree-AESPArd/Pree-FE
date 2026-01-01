@@ -15,7 +15,12 @@ struct CameraView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @StateObject private var overlayManager = OverlayWindowManager()
     
-    let newPresentation: CreatePresentationRequest?
+    // viewmodel을 RootTabView가 아니라 View에서 만드는 이유:
+    // 생명주기를 SwiftUI가 직접 관리하면서 화면이 떠 있는 동안 한번만 ViewModel이 생성되게 하기 위해서
+    // navigationDestination의 클로저는 화면 상태가 변경되어 다시 그려질때 재실행 가능성 높음
+    init(presentation: CreatePresentationRequest?) {
+        _vm = StateObject(wrappedValue: AppDI.shared.makeCameraViewModel(newPresentation: presentation))
+    }
     
     var body: some View {
         
@@ -42,8 +47,8 @@ struct CameraView: View {
         }
         .task {
             // 새롭게 발표를 생성할시 서버에 전송
-            guard let newPresentation else { return }
-            await vm.createPresentaion(newPresentation: newPresentation)
+            // 새로운 발표가 아니라 기존 발표에서 새 영상 찍는거면 아무것도 안함
+            await vm.createPresentaionIfNotNull()
         }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false

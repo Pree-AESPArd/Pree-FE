@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct FetchPresentationsUseCase {
+struct FetchPresentationsUseCase: FetchPresentationsUseCaseProtocol {
     let presentationRepository: PresentationRepository
     
     func execute() async throws -> [Presentation] {

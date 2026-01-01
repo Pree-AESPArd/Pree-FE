@@ -14,7 +14,7 @@ enum ViewType: Hashable {
     case profile
     case presentationList
     case practiceResult
-    case completeRecording(url: URL)
+    case completeRecording(url: URL, eyeTrackingRate: Int, mode: PracticeMode)
 }
 
 // path에서 현재 completeView에 있는지 확인하기 위함

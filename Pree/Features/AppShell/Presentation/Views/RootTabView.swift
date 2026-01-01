@@ -14,7 +14,7 @@ struct RootTabView: View {
     @StateObject private var modalManager = ModalManager.shared
     
     let homeViewModel = AppDI.shared.makeHomeViewModel()
-    let cameraViewModel = AppDI.shared.makeCameraViewModel()
+//    let cameraViewModel = AppDI.shared.makeCameraViewModel()
     let presnetationListViewModel = AppDI.shared.makePresnetationListViewModel()
     let practiceResultViewModel = AppDI.shared.makePracticeResultViewModel()
     
@@ -25,7 +25,8 @@ struct RootTabView: View {
                     .navigationDestination(for: ViewType.self) { path in
                         switch path {
                         case .camera(let presentation):
-                            CameraView(vm: cameraViewModel, newPresentation: presentation)
+                            //let cameraViewModel = AppDI.shared.makeCameraViewModel(newPresentation: presentation) 이 방식 쓰면 매번 재실행되면서 새로운 ARView와 ARSession 만들어져서 메모리 에러 남
+                            CameraView(presentation: presentation)
                             //                                .toolbarVisibility(.hidden, for: .tabBar)
                         case .home:
                             HomeView(vm: homeViewModel)
@@ -35,8 +36,8 @@ struct RootTabView: View {
                             PresentaionListView(vm: presnetationListViewModel)
                         case .practiceResult:
                             PracticeResultView(vm: practiceResultViewModel)
-                        case .completeRecording(let url):
-                            CompleteView(videoUrl: url)
+                        case .completeRecording(let url, let eyeTrackingRate, let mode):
+                            CompleteView(videoUrl: url, eyeTrackingRate: eyeTrackingRate, practiceMode: mode)
                         }
                     } // : navigationDestination
             } // : NavigationStack

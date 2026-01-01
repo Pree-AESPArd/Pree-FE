@@ -9,8 +9,17 @@ import SwiftUI
 
 
 struct CompleteView: View {
+    @StateObject var vm: CompleteViewModel
     
-    let videoUrl: URL
+    
+    init(videoUrl: URL, eyeTrackingRate: Int, practiceMode: PracticeMode) {
+        // _vm을 통해 StateObject의 초기값을 안전하게 설정
+        self._vm = StateObject(wrappedValue: AppDI.shared.makeCompleteViewModel(
+            videoUrl: videoUrl,
+            eyeTrackingRate: eyeTrackingRate,
+            practiceMode: practiceMode
+        ))
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -22,6 +31,10 @@ struct CompleteView: View {
             
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            vm.processVideo()
+        }
+        
     }
     
     private var waitngText: some View {
@@ -62,7 +75,7 @@ struct CircularLoadingView: View {
 
 
 
-#Preview {
-    let url: URL = URL(string: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")!
-    CompleteView(videoUrl: url)
-}
+//#Preview {
+//    let url: URL = URL(string: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")!
+//    CompleteView(videoUrl: url)
+//}

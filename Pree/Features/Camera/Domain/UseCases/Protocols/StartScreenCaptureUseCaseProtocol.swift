@@ -8,6 +8,6 @@
 import Foundation
 
 // StartScreenCaptureUseCase 프로토콜
-public protocol StartScreenCaptureUseCaseProtocol {
+protocol StartScreenCaptureUseCaseProtocol {
     func execute(completion: @escaping (Result<Void, ScreenCaptureError>) -> Void)
 }

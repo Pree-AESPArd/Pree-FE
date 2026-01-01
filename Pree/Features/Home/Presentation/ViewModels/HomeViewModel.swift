@@ -27,9 +27,9 @@ final class HomeViewModel: ObservableObject {
     
     @Published var score: Double = 0.2
     
-    private let fetchPresentationsUseCase: FetchPresentationsUseCase
+    private let fetchPresentationsUseCase: FetchPresentationsUseCaseProtocol
     
-    init(fetchPresentationsUseCase: FetchPresentationsUseCase) {
+    init(fetchPresentationsUseCase: FetchPresentationsUseCaseProtocol) {
         self.fetchPresentationsUseCase = fetchPresentationsUseCase
     }
     

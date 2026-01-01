@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class CreatePresentationUseCase {
+struct CreatePresentationUseCase: CreatePresentationUseCaseProtocol {
     
     private let presentationRepository: PresentationRepository
     
@@ -15,7 +15,7 @@ public final class CreatePresentationUseCase {
         self.presentationRepository = presentationRepository
     }
     
-    func execute(CreatePresentationRequest presentation: CreatePresentationRequest) async throws -> ResponseForNewPresentation {
+    func execute(presentation: CreatePresentationRequest) async throws -> ResponseForNewPresentation {
         do {
             let response = try await presentationRepository.createPresentation(createPresentationRequest: presentation)
             

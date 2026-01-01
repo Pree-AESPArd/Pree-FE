@@ -22,9 +22,9 @@ struct MockAPIService: APIServiceProtocol {
     
     func createPresentation(createPresentationRequest presentation: CreatePresentationRequest) async throws -> ResponseForNewPresentation {
         return ResponseForNewPresentation(
-            presentationId: nil,
-            presentationName: nil,
-            createdAt: nil
+            presentationId: "25",
+            presentationName: "mock",
+            createdAt: "2025-11-16"
         )
     }
 }

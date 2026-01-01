@@ -10,7 +10,7 @@ import RealityKit
 import Combine
 
 
-final class EyeTrackingUseCase: EyeTrackingUseCaseProtocol {
+ final class EyeTrackingUseCase: EyeTrackingUseCaseProtocol {
     
     private let eyeTrackingService: EyeTrackingService
     private var calibrationService: CalibrationService?
@@ -36,8 +36,8 @@ final class EyeTrackingUseCase: EyeTrackingUseCaseProtocol {
     func stop() { eyeTrackingService.stopTracking() }
     
     
-    // --- ⬇️ 수동 보정값을 설정하는 함수 추가 ⬇️ ---
-    /// 캘리브레이션 완료 후, 시선의 미세한 편향을 수동으로 조절합니다.
+    // --- 수동 보정값을 설정하는 함수 추가 ---
+    /// 캘리브레이션 완료 후, 시선의 미세한 편향을 수동으로 조절
     /// - Parameters:
     ///   - x: 좌/우 보정값. 양수는 오른쪽, 음수는 왼쪽.
     ///   - y: 상/하 보정값. 양수는 아래쪽, 음수는 위쪽.
@@ -51,10 +51,11 @@ final class EyeTrackingUseCase: EyeTrackingUseCaseProtocol {
                 guard let self = self, let mapper = self.calibrationService else {
                     return rawPoint
                 }
-               
+                // 1. 캘리브레이션 데이터가 있으면 보정 (CalibrationServiceImpl)
+                // (IDW 보간법으로 부드럽게 오차 수정)
                 let calibratedPoint = mapper.calibratedPoint(for: rawPoint)
                 
-                // --- ⬇️ 2. 수동 보정값 최종 적용 ⬇️ ---
+                // 2. 수동 미세 조정 값 더하기 (offset)
                 return CGPoint(
                     x: calibratedPoint.x + self.finalAdjustmentOffset.x,
                     y: calibratedPoint.y + self.finalAdjustmentOffset.y

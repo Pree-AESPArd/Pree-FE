@@ -56,6 +56,7 @@ final class OverlayWindowManager: ObservableObject {
   /// Tear it down
   func hide() {
     overlayWindow?.isHidden = true
+    /*self.overlayWindow?.rootViewController = nil*/ // 새로 추가
     overlayWindow = nil
   }
 }

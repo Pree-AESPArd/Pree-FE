@@ -99,9 +99,9 @@ struct OverlayView: View {
                     }
                     // url이 생성되면 자동으로 화면 전환
                     .onChange(of: vm.videoURL) {
-                        if let url = vm.videoURL {
+                        if let url = vm.videoURL, let rate = vm.eyeTrackingRate {
                             overlayManager.hide()
-                            navigationManager.push(.completeRecording(url: url))
+                            navigationManager.push(.completeRecording(url: url, eyeTrackingRate: rate, mode: vm.currentPracticeMode))
                         }
                     }
                 }
@@ -165,9 +165,9 @@ struct OverlayView: View {
 
 
 
-#Preview {
-    let vm = AppDI.shared.makeCameraViewModel()
-    let overlayManager = OverlayWindowManager()
-    OverlayView(vm: vm, overlayManager: overlayManager)
-        .environmentObject(NavigationManager())
-}
+//#Preview {
+//    let vm = AppDI.shared.makeCameraViewModel()
+//    let overlayManager = OverlayWindowManager()
+//    OverlayView(vm: vm, overlayManager: overlayManager)
+//        .environmentObject(NavigationManager())
+//}
