@@ -16,6 +16,11 @@ struct DeviceDimensionHelper {
         let modelName = UIDevice.modelName
         
         switch modelName {
+        
+        // iPhone 16
+        case "iPhone17,3":
+            return CGSize(width: 0.0716, height: 0.1476)
+            
         // iPhone 14 Pro, 15 Pro, 16 Pro (6.1 inch)
         case "iPhone15,2", "iPhone16,1", "iPhone17,1":
             return CGSize(width: 0.0715, height: 0.1475)
@@ -38,9 +43,17 @@ struct DeviceDimensionHelper {
 // 기기 모델명을 가져오기 위한 확장
 extension UIDevice {
     static var modelName: String {
+        // 1. 시스템 정보를 담을 구조체(통)를 준비
         var systemInfo = utsname()
+        
+        // 2. C언어 시스템 함수(uname)를 호출해서 기계 정보를 가져옴
+        // 여기서 systemInfo.machine에 "iPhone15,2" 같은 암호가 채워짐
         uname(&systemInfo)
+        
+        // 3. 기계어(바이트)로 된 정보를 우리가 읽을 수 있는 문자열로 변환 (Mirror 사용)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
+        
+        // 4. 바이트 하나하나를 문자로 합침
         return machineMirror.children.reduce("") { identifier, element in
             guard let value = element.value as? Int8, value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))

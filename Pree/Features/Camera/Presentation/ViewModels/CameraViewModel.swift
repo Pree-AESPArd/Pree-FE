@@ -109,18 +109,21 @@ final class CameraViewModel: ObservableObject {
         }
     }
     
-    
+    // 사용자가 9개 점을 다 보고 났을 때 한 번 실행되는 로직
+    // 수집된 시선 데이터(samples)와 정답(targets)을 가지고 CalibrationServiceImpl을 만듬
     func processAndStoreCalibration(targets: [CGPoint], samples: [[CGPoint]]) {
-        // 직접 OffsetCalibration 모델을 생성합니다.
+        // 1. 여기서 오차 계산 (이상치 제거, 평균 계산 등)
         if let offsetModel = CalibrationServiceImpl(targets: targets, samples: samples) {
-            print("✅ Offset Calibration successful!")
             
+            // 2. 계산된 모델을 UseCase에 장착!
+            // 이 모델을 사용해 좌표를 수정하게 됨
             self.eyeTrackingUseCase.setCalibration(calibrationService: offsetModel)
             
-            self.eyeTrackingUseCase.setFinalAdjustment(x: 15.0, y: -5.0) 
+            // 3. 수동 오프셋도 추가 적용
+            self.eyeTrackingUseCase.setFinalAdjustment(x: 0, y: 0)
             
         } else {
-            print("❌ Offset Calibration failed.")
+            //print("❌ Offset Calibration failed.")
             self.errorMessage = "Calibration failed. Please try again."
         }
     }
@@ -209,7 +212,7 @@ final class CameraViewModel: ObservableObject {
     }
     
     private func calculateEyeTrackingRate() -> Void {
-        // 👇 시작: 녹화 중단 시 비율 계산
+        // 시작: 녹화 중단 시 비율 계산
         var rate: Int = 0
         if recordingTime > 0 { // 0으로 나누기 방지
             // (시선 추적 시간 / 총 녹화 시간) * 100
