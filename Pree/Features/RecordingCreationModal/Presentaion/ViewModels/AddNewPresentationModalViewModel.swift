@@ -19,9 +19,9 @@ class AddNewPresentationModalViewModel: ObservableObject {
     //@Published var presentaion: Presentation
     
     @Published var titleText: String = ""
-    @Published var minMinitue: String = "05"
-    @Published var minSecond: String = "00"
-    @Published var maxMinitue: String = "07"
+    @Published var minMinitue: String = "00"
+    @Published var minSecond: String = "30"
+    @Published var maxMinitue: String = "01"
     @Published var maxSecond: String = "00"
     @Published var showTimeOnScreen: Bool = false
     @Published var showMeOnScreen: Bool = false
@@ -74,8 +74,12 @@ class AddNewPresentationModalViewModel: ObservableObject {
             timeError = "최소시간은 최대시간을 넘을 수 없어요"
         }
         
-        if maxTime > 600 {
-            timeError = "최대 설정시간은 10분이에요"
+        if minTime < 30 {
+            timeError = "최소시간은 30초에요"
+        }
+        
+        if maxTime > 60 {
+            timeError = "최대 설정시간은 1분이에요"
         }
         
         

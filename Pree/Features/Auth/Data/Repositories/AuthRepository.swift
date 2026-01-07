@@ -15,7 +15,7 @@ class AuthRepository {
     func sendGuestLogin(request: GuestLoginRequest) async throws {
         
         // 1. URL 조합
-        let url = Config.baseURL + "/login/"
+        let url = Config.baseURL + "/users/login"
         
         // 2. Alamofire 요청 (Async/Await)
         // .serializingDecodable() 안쓰고 성공 여부(Status Code 200)만 확인하는 로직으로 짬

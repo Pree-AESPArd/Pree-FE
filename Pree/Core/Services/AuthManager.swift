@@ -63,8 +63,8 @@ class AuthManager: ObservableObject {
             
             // Step C: DTO 생성
             let requestDTO = GuestLoginRequest(
-                idToken: idToken,
-                fcmToken: fcmToken,
+                device_id: idToken,
+                fcm_tocken: fcmToken,
             )
             
             // Step D: 서버로 전송 (Alamofire)
