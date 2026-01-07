@@ -15,9 +15,6 @@ struct LaunchSignInView: View {
     @State private var showText = false // 텍스트 애니메이션 플래그
     @State private var showSignIn = false
     
-    
-    // TODO: 세부 디자인 간격 맞추기
-    
     var body: some View {
         ZStack(){
             
