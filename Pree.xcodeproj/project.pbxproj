@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		0CBCCBA12E324E1E0094475A /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 0CBCCBA02E324E1E0094475A /* .gitignore */; };
+		0CCCB18D2F0C98EA00F6FD4C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0CCCB18C2F0C98EA00F6FD4C /* GoogleService-Info.plist */; };
+		0CCCB1902F0C9AD100F6FD4C /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 0CCCB18F2F0C9AD100F6FD4C /* FirebaseAnalytics */; };
+		0CCCB1952F0CA31400F6FD4C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 0CCCB1942F0CA31400F6FD4C /* FirebaseAuth */; };
+		0CCCB1972F0CA31400F6FD4C /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 0CCCB1962F0CA31400F6FD4C /* FirebaseMessaging */; };
 		0CCF4B6F2E6D574800F36CF0 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 0CCF4B6E2E6D574800F36CF0 /* Alamofire */; };
 		1481E2ED2E3CA04A00ED27E9 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 1481E2EC2E3CA04A00ED27E9 /* DGCharts */; };
 /* End PBXBuildFile section */
@@ -36,6 +40,7 @@
 		0CBCCBA02E324E1E0094475A /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		0CBCCBA32E324E8F0094475A /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		0CBCCBA42E324EA00094475A /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		0CCCB18C2F0C98EA00F6FD4C /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -92,6 +97,9 @@
 			files = (
 				1481E2ED2E3CA04A00ED27E9 /* DGCharts in Frameworks */,
 				0CCF4B6F2E6D574800F36CF0 /* Alamofire in Frameworks */,
+				0CCCB1972F0CA31400F6FD4C /* FirebaseMessaging in Frameworks */,
+				0CCCB1902F0C9AD100F6FD4C /* FirebaseAnalytics in Frameworks */,
+				0CCCB1952F0CA31400F6FD4C /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,6 +123,7 @@
 		0CBCCB6A2E324DF90094475A = {
 			isa = PBXGroup;
 			children = (
+				0CCCB18C2F0C98EA00F6FD4C /* GoogleService-Info.plist */,
 				0CBCCBA92E324F530094475A /* Config */,
 				0CBCCBA02E324E1E0094475A /* .gitignore */,
 				0CBCCB752E324DF90094475A /* Pree */,
@@ -167,6 +176,9 @@
 			packageProductDependencies = (
 				1481E2EC2E3CA04A00ED27E9 /* DGCharts */,
 				0CCF4B6E2E6D574800F36CF0 /* Alamofire */,
+				0CCCB18F2F0C9AD100F6FD4C /* FirebaseAnalytics */,
+				0CCCB1942F0CA31400F6FD4C /* FirebaseAuth */,
+				0CCCB1962F0CA31400F6FD4C /* FirebaseMessaging */,
 			);
 			productName = Pree;
 			productReference = 0CBCCB732E324DF90094475A /* Pree.app */;
@@ -253,6 +265,7 @@
 			packageReferences = (
 				1481E2EB2E3CA04A00ED27E9 /* XCRemoteSwiftPackageReference "Charts" */,
 				0CCF4B6D2E6D574800F36CF0 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				0CCCB18E2F0C9AD100F6FD4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0CBCCB742E324DF90094475A /* Products */;
@@ -272,6 +285,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0CBCCBA12E324E1E0094475A /* .gitignore in Resources */,
+				0CCCB18D2F0C98EA00F6FD4C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,6 +473,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Pree/Pree.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
@@ -467,7 +482,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Pree/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "비디오 재생을 위해 오디오 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "녹화된 영상을 사진 보관함에 저장하기 위해 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -495,6 +510,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Pree/Pree.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pree/Preview Content\"";
@@ -503,7 +519,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Pree/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 사용을 위해 권한이 필요합니다.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "화면 녹화 중 마이크 오디오 캡처를 위해 권한이 필요합니다.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "비디오 재생을 위해 오디오 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to store and manage your recorded videos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "녹화된 영상을 사진 보관함에 저장하기 위해 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -646,6 +662,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0CCCB18E2F0C9AD100F6FD4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
 		0CCF4B6D2E6D574800F36CF0 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
@@ -665,6 +689,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0CCCB18F2F0C9AD100F6FD4C /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0CCCB18E2F0C9AD100F6FD4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		0CCCB1942F0CA31400F6FD4C /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0CCCB18E2F0C9AD100F6FD4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		0CCCB1962F0CA31400F6FD4C /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0CCCB18E2F0C9AD100F6FD4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
 		0CCF4B6E2E6D574800F36CF0 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0CCF4B6D2E6D574800F36CF0 /* XCRemoteSwiftPackageReference "Alamofire" */;

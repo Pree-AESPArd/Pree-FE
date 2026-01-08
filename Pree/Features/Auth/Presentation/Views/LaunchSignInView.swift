@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import AuthenticationServices
 
 struct LaunchSignInView: View {
     
@@ -15,9 +14,6 @@ struct LaunchSignInView: View {
     @State private var isAnimating = false  // 첫 시작 아이콘 애니메이션 플래그
     @State private var showText = false // 텍스트 애니메이션 플래그
     @State private var showSignIn = false
-    
-    
-    // TODO: 세부 디자인 간격 맞추기
     
     var body: some View {
         ZStack(){
@@ -81,18 +77,23 @@ struct LaunchSignInView: View {
                 Spacer()
                 
                 if showSignIn {
-                    SignInWithAppleButton(.signIn) { request in
-                        request.requestedScopes = [.fullName, .email]
-                    } onCompletion: { result in
-                        // 로그인 결과 처리
-                        // TODO: 로그인 로직 구현
-                        authVM.isSignedIn = true
+                    Button(action: {
+                        authVM.signInAsGuest()
+                    }) {
+                        HStack {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 20))
+                            Text("게스트로 시작하기")
+                                .font(.system(size: 17, weight: .semibold))
+                        }
+                        .foregroundColor(.white) // 글자색
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(Color.black) // 배경색
+                        .cornerRadius(16) // 둥근 모서리
                     }
-                    .signInWithAppleButtonStyle(.black)
-                    .frame(height: 52)
-                    .cornerRadius(16)
                     .padding(.horizontal, 16)
-                    .transition(.opacity)
+                    .transition(.opacity) // 페이드 효과
                     
                 }
             }

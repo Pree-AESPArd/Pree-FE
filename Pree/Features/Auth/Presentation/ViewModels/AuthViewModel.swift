@@ -6,29 +6,29 @@
 //
 
 import SwiftUI
+import Combine
 
 final class AuthViewModel: ObservableObject {
     @Published var isSignedIn: Bool = false
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
-        // 앱 런치 시, 저장된 토큰(예: UserDefaults or Keychain) 검사
-        let token = UserDefaults.standard.string(forKey: "authToken")
-        isSignedIn = (token != nil)
+        // AuthManager의 user 상태를 구독합니다.
+        // user가 nil이 아니면(로그인 됨) -> isSignedIn = true
+        // user가 nil이면(로그아웃 됨) -> isSignedIn = false
+        AuthManager.shared.$user
+            .receive(on: DispatchQueue.main)
+            .map { $0 != nil }
+            .assign(to: \.isSignedIn, on: self)
+            .store(in: &cancellables)
     }
     
-    func login(username: String, password: String) {
-        // 실제는 네트워크 호출 → 토큰 받아오기 로직
-        // 여기서는 간단히 성공 처리 예시
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            let fakeToken = "ABC123"
-            UserDefaults.standard.set(fakeToken, forKey: "authToken")
-            self.isSignedIn = true
-        }
+    func signInAsGuest() {
+        AuthManager.shared.signInAsGuest()
     }
     
     func logout() {
-        UserDefaults.standard.removeObject(forKey: "authToken")
-        isSignedIn = false
+        AuthManager.shared.signOut()
     }
     
 }
