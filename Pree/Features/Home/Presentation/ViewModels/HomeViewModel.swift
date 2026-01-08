@@ -20,7 +20,7 @@ final class HomeViewModel: ObservableObject {
     @Published var filterMode: FilterMode = .recentMode
     @Published var showDeleteMode: Bool = false
     
-    @Published var userName: String = "규희"
+    @Published var userName: String = "게스트"
     @Published var percentages: [CGFloat] = [82, 89, 50, 32, 100, 30]
     @Published var percentagesZero: [CGFloat] = [0, 0, 0, 0, 0, 0]
     @Published var presentationListCount: Int = 1
