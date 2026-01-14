@@ -8,9 +8,8 @@
 import Foundation
 
 struct PresentationDTO: Codable, Identifiable {
-    var id: String { presentationId ?? UUID().uuidString }
     
-    let presentationId: String?
+    let id: String
     let presentationName: String
     let idealMinTime: Double
     let idealMaxTime: Double
@@ -20,13 +19,13 @@ struct PresentationDTO: Codable, Identifiable {
 
     let totalScore: Int
     let totalPractices: Int
-    let toggleFavorite: Bool
-    let createdAt: String?
+    let isFavorite: Bool
+    let createdAt: String
     let updatedAt: String?
     
     // 서버에서 오는 JSON 키값과 매칭
     enum CodingKeys: String, CodingKey {
-        case presentationId = "id"
+        case id = "id"
         case presentationName = "title"
         case idealMinTime = "min_duration"
         case idealMaxTime = "max_duration"
@@ -36,7 +35,7 @@ struct PresentationDTO: Codable, Identifiable {
         
         case totalScore = "total_score"
         case totalPractices = "take_count"
-        case toggleFavorite = "is_favorite"
+        case isFavorite = "is_favorite"
         case createdAt = "created_at"
         case updatedAt = "last_take_at"
     }

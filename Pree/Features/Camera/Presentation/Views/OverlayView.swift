@@ -33,20 +33,11 @@ struct OverlayView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 12)
                         
-                        if !vm.isCapturing {
-                            if vm.presentation.showMeOnScreen {
-                                descriptionText
-                            } else {
-                                faceHidingDescriptionText
-                            }
-                        } else {
-                            if vm.presentation.showTimeOnScreen {
-                                timerText
-                            }
-                        }
+                        centerGuideText
                         
                         if vm.presentation.isDevMode {
                             eyeTrackingTimer
+                                .padding(.top, 8)
                         }
                         
                         Spacer()
@@ -61,23 +52,11 @@ struct OverlayView: View {
                         
                         Spacer()
                         
-                        PrimaryButton(
-                            title: vm.isDoneCalibration ? (vm.isCapturing ? "촬영 마치기" : "촬영 시작하기") : "눈 추적 조정 시작",
-                            action: {
-                                
-                                if vm.isDoneCalibration {
-                                    if vm.isCapturing {
-                                        // 촬영 종료 alert를 띄움
-                                        showFinishRecordAlert = true
-                                    } else {
-                                        // 촬영 시작
-                                        vm.toggleCapture()
-                                    }
-                                } else {
-                                    vm.startCalibration()
-                                }
-                            }
-                        )
+                        bottomActionButton
+                            .appPadding()
+                            .background(
+                                vm.presentation.showMeOnScreen ? Color.clear : Color(hex: "#6D7078")
+                            )
                     }
                     .appPadding()
                     .background(
@@ -122,6 +101,38 @@ struct OverlayView: View {
         
     }
     
+    @ViewBuilder
+    private var centerGuideText: some View {
+        if !vm.isCapturing {
+            if vm.presentation.showMeOnScreen {
+                descriptionText
+            } else {
+                faceHidingDescriptionText
+            }
+        } else {
+            if vm.presentation.showTimeOnScreen {
+                timerText
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var bottomActionButton: some View {
+        PrimaryButton(
+            title: vm.isDoneCalibration ? (vm.isCapturing ? "촬영 마치기" : "촬영 시작하기") : "눈 추적 조정 시작",
+            action: {
+                if vm.isDoneCalibration {
+                    if vm.isCapturing {
+                        showFinishRecordAlert = true
+                    } else {
+                        vm.toggleCapture()
+                    }
+                } else {
+                    vm.startCalibration()
+                }
+            }
+        )
+    }
     
     private var popButton: some View {
         Button(

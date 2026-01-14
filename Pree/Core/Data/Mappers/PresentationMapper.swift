@@ -10,7 +10,7 @@ import Foundation
 enum PresentationMapper {
     static func toEntity(_ dto: PresentationDTO) -> Presentation {
         Presentation(
-            presentationId: dto.presentationId,
+            id: dto.id,
             presentationName: dto.presentationName,
             idealMinTime: dto.idealMinTime,
             idealMaxTime: dto.idealMaxTime,
@@ -19,7 +19,7 @@ enum PresentationMapper {
             isDevMode: dto.isDevMode,
             totalScore: dto.totalScore,
             totalPractices: dto.totalPractices,
-            toggleFavorite: dto.toggleFavorite,
+            isFavorite: dto.isFavorite,
             updatedAtText: makeUpdatedAtText(from: dto.updatedAt),
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt

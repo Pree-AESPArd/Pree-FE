@@ -20,13 +20,12 @@ final class AppDI {
     private let apiService: APIServiceProtocol
     
     // Repository
-    private let presentationRepository: PresentationRepository
+    let presentationRepository: PresentationRepositoryProtocol //Reactive 패턴
     
     // 2) UseCases
     private let startCaptureUseCase: StartScreenCaptureUseCaseProtocol
     private let stopCaptureUseCase: StopScreenCaptureUseCaseProtocol
     private let eyeTrackingUseCase: EyeTrackingUseCaseProtocol
-    private let fetchPresentationUseCase: FetchPresentationsUseCaseProtocol
     private let createPresentationUseCase: CreatePresentationUseCase
     private let uploadPracticeUseCase: UploadPracticeUseCaseProtocol
     
@@ -37,14 +36,12 @@ final class AppDI {
         self.eyeTrackingService = EyeTrackingServiceImpl()
         self.apiService = APIService()
         
-        // Repository에 주입
-        self.presentationRepository = PresentationRepository(apiService: apiService)
+        self.presentationRepository = PresentationRepository(apiService: self.apiService)
         
         // UseCase 에 주입
         self.startCaptureUseCase = StartScreenCaptureUseCase(service: screenCaptureService)
         self.stopCaptureUseCase  = StopScreenCaptureUseCase(service: screenCaptureService)
         self.eyeTrackingUseCase = EyeTrackingUseCase(service: eyeTrackingService)
-        self.fetchPresentationUseCase = FetchPresentationsUseCase(presentationRepository: presentationRepository)
         self.createPresentationUseCase = CreatePresentationUseCase(repository: presentationRepository)
         self.uploadPracticeUseCase = UploadPracticeUseCase()
     }
@@ -60,7 +57,7 @@ final class AppDI {
     }
   
     func makeHomeViewModel() -> HomeViewModel {
-        HomeViewModel(fetchPresentationsUseCase: fetchPresentationUseCase)
+        return HomeViewModel(presentationRepository: presentationRepository)
     }
     
     func makePresnetationListViewModel() -> PresentaionListViewModel {
@@ -72,7 +69,7 @@ final class AppDI {
     }
     
     func makePresentationListModalViewModel() -> PresentationListModalViewModel {
-        PresentationListModalViewModel()
+        PresentationListModalViewModel(presentationRepository: presentationRepository)
     }
     
     func makeAddNewPresentationModalViewModel() -> AddNewPresentationModalViewModel {

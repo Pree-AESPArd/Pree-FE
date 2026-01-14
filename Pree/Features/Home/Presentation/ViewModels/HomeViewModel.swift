@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 enum FilterMode {
     case recentMode
@@ -27,24 +28,26 @@ final class HomeViewModel: ObservableObject {
     
     @Published var score: Double = 0.2
     
-    private let fetchPresentationsUseCase: FetchPresentationsUseCaseProtocol
+    private let presentationRepository: PresentationRepositoryProtocol
+    private var cancellables = Set<AnyCancellable>()
     
-    init(fetchPresentationsUseCase: FetchPresentationsUseCaseProtocol) {
-        self.fetchPresentationsUseCase = fetchPresentationsUseCase
+    init(presentationRepository: PresentationRepositoryProtocol) {
+        self.presentationRepository = presentationRepository
+        
+        if let repo = presentationRepository as? PresentationRepository {
+            repo.presentationsPublisher
+                .receive(on: DispatchQueue.main)
+                .assign(to: \.presentations, on: self)
+                .store(in: &cancellables)
+        }
+        
+        // 앱 켤 때 최초 1회 로딩
+        Task { await fetchList() }
     }
     
     
     @MainActor
-    func loadPresentations() async {
-        isLoading = true
-        errorMessage = nil
-        
-        do {
-            self.presentations = try await fetchPresentationsUseCase.execute()
-        } catch {
-            self.errorMessage = error.localizedDescription
-        }
-        
-        isLoading = false
+    func fetchList() async {
+        try? await presentationRepository.fetchPresentations()
     }
 }

@@ -10,29 +10,50 @@ import Alamofire
 import FirebaseAuth
 
 struct APIService: APIServiceProtocol {
-    
     private let url = Config.baseURL
     
     
-    func fetchPresentations() async throws -> [Presentation] {
+    func fetchPresentations() async throws -> [PresentationDTO] {
+        let endpoint = "\(Config.baseURL)/projects/"
         
-        //        let response = await AF.request(url)
-        //            .validate(statusCode: 200..<300)
-        //            .serializingDecodable([Presentation].self)
-        //            .response // 상태 코드, 헤더 등도 같이 확인해야 할 때
-        //        // or .value -> 깔끔하게 await 후 데이터만 받고 싶을 때
-        //
-        //        switch response.result {
-        //        case .success(let presentations):
-        //            return presentations
-        //        case .failure(let error):
-        //            throw error
-        //        }
+        // 저장된 UUID 꺼내기 (없으면 에러 처리)
+        guard let userId = UserStorage.shared.getUUID() else {
+            print("❌ [Network] 유저 ID가 없습니다.")
+            throw URLError(.userAuthenticationRequired)
+        }
         
-        try await AF.request(url)
+        // 인증 헤더 (Firebase 토큰 - 기존에 있다면 유지)
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        // 쿼리 파라미터 설정
+        let parameters: [String: Any] = [
+            "user_id": userId
+        ]
+        
+        let dataRequest = AF.request(
+            endpoint,
+            method: .get,
+            parameters: parameters,
+            encoding: URLEncoding.default,
+            headers: headers
+        )
             .validate(statusCode: 200..<300)
-            .serializingDecodable([Presentation].self)
-            .value
+        
+        do {
+            let dtos = try await dataRequest.serializingDecodable([PresentationDTO].self).value
+            return dtos
+        } catch {
+            print("❌ [APIService] 리스트 요청 실패: \(error.localizedDescription)")
+           
+            throw error
+        }
     }
     
     func createPresentation(request: CreatePresentationRequestDTO) async throws -> PresentationDTO {

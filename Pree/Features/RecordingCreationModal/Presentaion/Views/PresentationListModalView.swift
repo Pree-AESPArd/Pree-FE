@@ -13,10 +13,7 @@ struct PresentationListModalView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     
     // TODO: AppDI 로 인젝션
-    @StateObject var vm: PresentationListModalViewModel = PresentationListModalViewModel()
-    
-    let presentations: [Presentation]
-    
+    @StateObject var vm: PresentationListModalViewModel = AppDI.shared.makePresentationListModalViewModel()
     
     
     var body: some View {
@@ -29,7 +26,7 @@ struct PresentationListModalView: View {
             
             ScrollView() {
                 
-                ForEach(presentations, id: \.presentationId) { presentation in
+                ForEach(vm.presentations, id: \.id) { presentation in
                     
                     makePresentaionCard(presentation: presentation)
                         .padding(.top, 5)
@@ -55,7 +52,9 @@ struct PresentationListModalView: View {
                     // 모달이 완전히 닫힌 후 카메라를 띄우도록 약간의 딜레이
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             //TODO: 선택 된 발표 전달
-                            navigationManager.push(.camera(presentation: presentations.first!))
+                            if let selected = vm.selectedPresentaion {
+                                navigationManager.push(.camera(presentation: selected))
+                            }
                         }
                 },
                 isActive: vm.isValid
@@ -137,7 +136,7 @@ struct PresentationListModalView: View {
         .padding(.vertical, 17)
         .contentShape(Rectangle()) // 탭 가능한 영역을 사각형으로 명시적으로 정의
         .background(
-            vm.selectedPresentaion?.presentationId == presentation.presentationId ? Color(hex:"#E6EDFF") : Color.clear
+            vm.selectedPresentaion?.id == presentation.id ? Color(hex:"#E6EDFF") : Color.clear
         )
         
     }
