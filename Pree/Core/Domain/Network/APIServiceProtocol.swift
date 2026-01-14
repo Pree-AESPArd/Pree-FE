@@ -9,5 +9,5 @@ import Foundation
 
 protocol APIServiceProtocol {
     func fetchPresentations() async throws -> [Presentation]
-    func createPresentation(createPresentationRequest presentation: CreatePresentationRequest) async throws -> ResponseForNewPresentation
+    func createPresentation(request: CreatePresentationRequestDTO) async throws -> PresentationDTO
 }

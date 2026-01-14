@@ -13,19 +13,19 @@ final class CompleteViewModel: ObservableObject {
     let videoURL: URL
     let eyeTrackingRate: Int
 //    var isNewPresentationPractice: Bool
-    let practiceMode: PracticeMode
+//    let practiceMode: PracticeMode
     let uploadUseCase: UploadPracticeUseCaseProtocol
     
     init(
         videoURL: URL,
         eyeTrackingRate: Int,
-        practiceMode: PracticeMode,
+//        practiceMode: PracticeMode,
         uploadUseCase: UploadPracticeUseCaseProtocol
     ) {
         self.videoURL = videoURL
         self.eyeTrackingRate = eyeTrackingRate
 //        self.isNewPresentationPractice = isNewPresentationPractice
-        self.practiceMode = practiceMode
+//        self.practiceMode = practiceMode
         self.uploadUseCase = uploadUseCase
     }
     

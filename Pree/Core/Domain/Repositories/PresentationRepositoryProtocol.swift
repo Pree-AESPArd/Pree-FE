@@ -7,8 +7,9 @@
 
 import Foundation
 
-protocol PresentationRepository {
+protocol PresentationRepositoryProtocol {
     func fetchPresentations() async throws -> [Presentation]
     
-    func createPresentation(createPresentationRequest: CreatePresentationRequest) async throws -> ResponseForNewPresentation
+    func createNewPresentation(request: CreatePresentationRequest) async throws -> Presentation
 }
+

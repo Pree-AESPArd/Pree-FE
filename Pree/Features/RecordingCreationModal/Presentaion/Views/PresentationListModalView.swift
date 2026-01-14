@@ -54,7 +54,8 @@ struct PresentationListModalView: View {
 //                    navigationManager.push(.camera())
                     // 모달이 완전히 닫힌 후 카메라를 띄우도록 약간의 딜레이
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            navigationManager.push(.camera())
+                            //TODO: 선택 된 발표 전달
+                            navigationManager.push(.camera(presentation: presentations.first!))
                         }
                 },
                 isActive: vm.isValid

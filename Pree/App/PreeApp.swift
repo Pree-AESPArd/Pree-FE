@@ -25,7 +25,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             completionHandler: { _, _ in }
         )
         
-        // 2. 🚀 애플 서버(APNS)에 원격 알림 등록 요청
+        // 2. 애플 서버(APNS)에 원격 알림 등록 요청
         application.registerForRemoteNotifications()
         
         // 3. 메시징 델리게이트 설정

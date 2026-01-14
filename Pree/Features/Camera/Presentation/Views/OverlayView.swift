@@ -26,6 +26,7 @@ struct OverlayView: View {
                 EyeTrackingCalibrationView(vm: vm)
             } else {
                 GeometryReader { geometry in
+                    
                     VStack(spacing: 0) {
                         
                         popButton
@@ -33,18 +34,24 @@ struct OverlayView: View {
                             .padding(.bottom, 12)
                         
                         if !vm.isCapturing {
-                            descriptionText
+                            if vm.presentation.showMeOnScreen {
+                                descriptionText
+                            } else {
+                                faceHidingDescriptionText
+                            }
                         } else {
-                            timerText
+                            if vm.presentation.showTimeOnScreen {
+                                timerText
+                            }
                         }
                         
-                        if vm.isDebugMode {
+                        if vm.presentation.isDevMode {
                             eyeTrackingTimer
                         }
                         
                         Spacer()
                         
-                        if !vm.isCapturing {
+                        if !vm.isCapturing && !vm.presentation.showMeOnScreen {
                             Image("face_guide")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
@@ -73,6 +80,10 @@ struct OverlayView: View {
                         )
                     }
                     .appPadding()
+                    .background(
+                        vm.presentation.showMeOnScreen ? Color.clear : Color(hex: "#6D7078")
+                    )
+                    
                     // alert는 커스텀 스타일 적용 못함
                     // text에 폰트나 색상 바꾸고 싶으면 confirmationDialog 사용
                     .alert("뒤로가기", isPresented: $showPopWarningAlert) {
@@ -101,7 +112,7 @@ struct OverlayView: View {
                     .onChange(of: vm.videoURL) {
                         if let url = vm.videoURL, let rate = vm.eyeTrackingRate {
                             overlayManager.hide()
-                            navigationManager.push(.completeRecording(url: url, eyeTrackingRate: rate, mode: vm.currentPracticeMode))
+                            navigationManager.push(.completeRecording(url: url, eyeTrackingRate: rate))
                         }
                     }
                 }
@@ -132,6 +143,16 @@ struct OverlayView: View {
     
     private var descriptionText: some View {
         Text("얼굴을 프레임에 맞추고\n 중심의 점을 바라봐주세요")
+            .font(.pretendardMedium(size: 14))
+            .foregroundStyle(Color.primary)
+            .multilineTextAlignment(.center)
+            .padding(8)
+            .background(.white)
+            .cornerRadius(20)
+    }
+    
+    private var faceHidingDescriptionText: some View {
+        Text("촬영 중 화면은 보이지 않지만,\n 촬영이 끝난 후 리포트에선 녹화 화면을 볼 수 있어요!")
             .font(.pretendardMedium(size: 14))
             .foregroundStyle(Color.primary)
             .multilineTextAlignment(.center)

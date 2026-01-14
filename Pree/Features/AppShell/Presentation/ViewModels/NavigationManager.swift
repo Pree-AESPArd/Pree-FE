@@ -10,11 +10,11 @@ import SwiftUI
 
 enum ViewType: Hashable {
     case home
-    case camera(presentation: CreatePresentationRequest? = nil)
+    case camera(presentation: Presentation)
     case profile
     case presentationList
     case practiceResult
-    case completeRecording(url: URL, eyeTrackingRate: Int, mode: PracticeMode)
+    case completeRecording(url: URL, eyeTrackingRate: Int)
 }
 
 // path에서 현재 completeView에 있는지 확인하기 위함

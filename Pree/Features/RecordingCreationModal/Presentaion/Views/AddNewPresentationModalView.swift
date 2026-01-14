@@ -12,8 +12,7 @@ struct AddNewPresentationModalView: View {
     @EnvironmentObject var modalManager: ModalManager
     @EnvironmentObject var navigationManager: NavigationManager
     
-    // TODO: AppDI 로 인젝션
-    @StateObject var vm: AddNewPresentationModalViewModel = AddNewPresentationModalViewModel()
+    @StateObject var vm: AddNewPresentationModalViewModel = AppDI.shared.makeAddNewPresentationModalViewModel()
     
     @State private var isMinTimeFieldPressed: Bool = false
     @State private var isMaxTimeFieldPressed: Bool = false
@@ -65,18 +64,34 @@ struct AddNewPresentationModalView: View {
             Spacer()
             
             PrimaryButton(
-                title: "발표 영상 촬영하기",
+                title: vm.isLoading ? "발표 생성 중..." :"발표 영상 촬영하기",
                 action: {
-                    modalManager.hideModal()
-                    let presentation = vm.startRecording()
-                    navigationManager.push(.camera(presentation: presentation))
+                    
+                    Task {
+                        
+                        do {
+                            let presentation = try await vm.startRecording()
+                            modalManager.hideModal()
+                            navigationManager.push(.camera(presentation: presentation))
+                        } catch {
+                            // VM에서 alert 띄우라고 신호 보냄
+                        }
+                    }
                     
                 },
-                isActive: vm.isValid
+                isActive: vm.isValid && !vm.isLoading
             )
             .safeAreaPadding(.bottom)
             .appPadding()
         }
+        .alert(item: $vm.alert) { (alert: AlertState) in
+            Alert(
+                title: Text(alert.title),
+                message: Text(alert.message),
+                dismissButton: .default(Text("확인"))
+            )
+        }
+    
     } // View
     
     
@@ -326,7 +341,7 @@ struct AddNewPresentationModalView: View {
         VStack(spacing: 32.5) {
             makeOption(title: "촬영 시간 보이게 하기", isOn: $vm.showTimeOnScreen)
             makeOption(title: "촬영 화면 보이게 하기", isOn: $vm.showMeOnScreen)
-            makeOption(title: "개발 모드", isOn: $vm.debugMode)
+            makeOption(title: "개발 모드", isOn: $vm.isDevMode)
         }
         .appPadding()
     }

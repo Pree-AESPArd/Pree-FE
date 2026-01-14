@@ -6,5 +6,5 @@
 //
 
 protocol UploadPracticeUseCaseProtocol {
-    func execute(mode: PracticeMode, videoKey: String, eyePercentage: Int) async throws
+    func execute(videoKey: String, eyePercentage: Int) async throws
 }

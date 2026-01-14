@@ -7,18 +7,19 @@
 
 import Foundation
 
-struct Presentation: Codable, Equatable {
+struct Presentation: Codable, Equatable,Hashable {
     let presentationId: String?
     let presentationName: String
     let idealMinTime: Double
     let idealMaxTime: Double
     let showTimeOnScreen: Bool
     let showMeOnScreen: Bool
+    let isDevMode: Bool
     
-    let totalScore: Int
-    let totalPractices: Int
+    let totalScore: Int?
+    let totalPractices: Int?
     let toggleFavorite: Bool
-    let updatedAtText: String
+    let updatedAtText: String?
     let createdAt: String?
     let updatedAt: String?
 
@@ -37,6 +38,7 @@ extension Presentation {
                 idealMaxTime: 15.0,
                 showTimeOnScreen: true,
                 showMeOnScreen: true,
+                isDevMode: true,
                 totalScore: 95,
                 totalPractices: 5,
                 toggleFavorite: false,
@@ -51,6 +53,7 @@ extension Presentation {
                 idealMaxTime: 12.0,
                 showTimeOnScreen: false,
                 showMeOnScreen: true,
+                isDevMode: true,
                 totalScore: 88,
                 totalPractices: 2,
                 toggleFavorite: false,

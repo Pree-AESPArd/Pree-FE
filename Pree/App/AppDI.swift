@@ -27,7 +27,7 @@ final class AppDI {
     private let stopCaptureUseCase: StopScreenCaptureUseCaseProtocol
     private let eyeTrackingUseCase: EyeTrackingUseCaseProtocol
     private let fetchPresentationUseCase: FetchPresentationsUseCaseProtocol
-    private let createPresentationUseCase: CreatePresentationUseCaseProtocol
+    private let createPresentationUseCase: CreatePresentationUseCase
     private let uploadPracticeUseCase: UploadPracticeUseCaseProtocol
     
     
@@ -35,28 +35,27 @@ final class AppDI {
         // Service 구현체 생성
         self.screenCaptureService = ScreenCaptureServiceImpl()
         self.eyeTrackingService = EyeTrackingServiceImpl()
-        self.apiService = MockAPIService() // test 용 mock 주입
+        self.apiService = APIService()
         
         // Repository에 주입
-        self.presentationRepository = PresentationRepositoryImpl(apiService: apiService)
+        self.presentationRepository = PresentationRepository(apiService: apiService)
         
         // UseCase 에 주입
         self.startCaptureUseCase = StartScreenCaptureUseCase(service: screenCaptureService)
         self.stopCaptureUseCase  = StopScreenCaptureUseCase(service: screenCaptureService)
         self.eyeTrackingUseCase = EyeTrackingUseCase(service: eyeTrackingService)
         self.fetchPresentationUseCase = FetchPresentationsUseCase(presentationRepository: presentationRepository)
-        self.createPresentationUseCase = CreatePresentationUseCase(presentationRepository: presentationRepository)
+        self.createPresentationUseCase = CreatePresentationUseCase(repository: presentationRepository)
         self.uploadPracticeUseCase = UploadPracticeUseCase()
     }
     
     // 3) ViewModel 팩토리
-    func makeCameraViewModel(newPresentation: CreatePresentationRequest?) -> CameraViewModel {
+    func makeCameraViewModel(newPresentation: Presentation) -> CameraViewModel {
         CameraViewModel(
             start: startCaptureUseCase,
             stop:  stopCaptureUseCase,
             eyeTrackingUseCase: eyeTrackingUseCase,
-            createPresentationUseCase: createPresentationUseCase,
-            newPresentation: newPresentation
+            presentation: newPresentation
         )
     }
   
@@ -77,14 +76,13 @@ final class AppDI {
     }
     
     func makeAddNewPresentationModalViewModel() -> AddNewPresentationModalViewModel {
-        AddNewPresentationModalViewModel()
+        AddNewPresentationModalViewModel(createPresentationUsecase: createPresentationUseCase)
     }
     
-    func makeCompleteViewModel(videoUrl: URL, eyeTrackingRate: Int, practiceMode: PracticeMode, ) -> CompleteViewModel {
+    func makeCompleteViewModel(videoUrl: URL, eyeTrackingRate: Int) -> CompleteViewModel {
         CompleteViewModel(
             videoURL: videoUrl,
             eyeTrackingRate: eyeTrackingRate,
-            practiceMode: practiceMode,
             uploadUseCase: uploadPracticeUseCase
         )
     }

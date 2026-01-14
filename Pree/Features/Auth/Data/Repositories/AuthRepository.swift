@@ -25,9 +25,17 @@ class AuthRepository {
                                  encoder: JSONParameterEncoder.default)
             .validate() // 200~299 상태코드가 아니면 에러로 간주
         
-        // 3. 응답 대기
-        let _ = try await request.serializingData().value
         
-        print("✅ [Server] 게스트 로그인 정보 전송 성공!")
+        do {
+            let response = try await request.serializingDecodable(UserResponseDTO.self).value
+            
+            // 💾 여기서 UUID를 저장
+            UserStorage.shared.saveUUID(response.id)
+            
+            print("✅ [AuthRepo] 로그인 및 UUID 저장 성공")
+        } catch {
+            print("❌ [AuthRepo] 로그인 실패 또는 응답 파싱 실패")
+            throw error
+        }
     }
 }

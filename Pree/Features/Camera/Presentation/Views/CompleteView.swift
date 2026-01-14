@@ -12,12 +12,12 @@ struct CompleteView: View {
     @StateObject var vm: CompleteViewModel
     
     
-    init(videoUrl: URL, eyeTrackingRate: Int, practiceMode: PracticeMode) {
+    init(videoUrl: URL, eyeTrackingRate: Int) {
         // _vm을 통해 StateObject의 초기값을 안전하게 설정
         self._vm = StateObject(wrappedValue: AppDI.shared.makeCompleteViewModel(
             videoUrl: videoUrl,
             eyeTrackingRate: eyeTrackingRate,
-            practiceMode: practiceMode
+//            practiceMode: practiceMode
         ))
     }
     
