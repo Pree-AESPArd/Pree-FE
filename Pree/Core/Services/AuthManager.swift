@@ -47,14 +47,14 @@ class AuthManager: ObservableObject {
     
     private func fetchTokensAndSendToServer(user: User) async throws {
         // Step A: ID Token
-        let idToken = try await user.getIDTokenResult(forcingRefresh: true).token
+        let idToken = try await user.getIDTokenResult(forcingRefresh: false).token
         
         // Step B: FCM Token
         let fcmToken = try await Messaging.messaging().token()
         
         // Step C: DTO
         let requestDTO = GuestLoginRequest(
-            device_id: idToken,
+            device_id: user.uid,
             fcm_tocken: fcmToken
         )
         

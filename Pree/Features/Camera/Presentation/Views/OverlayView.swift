@@ -33,6 +33,10 @@ struct OverlayView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 12)
                         
+                        if !vm.isCapturing && !vm.presentation.showMeOnScreen {
+                            Spacer()
+                        }
+                        
                         centerGuideText
                         
                         if vm.presentation.isDevMode {
