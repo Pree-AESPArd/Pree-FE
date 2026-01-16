@@ -143,6 +143,17 @@ final class CameraViewModel: ObservableObject {
                 let minutes = Int(self.recordingTime) / 60
                 let seconds = Int(self.recordingTime) % 60
                 self.timerString = String(format: "%02d:%02d", minutes, seconds)
+                
+                
+                // 데모용 최대 녹화시간 제한: 160초 지나면 종료
+                let limit = 160.0
+                
+                if self.recordingTime >= limit {
+                    print("⏰ 제한 시간(\(limit)초) 도달! 녹화를 자동 종료합니다.")
+                    
+                    // 녹화 종료 함수 호출 (사용자가 버튼 누른 것과 똑같이 동작)
+                    self.toggleCapture()
+                }
             }
         }
     }
