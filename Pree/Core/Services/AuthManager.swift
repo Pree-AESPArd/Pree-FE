@@ -42,6 +42,7 @@ class AuthManager: ObservableObject {
         // Step B: FCM Token
         let fcmToken = try await Messaging.messaging().token()
         
+        print(user.uid)
         // Step C: DTO
         let requestDTO = GuestLoginRequest(
             device_id: user.uid,

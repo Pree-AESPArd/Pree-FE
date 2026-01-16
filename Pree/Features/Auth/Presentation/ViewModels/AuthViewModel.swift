@@ -26,11 +26,15 @@ final class AuthViewModel: ObservableObject {
         
         if hasFirebaseUser && hasUUID {
             self.isSignedIn = true
+            
+            if let user = Auth.auth().currentUser {
+                Task {
+                    try? await AuthManager.shared.signInAndSync() // 내부 로직 재활용
+                }
+            }
+            
         } else {
             self.isSignedIn = false
-            // 만약 hasFirebaseUser는 true인데 hasUUID가 false라면? (앱 재설치 상황)
-            // -> isSignedIn = false로 둬서 로그인 화면을 보여주고,
-            // -> 사용자가 "게스트 시작" 버튼을 누르면 서버에서 다시 UUID를 받아오게 유도함.
         }
     }
     
