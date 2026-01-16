@@ -10,14 +10,13 @@ import SwiftUI
 
 struct CompleteView: View {
     @StateObject var vm: CompleteViewModel
+    @EnvironmentObject var navigationManager: NavigationManager
     
-    
-    init(videoUrl: URL, eyeTrackingRate: Int) {
-        // _vm을 통해 StateObject의 초기값을 안전하게 설정
+    init(presentationId: String, videoUrl: URL, eyeTrackingRate: Int) {
         self._vm = StateObject(wrappedValue: AppDI.shared.makeCompleteViewModel(
+            presentationId: presentationId,
             videoUrl: videoUrl,
             eyeTrackingRate: eyeTrackingRate,
-//            practiceMode: practiceMode
         ))
     }
     
@@ -33,6 +32,27 @@ struct CompleteView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear {
             vm.processVideo()
+        }
+        .alert("분석 요청 완료", isPresented: $vm.isUploadComplete) {
+            Button("확인") {
+                // 확인 버튼을 누르면 홈으로 이동!
+                navigationManager.popToRoot()
+            }
+        } message: {
+            Text("서버에서 분석이 시작되었습니다.\n완료되면 푸시 알림으로 알려드릴게요!")
+        }
+        // 에러 알림창 (기존 로직 유지 또는 추가)
+        .alert("오류 발생", isPresented: Binding(
+            get: { vm.errorMessage != nil },
+            set: { _ in vm.errorMessage = nil }
+        )) {
+            Button("확인") {
+                navigationManager.popToRoot() // 에러 나면 일단 홈으로
+            }
+        } message: {
+            if let errorMsg = vm.errorMessage {
+                Text(errorMsg)
+            }
         }
         
     }

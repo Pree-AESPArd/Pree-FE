@@ -36,8 +36,8 @@ struct RootTabView: View {
                             PresentaionListView(vm: presnetationListViewModel)
                         case .practiceResult:
                             PracticeResultView(vm: practiceResultViewModel)
-                        case .completeRecording(let url, let eyeTrackingRate):
-                            CompleteView(videoUrl: url, eyeTrackingRate: eyeTrackingRate)
+                        case .completeRecording(let id, let url, let eyeTrackingRate):
+                            CompleteView(presentationId: id, videoUrl: url, eyeTrackingRate: eyeTrackingRate)
                         }
                     } // : navigationDestination
             } // : NavigationStack

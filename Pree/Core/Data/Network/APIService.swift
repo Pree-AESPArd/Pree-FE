@@ -51,7 +51,7 @@ struct APIService: APIServiceProtocol {
             return dtos
         } catch {
             print("❌ [APIService] 리스트 요청 실패: \(error.localizedDescription)")
-           
+            
             throw error
         }
     }
@@ -96,6 +96,62 @@ struct APIService: APIServiceProtocol {
             }
             
             print("❌ [Network] 요청 실패: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    
+    func uploadTake(presentationId: String, videoKey: String, eyeTrackingRate: Int, audioURL: URL) async throws -> TakeDTO {
+        // 1. URL 설정
+        let endpoint = "\(Config.baseURL)/projects/\(presentationId)/takes"
+        
+        // 2. 유저 인증 정보 가져오기
+        guard let userId = UserStorage.shared.getUUID() else { throw URLError(.userAuthenticationRequired) }
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else { throw URLError(.userAuthenticationRequired) }
+        
+        // 3. 헤더 설정 (Multipart는 Content-Type을 Alamofire가 자동으로 설정해주므로 Authorization만 넣음)
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)"
+        ]
+        
+        print("📤 [Network] 업로드 시작: \(endpoint)")
+        
+        // 4. Alamofire Upload (MultipartFormData)
+        let dataRequest = AF.upload(multipartFormData: { multipart in
+            
+            // (1) 오디오 파일 추가
+            // withName: 서버에서 받는 필드명 (예: "audio_file")
+            // fileName: 저장될 파일명
+            // mimeType: 오디오 타입
+            multipart.append(audioURL, withName: "file", fileName: "practice.m4a", mimeType: "audio/m4a")
+            
+            // (2) 텍스트 데이터 추가 (String -> Data 변환 필요)
+            if let presentationIdData = presentationId.data(using: .utf8) {
+                multipart.append(presentationIdData, withName: "project_id")
+            }
+            
+            if let keyData = videoKey.data(using: .utf8) {
+                multipart.append(keyData, withName: "video_key")
+            }
+            
+            if let scoreData = "\(eyeTrackingRate)".data(using: .utf8) {
+                multipart.append(scoreData, withName: "eye_tracking_score")
+            }
+            
+        }, to: endpoint, method: .post, headers: headers)
+            .validate(statusCode: 200..<300)
+        
+        // 5. 응답 처리
+        do {
+            let result = try await dataRequest.serializingDecodable(TakeDTO.self).value
+            print("✅ [Network] 업로드 성공! Take ID: \(result.id)")
+            return result
+        } catch {
+            // 에러 디버깅용 로그
+            if let data = try? await dataRequest.serializingData().result.get(),
+               let errorBody = String(data: data, encoding: .utf8) {
+                print("❌ [Network] 서버 에러: \(errorBody)")
+            }
             throw error
         }
     }

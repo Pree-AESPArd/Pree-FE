@@ -155,7 +155,7 @@ public final class ScreenCaptureServiceImpl: ScreenCaptureService {
                 self.audioInput?.markAsFinished()
                 self.assetWriter?.finishWriting {
                     self.isSessionStarted = false
-                    self.saveVideoToGallery(self.outputURL) { _, _ in}
+
                     completion(.success(self.outputURL))
                 }
             }
@@ -201,7 +201,8 @@ public final class ScreenCaptureServiceImpl: ScreenCaptureService {
         
     }
     
-    
+   
+    // 안씀
     func saveVideoToGallery(_ videoURL: URL, completion: @escaping (Bool, Error?) -> Void) {
         // 1) 권한 요청
         PHPhotoLibrary.requestAuthorization { status in

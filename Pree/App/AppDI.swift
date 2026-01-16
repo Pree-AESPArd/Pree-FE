@@ -18,16 +18,19 @@ final class AppDI {
     private let screenCaptureService: ScreenCaptureService
     private let eyeTrackingService: EyeTrackingService
     private let apiService: APIServiceProtocol
+    private let mediaService: MediaServiceProtocol
     
     // Repository
     let presentationRepository: PresentationRepositoryProtocol //Reactive 패턴
+    let takeRepository: TakeRepositoryProtocol
     
     // 2) UseCases
     private let startCaptureUseCase: StartScreenCaptureUseCaseProtocol
     private let stopCaptureUseCase: StopScreenCaptureUseCaseProtocol
     private let eyeTrackingUseCase: EyeTrackingUseCaseProtocol
     private let createPresentationUseCase: CreatePresentationUseCase
-    private let uploadPracticeUseCase: UploadPracticeUseCaseProtocol
+    private let uploadPracticeUseCase: UploadTakeUseCaseProtocol
+    private let processMediaUseCase: ProcessMediaUseCaseProtocol
     
     
     private init() {
@@ -35,15 +38,18 @@ final class AppDI {
         self.screenCaptureService = ScreenCaptureServiceImpl()
         self.eyeTrackingService = EyeTrackingServiceImpl()
         self.apiService = APIService()
+        self.mediaService = MediaServiceImpl()
         
         self.presentationRepository = PresentationRepository(apiService: self.apiService)
+        self.takeRepository = TakeRepository(apiService: self.apiService)
         
         // UseCase 에 주입
         self.startCaptureUseCase = StartScreenCaptureUseCase(service: screenCaptureService)
         self.stopCaptureUseCase  = StopScreenCaptureUseCase(service: screenCaptureService)
         self.eyeTrackingUseCase = EyeTrackingUseCase(service: eyeTrackingService)
         self.createPresentationUseCase = CreatePresentationUseCase(repository: presentationRepository)
-        self.uploadPracticeUseCase = UploadPracticeUseCase()
+        self.uploadPracticeUseCase = UploadTakeUseCase(repository: takeRepository)
+        self.processMediaUseCase = ProcessMediaUseCase(mediaService: mediaService)
     }
     
     // 3) ViewModel 팩토리
@@ -76,10 +82,12 @@ final class AppDI {
         AddNewPresentationModalViewModel(createPresentationUsecase: createPresentationUseCase)
     }
     
-    func makeCompleteViewModel(videoUrl: URL, eyeTrackingRate: Int) -> CompleteViewModel {
+    func makeCompleteViewModel(presentationId: String, videoUrl: URL, eyeTrackingRate: Int) -> CompleteViewModel {
         CompleteViewModel(
+            presentatonId: presentationId,
             videoURL: videoUrl,
             eyeTrackingRate: eyeTrackingRate,
+            processMediaUseCase: processMediaUseCase,
             uploadUseCase: uploadPracticeUseCase
         )
     }
