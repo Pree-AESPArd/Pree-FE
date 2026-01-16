@@ -10,17 +10,16 @@ import Alamofire
 import FirebaseAuth
 
 struct APIService: APIServiceProtocol {
-    private let url = Config.baseURL
-    
     
     func fetchPresentations() async throws -> [PresentationDTO] {
-        let endpoint = "\(Config.baseURL)/projects/"
         
         // 저장된 UUID 꺼내기 (없으면 에러 처리)
         guard let userId = UserStorage.shared.getUUID() else {
             print("❌ [Network] 유저 ID가 없습니다.")
             throw URLError(.userAuthenticationRequired)
         }
+        
+        let route = APIEndpoint.fetchProjects(userId: userId)
         
         // 인증 헤더 (Firebase 토큰 - 기존에 있다면 유지)
         guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
@@ -32,16 +31,12 @@ struct APIService: APIServiceProtocol {
             "Content-Type": "application/json"
         ]
         
-        // 쿼리 파라미터 설정
-        let parameters: [String: Any] = [
-            "user_id": userId
-        ]
         
         let dataRequest = AF.request(
-            endpoint,
-            method: .get,
-            parameters: parameters,
-            encoding: URLEncoding.default,
+            route.url,              // URL
+            method: route.method,   // .get
+            parameters: route.parameters, // ["user_id": userId]
+            encoding: URLEncoding.default, // GET은 URLEncoding
             headers: headers
         )
             .validate(statusCode: 200..<300)
@@ -57,7 +52,7 @@ struct APIService: APIServiceProtocol {
     }
     
     func createPresentation(request: CreatePresentationRequestDTO) async throws -> PresentationDTO {
-        let endpoint = "\(url)/projects/"
+        let route = APIEndpoint.createProject
         
         // 인증 헤더 (Firebase 사용 시 필수)
         // 게스트 로그인이라도 Firebase에서 발급한 ID 토큰을 보내야 서버에서 누군지 식별
@@ -72,8 +67,8 @@ struct APIService: APIServiceProtocol {
         ]
         
         let dataRequest = AF.request(
-            endpoint,
-            method: .post,
+            route.url,
+            method: route.method,
             parameters: request,
             encoder: JSONParameterEncoder.default,
             headers: headers
@@ -102,8 +97,7 @@ struct APIService: APIServiceProtocol {
     
     
     func uploadTake(presentationId: String, videoKey: String, eyeTrackingRate: Int, audioURL: URL) async throws -> TakeDTO {
-        // 1. URL 설정
-        let endpoint = "\(Config.baseURL)/projects/\(presentationId)/takes"
+        let route = APIEndpoint.uploadTake(projectId: presentationId)
         
         // 2. 유저 인증 정보 가져오기
         guard let userId = UserStorage.shared.getUUID() else { throw URLError(.userAuthenticationRequired) }
@@ -114,7 +108,6 @@ struct APIService: APIServiceProtocol {
             "Authorization": "Bearer \(idToken)"
         ]
         
-        print("📤 [Network] 업로드 시작: \(endpoint)")
         
         // 4. Alamofire Upload (MultipartFormData)
         let dataRequest = AF.upload(multipartFormData: { multipart in
@@ -138,7 +131,7 @@ struct APIService: APIServiceProtocol {
                 multipart.append(scoreData, withName: "eye_tracking_score")
             }
             
-        }, to: endpoint, method: .post, headers: headers)
+        }, to: route.url, method: route.method, headers: headers)
             .validate(statusCode: 200..<300)
         
         // 5. 응답 처리
