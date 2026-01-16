@@ -6,15 +6,9 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
-enum ModalErorr {
-    case textFieldEmpty
-    case exceedMaxLength
-    case exceedMaxTime
-    case exceedMinTime
-    case invalidTimeFormat
-}
-
+@MainActor
 class AddNewPresentationModalViewModel: ObservableObject {
     //@Published var presentaion: Presentation
     
@@ -25,11 +19,19 @@ class AddNewPresentationModalViewModel: ObservableObject {
     @Published var maxSecond: String = "00"
     @Published var showTimeOnScreen: Bool = false
     @Published var showMeOnScreen: Bool = false
-    @Published var debugMode: Bool = false
+    @Published var isDevMode: Bool = false
     
     @Published var textFieldError: String? = nil
     @Published var timeError: String? = nil
     @Published var isValid: Bool = false
+    @Published var isLoading: Bool = false
+    @Published var alert: AlertState? = nil
+    
+    private let createPresentationUsecase: CreatePresentationUseCase
+    
+    init(createPresentationUsecase: CreatePresentationUseCase) {
+        self.createPresentationUsecase = createPresentationUsecase
+    }
     
     
     func timeStringToInt() -> (minTime: Int, maxTime: Int)? {
@@ -92,21 +94,67 @@ class AddNewPresentationModalViewModel: ObservableObject {
         isValid = textFieldError == nil && timeError == nil
     }
     
-    func startRecording() -> CreatePresentationRequest {
+    func startRecording() async throws -> Presentation {
+        
+        validateForm()
+        if let msg = textFieldError { throw AddPresentationError.invalidTitle(msg) }
+        if let msg = timeError { throw AddPresentationError.invalidTime(msg) }
         
         guard let (minTime, maxTime) = timeStringToInt() else {
-            timeError = "유효한 숫자를 입력해주세요"
-            // TODO: 여기 nil 반환시 값을 에러 처리
-            return CreatePresentationRequest(presentationName: "", idealMinTime: 0, idealMaxTime: 0, showTimeOnScreen: false, showMeOnScreen: false)
+            throw AddPresentationError.invalidTime("유효한 숫자를 입력해주세요")
         }
         
+        // 로그인 정보 가져오기
+        guard let serverUUID = UserStorage.shared.getUUID() else {
+            print("❌ 오류: 서버에서 발급받은 User UUID가 없습니다. (재로그인 필요)")
+            textFieldError = "로그인 정보가 만료되었습니다. 앱을 재실행해주세요."
+            throw AddPresentationError.createFailed("로그인 정보가 만료되었습니다. 앱을 재실행해주세요.")
+        }
+        
+        print(isDevMode)
         // 발표 객체 생성
-        let presentation: CreatePresentationRequest = CreatePresentationRequest(presentationName: titleText, idealMinTime: Double(minTime), idealMaxTime: Double(maxTime), showTimeOnScreen: showTimeOnScreen, showMeOnScreen: showMeOnScreen)
+        let request: CreatePresentationRequest = .init(userId: serverUUID, name: titleText, idealMinTime: Double(minTime), idealMaxTime: Double(maxTime), showTimeOnScreen: showTimeOnScreen, showMeOnScreen: showMeOnScreen, isDevMode: isDevMode)
         
-        return presentation
+        isLoading = true
+        defer { isLoading = false }
         
+        do {
+            let presentation = try await createPresentationUsecase.execute(request: request)
+            print("응답 성공!!!!")
+            print(presentation)
+            return presentation
+        } catch let error as AddPresentationError {
+            alert = AlertState(
+                title: "오류",
+                message: error.localizedDescription
+            )
+            
+            throw error
+            
+        } catch {
+            alert = AlertState(
+                title: "오류",
+                message: "알 수 없는 오류가 발생했습니다."
+            )
+            throw AddPresentationError.createFailed("알 수 없는 오류가 발생했습니다.")
+        }
         
     }
     
-    
+}
+
+
+enum AddPresentationError: LocalizedError {
+    case invalidTitle(String)
+    case invalidTime(String)
+    case createFailed(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidTitle(let msg),
+             .invalidTime(let msg),
+             .createFailed(let msg):
+            return msg
+        }
+    }
 }

@@ -18,50 +18,52 @@ final class AppDI {
     private let screenCaptureService: ScreenCaptureService
     private let eyeTrackingService: EyeTrackingService
     private let apiService: APIServiceProtocol
+    private let mediaService: MediaServiceProtocol
     
     // Repository
-    private let presentationRepository: PresentationRepository
+    let presentationRepository: PresentationRepositoryProtocol //Reactive 패턴
+    let takeRepository: TakeRepositoryProtocol
     
     // 2) UseCases
     private let startCaptureUseCase: StartScreenCaptureUseCaseProtocol
     private let stopCaptureUseCase: StopScreenCaptureUseCaseProtocol
     private let eyeTrackingUseCase: EyeTrackingUseCaseProtocol
-    private let fetchPresentationUseCase: FetchPresentationsUseCaseProtocol
-    private let createPresentationUseCase: CreatePresentationUseCaseProtocol
-    private let uploadPracticeUseCase: UploadPracticeUseCaseProtocol
+    private let createPresentationUseCase: CreatePresentationUseCase
+    private let uploadPracticeUseCase: UploadTakeUseCaseProtocol
+    private let processMediaUseCase: ProcessMediaUseCaseProtocol
     
     
     private init() {
         // Service 구현체 생성
         self.screenCaptureService = ScreenCaptureServiceImpl()
         self.eyeTrackingService = EyeTrackingServiceImpl()
-        self.apiService = MockAPIService() // test 용 mock 주입
+        self.apiService = APIService()
+        self.mediaService = MediaServiceImpl()
         
-        // Repository에 주입
-        self.presentationRepository = PresentationRepositoryImpl(apiService: apiService)
+        self.presentationRepository = PresentationRepository(apiService: self.apiService)
+        self.takeRepository = TakeRepository(apiService: self.apiService)
         
         // UseCase 에 주입
         self.startCaptureUseCase = StartScreenCaptureUseCase(service: screenCaptureService)
         self.stopCaptureUseCase  = StopScreenCaptureUseCase(service: screenCaptureService)
         self.eyeTrackingUseCase = EyeTrackingUseCase(service: eyeTrackingService)
-        self.fetchPresentationUseCase = FetchPresentationsUseCase(presentationRepository: presentationRepository)
-        self.createPresentationUseCase = CreatePresentationUseCase(presentationRepository: presentationRepository)
-        self.uploadPracticeUseCase = UploadPracticeUseCase()
+        self.createPresentationUseCase = CreatePresentationUseCase(repository: presentationRepository)
+        self.uploadPracticeUseCase = UploadTakeUseCase(repository: takeRepository)
+        self.processMediaUseCase = ProcessMediaUseCase(mediaService: mediaService)
     }
     
     // 3) ViewModel 팩토리
-    func makeCameraViewModel(newPresentation: CreatePresentationRequest?) -> CameraViewModel {
+    func makeCameraViewModel(newPresentation: Presentation) -> CameraViewModel {
         CameraViewModel(
             start: startCaptureUseCase,
             stop:  stopCaptureUseCase,
             eyeTrackingUseCase: eyeTrackingUseCase,
-            createPresentationUseCase: createPresentationUseCase,
-            newPresentation: newPresentation
+            presentation: newPresentation
         )
     }
   
     func makeHomeViewModel() -> HomeViewModel {
-        HomeViewModel(fetchPresentationsUseCase: fetchPresentationUseCase)
+        return HomeViewModel(presentationRepository: presentationRepository)
     }
     
     func makePresnetationListViewModel() -> PresentaionListViewModel {
@@ -73,18 +75,19 @@ final class AppDI {
     }
     
     func makePresentationListModalViewModel() -> PresentationListModalViewModel {
-        PresentationListModalViewModel()
+        PresentationListModalViewModel(presentationRepository: presentationRepository)
     }
     
     func makeAddNewPresentationModalViewModel() -> AddNewPresentationModalViewModel {
-        AddNewPresentationModalViewModel()
+        AddNewPresentationModalViewModel(createPresentationUsecase: createPresentationUseCase)
     }
     
-    func makeCompleteViewModel(videoUrl: URL, eyeTrackingRate: Int, practiceMode: PracticeMode, ) -> CompleteViewModel {
+    func makeCompleteViewModel(presentationId: String, videoUrl: URL, eyeTrackingRate: Int) -> CompleteViewModel {
         CompleteViewModel(
+            presentatonId: presentationId,
             videoURL: videoUrl,
             eyeTrackingRate: eyeTrackingRate,
-            practiceMode: practiceMode,
+            processMediaUseCase: processMediaUseCase,
             uploadUseCase: uploadPracticeUseCase
         )
     }

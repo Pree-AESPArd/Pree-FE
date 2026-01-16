@@ -10,37 +10,40 @@ import ReplayKit
 import Combine
 import RealityKit
 
+enum TimerStatus {
+    case warning // 최소 시간 미만 or 최대 시간 초과 (빨간 배경)
+    case normal  // 정상 범위 (흰색 배경)
+}
+
 @MainActor
 final class CameraViewModel: ObservableObject {
     @Published var isCapturing = false
     @Published var isCalibrating = false
     @Published var isDoneCalibration: Bool = false
-    @Published var isDebugMode: Bool = true
     @Published var timerString: String = "00:00"
     @Published var eyeTrackingTimerString: String = "00:00"
     @Published var videoURL: URL?
     @Published var errorMessage: String?
     @Published var gazePoint: CGPoint = .zero // 시선이 닿은 화면 좌표 (UIKit 좌표계)
-    @Published var eyeTrackingRate: Int?;
+    @Published var eyeTrackingRate: Int?
     
-    // 새로 발표 생성하고 만드는 영상인지 기존 발표 영상 녹화인지
-    let newPresentation: CreatePresentationRequest?
-    
-    var currentPracticeMode: PracticeMode {
-        if let newPresentation = self.newPresentation {
-            // 새 발표 생성 모드
-            // TODO: 실제 User ID를 어디선가 가져와야 함 (UserManager 등)
-            return .newCreation(userId: "temp_user_id")
-        } else {
-            // 기존 발표 추가 모드
-            // TODO: 기존 발표라면 init에서 presentationId를 받아왔어야 함
-            return .additional(presentationId: "temp_presentation_id")
-        }
-    }
-    
+    let presentation: Presentation
     
     private var recordingTimer: Timer?
     private var recordingTime: TimeInterval = 0
+    
+    // 타이머 색상 변경 위한 변수
+    var currentTimerStatus: TimerStatus {
+        let currentSeconds = recordingTime
+        let minSeconds = presentation.idealMinTime
+        let maxSeconds = presentation.idealMaxTime
+        
+        if currentSeconds < minSeconds || currentSeconds > maxSeconds {
+            return .warning
+        } else {
+            return .normal
+        }
+    }
     
     // 시선 추적 타이머 관련 프로퍼티
     private var eyeTrackingTimer: Timer?
@@ -52,8 +55,6 @@ final class CameraViewModel: ObservableObject {
     private let startUseCase: StartScreenCaptureUseCaseProtocol
     private let stopUseCase: StopScreenCaptureUseCaseProtocol
     
-    private let createPresentationUseCase: CreatePresentationUseCaseProtocol
-    
     private let eyeTrackingUseCase: EyeTrackingUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
@@ -63,15 +64,13 @@ final class CameraViewModel: ObservableObject {
         start: StartScreenCaptureUseCaseProtocol,
         stop:  StopScreenCaptureUseCaseProtocol,
         eyeTrackingUseCase: EyeTrackingUseCaseProtocol,
-        createPresentationUseCase: CreatePresentationUseCaseProtocol,
-        newPresentation: CreatePresentationRequest?
+        presentation: Presentation
     ) {
         self.startUseCase = start
         self.stopUseCase  = stop
         self.eyeTrackingUseCase = eyeTrackingUseCase
         self.arView = ARView(frame: .zero)
-        self.createPresentationUseCase = createPresentationUseCase
-        self.newPresentation = newPresentation
+        self.presentation = presentation
         self.eyeTrackingUseCase.gazePublisher
                     .receive(on: DispatchQueue.main)            // UI 업데이트는 메인 스레드
                     .assign(to: \.gazePoint, on: self)
@@ -115,7 +114,7 @@ final class CameraViewModel: ObservableObject {
         // 1. 여기서 오차 계산 (이상치 제거, 평균 계산 등)
         if let offsetModel = CalibrationServiceImpl(targets: targets, samples: samples) {
             
-            // 2. 계산된 모델을 UseCase에 장착!
+            // 2. 계산된 모델을 UseCase에 장착
             // 이 모델을 사용해 좌표를 수정하게 됨
             self.eyeTrackingUseCase.setCalibration(calibrationService: offsetModel)
             
@@ -144,6 +143,17 @@ final class CameraViewModel: ObservableObject {
                 let minutes = Int(self.recordingTime) / 60
                 let seconds = Int(self.recordingTime) % 60
                 self.timerString = String(format: "%02d:%02d", minutes, seconds)
+                
+                
+                // 데모용 최대 녹화시간 제한: 160초 지나면 종료
+                let limit = 160.0
+                
+                if self.recordingTime >= limit {
+                    print("⏰ 제한 시간(\(limit)초) 도달! 녹화를 자동 종료합니다.")
+                    
+                    // 녹화 종료 함수 호출 (사용자가 버튼 누른 것과 똑같이 동작)
+                    self.toggleCapture()
+                }
             }
         }
     }
@@ -258,16 +268,7 @@ final class CameraViewModel: ObservableObject {
     }
     
     
-    func createPresentaionIfNotNull() async {
-        // TODO: 에러 뜨면 화면에 경고창 띄우고 뒤로가기 해야 함
-        guard let presentation = newPresentation else {return}
-        do {
-            let response = try await createPresentationUseCase.execute(presentation: presentation)
-            debugPrint(response)
-        } catch {
-            self.errorMessage = error.localizedDescription
-        }
-    }
+    
     
     
 }

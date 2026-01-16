@@ -67,7 +67,7 @@ struct EyeTrackingCalibrationView: View {
                         
                         // 시작 카운트다운 숫자
                         Text("\(startCountdown)")
-                            .font(.system(size: 60, weight: .bold))
+                            .font(.pretendardBold(size: 60))
                             .foregroundColor(.yellow)
                             .transition(.opacity) // 숫자가 바뀔 때 깜빡이는 효과
                             .id("start_\(startCountdown)") // 숫자가 바뀔 때마다 뷰 갱신

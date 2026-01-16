@@ -25,54 +25,60 @@ struct OverlayView: View {
             if vm.isCalibrating {
                 EyeTrackingCalibrationView(vm: vm)
             } else {
+                
+                ZStack {
+                    if !vm.presentation.showMeOnScreen && vm.isDoneCalibration {
+                        Color(hex: "#6D7078")
+                            .ignoresSafeArea()
+                    } else {
+                        Color.clear
+                            .ignoresSafeArea()
+                    }
+                
+                
                 GeometryReader { geometry in
+                    
                     VStack(spacing: 0) {
                         
                         popButton
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 12)
                         
-                        if !vm.isCapturing {
-                            descriptionText
-                        } else {
-                            timerText
+                        if !vm.isCapturing && !vm.presentation.showMeOnScreen {
+                            Spacer()
                         }
                         
-                        if vm.isDebugMode {
+                        centerGuideText
+                        
+                        if vm.presentation.isDevMode {
                             eyeTrackingTimer
+                                .padding(.top, 8)
                         }
                         
                         Spacer()
                         
-                        if !vm.isCapturing {
-                            Image("face_guide")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
-                                .frame(maxWidth: .infinity) // 가운데 정렬
-                        }
-                        
-                        Spacer()
-                        
-                        PrimaryButton(
-                            title: vm.isDoneCalibration ? (vm.isCapturing ? "촬영 마치기" : "촬영 시작하기") : "눈 추적 조정 시작",
-                            action: {
+                        if !vm.isCapturing  {
+                            if !vm.presentation.showMeOnScreen && vm.isDoneCalibration{
                                 
-                                if vm.isDoneCalibration {
-                                    if vm.isCapturing {
-                                        // 촬영 종료 alert를 띄움
-                                        showFinishRecordAlert = true
-                                    } else {
-                                        // 촬영 시작
-                                        vm.toggleCapture()
-                                    }
-                                } else {
-                                    vm.startCalibration()
-                                }
+                            } else {
+                                Image("face_guide")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
+                                    .frame(maxWidth: .infinity) // 가운데 정렬
                             }
-                        )
+                        }
+                        
+                        Spacer()
+                        
+                        bottomActionButton
+                            .appPadding()
                     }
                     .appPadding()
+//                    .background(
+//                        (vm.presentation.showMeOnScreen || !vm.isCapturing) ? Color.clear : Color(hex: "#6D7078")
+//                    )
+                    
                     // alert는 커스텀 스타일 적용 못함
                     // text에 폰트나 색상 바꾸고 싶으면 confirmationDialog 사용
                     .alert("뒤로가기", isPresented: $showPopWarningAlert) {
@@ -101,16 +107,49 @@ struct OverlayView: View {
                     .onChange(of: vm.videoURL) {
                         if let url = vm.videoURL, let rate = vm.eyeTrackingRate {
                             overlayManager.hide()
-                            navigationManager.push(.completeRecording(url: url, eyeTrackingRate: rate, mode: vm.currentPracticeMode))
+                            navigationManager.push(.completeRecording(presentationId: vm.presentation.id, url: url, eyeTrackingRate: rate))
                         }
                     }
                 }
+            }
             }
             
         }
         
     }
     
+    @ViewBuilder
+    private var centerGuideText: some View {
+        if !vm.isCapturing {
+            if vm.presentation.showMeOnScreen || !vm.isDoneCalibration {
+                descriptionText
+            } else {
+                faceHidingDescriptionText
+            }
+        } else {
+            if vm.presentation.showTimeOnScreen {
+                timerText
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var bottomActionButton: some View {
+        PrimaryButton(
+            title: vm.isDoneCalibration ? (vm.isCapturing ? "촬영 마치기" : "촬영 시작하기") : "눈 추적 조정 시작",
+            action: {
+                if vm.isDoneCalibration {
+                    if vm.isCapturing {
+                        showFinishRecordAlert = true
+                    } else {
+                        vm.toggleCapture()
+                    }
+                } else {
+                    vm.startCalibration()
+                }
+            }
+        )
+    }
     
     private var popButton: some View {
         Button(
@@ -131,7 +170,7 @@ struct OverlayView: View {
     }
     
     private var descriptionText: some View {
-        Text("얼굴을 프레임에 맞추고\n 중심의 점을 바라봐주세요")
+        Text("얼굴을 프레임에 맞추고\n 중간을 바라봐주세요")
             .font(.pretendardMedium(size: 14))
             .foregroundStyle(Color.primary)
             .multilineTextAlignment(.center)
@@ -140,13 +179,28 @@ struct OverlayView: View {
             .cornerRadius(20)
     }
     
+    private var faceHidingDescriptionText: some View {
+        Text("촬영 중 화면은 보이지 않지만,\n 촬영이 끝난 후 리포트에선\n 녹화 화면을 볼 수 있어요!")
+            .font(.pretendardMedium(size: 14))
+            .foregroundStyle(Color.primary)
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(.white)
+            .cornerRadius(20)
+    }
+    
     private var timerText: some View {
-        Text("\(vm.timerString)")
+        
+        let backgroundColor: Color = vm.currentTimerStatus == .warning ? Color.preeRed : Color.white
+        let foregroundColor: Color = vm.currentTimerStatus == .warning ? Color.white : Color.preeRed
+        
+        return Text("\(vm.timerString)")
             .font(.pretendardMedium(size: 20))
-            .foregroundStyle(Color.white)
+            .foregroundStyle(foregroundColor) // 글자색
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(Color.preeRed)
+            .background(backgroundColor) // 배경색
             .cornerRadius(4)
     }
     

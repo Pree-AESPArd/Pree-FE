@@ -8,6 +8,7 @@
 import Foundation
 
 protocol APIServiceProtocol {
-    func fetchPresentations() async throws -> [Presentation]
-    func createPresentation(createPresentationRequest presentation: CreatePresentationRequest) async throws -> ResponseForNewPresentation
+    func fetchPresentations() async throws -> [PresentationDTO]
+    func createPresentation(request: CreatePresentationRequestDTO) async throws -> PresentationDTO
+    func uploadTake(presentationId: String, videoKey: String, eyeTrackingRate: Int, audioURL: URL) async throws -> TakeDTO
 }

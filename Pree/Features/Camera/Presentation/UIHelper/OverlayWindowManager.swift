@@ -13,8 +13,8 @@ final class OverlayWindowManager: ObservableObject {
   private(set) var overlayWindow: UIWindow?
 
     //  1. func show<Content: View>
-    //      •    이 함수는 제네릭(Generic) 으로, 타입 매개변수 Content를 받습니다.
-    //      •    Content는 View 프로토콜을 준수해야(: View) 하므로, SwiftUI의 어떤 View 타입이든 사용할 수 있어요.
+    //  이 함수는 제네릭(Generic) 으로, 타입 매개변수 Content를 받음
+    //  Content는 View 프로토콜을 준수해야(: View) 하므로, SwiftUI의 어떤 View 타입이든 사용할 수 있음
     
     // 2.    (@ViewBuilder content: () -> Content)
     //    •    content라는 이름의 파라미터는 클로저(Closure) 입니다.
@@ -25,7 +25,7 @@ final class OverlayWindowManager: ObservableObject {
   func show<Content: View>(@ViewBuilder content: () -> Content) {
     guard overlayWindow == nil else { return }
 
-    // ① Grab the active UIWindowScene
+    // Grab the active UIWindowScene
       
     // UIApplication.shared.connectedScenes: 씬(Scene) API로, 앱에 연결된 모든 UIScene 객체(보통 UIWindowScene)들의 집합(Set<UIScene>)을 반환
     // first(where: { $0.activationState == .foregroundActive }): 그 중에서 activationState가 .foregroundActive, 즉 “사용자 눈앞에 현재 보이고 있는” 씬을 찾아 옵니다

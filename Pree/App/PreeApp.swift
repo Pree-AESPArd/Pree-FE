@@ -25,7 +25,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             completionHandler: { _, _ in }
         )
         
-        // 2. 🚀 애플 서버(APNS)에 원격 알림 등록 요청
+        // 2. 애플 서버(APNS)에 원격 알림 등록 요청
         application.registerForRemoteNotifications()
         
         // 3. 메시징 델리게이트 설정
@@ -95,10 +95,10 @@ extension AppDelegate: MessagingDelegate, UNUserNotificationCenterDelegate {
             Task {
                 do {
                     // Firebase ID Token도 새로 가져옴
-                    let idToken = try await currentUser.getIDTokenResult().token
+//                    let idToken = try await currentUser.getIDTokenResult().token
                     
                     let requestDTO = GuestLoginRequest(
-                        device_id: idToken,
+                        device_id: currentUser.uid,
                         fcm_tocken: fcmToken
                     )
                     

@@ -78,13 +78,20 @@ struct LaunchSignInView: View {
                 
                 if showSignIn {
                     Button(action: {
-                        authVM.signInAsGuest()
+                        if !authVM.isLoading{
+                            authVM.signInAsGuest()
+                        }
                     }) {
                         HStack {
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 20))
-                            Text("게스트로 시작하기")
-                                .font(.system(size: 17, weight: .semibold))
+                            if authVM.isLoading {
+                                Text("로그인 중...")
+                                    .font(.system(size: 17, weight: .semibold))
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .font(.system(size: 20))
+                                Text("게스트로 시작하기")
+                                    .font(.system(size: 17, weight: .semibold))
+                            }
                         }
                         .foregroundColor(.white) // 글자색
                         .frame(maxWidth: .infinity)

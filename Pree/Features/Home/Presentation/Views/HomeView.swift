@@ -43,46 +43,60 @@ struct HomeView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     
-                    ForEach(menus, id:\.self){ menu in
-                        switch menu {
-                        case .avgScoreGraph:
-                            avgScoreGraph
-                                .transition(.asymmetric(
-                                    insertion: .move(edge: .top).combined(with: .opacity),
-                                    removal: .move(edge: .top).combined(with: .opacity)
-                                ))
-                            
-                        case .searchBarOff:
-                            searchBarOff
-                                .transition(.asymmetric(
-                                    insertion: .move(edge: .bottom).combined(with: .opacity),
-                                    removal: .move(edge: .top).combined(with: .opacity)
-                                ))
-                            
-                        case .searchBarOn:
-                            SearchBarView(
-                                searchText: $searchText,
-                                isExpanded: $isSearchBarExpanded)
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .leading).combined(with: .opacity),
-                                removal: .move(edge: .trailing).combined(with: .opacity)
-                            ))
-                            
-                        case .filter:
-                            filter
-                                .transition(.asymmetric(
-                                    insertion: .move(edge: .top).combined(with: .opacity),
-                                    removal: .move(edge: .top).combined(with: .opacity)
-                                ))
-                        case .presentationList:
-                            VStack(alignment: .leading, spacing: 8){
-                                ForEach(1...10, id:\.self){ _ in
-                                    presentationList
-                                }
-                            } // :VStack
-                        }
-                    } // ForEach
-                    
+                    ForEach(menus, id: \.self) { menu in
+                        menuView(for: menu)
+                    }
+                    //                    ForEach(menus, id:\.self){ menu in
+                    //                        switch menu {
+                    //                        case .avgScoreGraph:
+                    //                            avgScoreGraph
+                    //                                .transition(.asymmetric(
+                    //                                    insertion: .move(edge: .top).combined(with: .opacity),
+                    //                                    removal: .move(edge: .top).combined(with: .opacity)
+                    //                                ))
+                    //
+                    //                        case .searchBarOff:
+                    //                            searchBarOff
+                    //                                .transition(.asymmetric(
+                    //                                    insertion: .move(edge: .bottom).combined(with: .opacity),
+                    //                                    removal: .move(edge: .top).combined(with: .opacity)
+                    //                                ))
+                    //
+                    //                        case .searchBarOn:
+                    //                            SearchBarView(
+                    //                                searchText: $searchText,
+                    //                                isExpanded: $isSearchBarExpanded)
+                    //                            .transition(.asymmetric(
+                    //                                insertion: .move(edge: .leading).combined(with: .opacity),
+                    //                                removal: .move(edge: .trailing).combined(with: .opacity)
+                    //                            ))
+                    //
+                    //                        case .filter:
+                    //                            filter
+                    //                                .transition(.asymmetric(
+                    //                                    insertion: .move(edge: .top).combined(with: .opacity),
+                    //                                    removal: .move(edge: .top).combined(with: .opacity)
+                    //                                ))
+                    //                        case .presentationList:
+                    //                            VStack(alignment: .leading, spacing: 8){
+                    //                                if vm.presentations.isEmpty {
+                    //                                    // 데이터 없을 때 보여줄 뷰 (선택사항)
+                    //                                    emptyView
+                    //                                        .padding(.top, 40)
+                    //                                } else {
+                    //                                    ForEach(vm.presentations, id: \.id) { presentation in
+                    //                                        // 리스트 아이템 뷰에 실제 데이터 전달
+                    ////                                        PresentationListItemView(
+                    ////                                            presentation: presentation,
+                    ////                                            vm: vm,
+                    ////                                            navigationManager: navigationManager
+                    ////                                        )
+                    //                                    }
+                    //                                }
+                    //                            } // :VStack
+                    //                        }
+                    //                    } // ForEach
+                    //
                     Spacer()
                 } // : VStack
                 .padding(.horizontal, 16)
@@ -105,24 +119,75 @@ struct HomeView: View {
             }
         }
         .task {
-            await vm.loadPresentations()
+            await vm.fetchList()
         }
         .sheet(isPresented: $modalManager.isShowingModal){
             switch modalManager.currentModal {
                 
-            // 영상 촬영 위한 발표 선택 모달
+                // 영상 촬영 위한 발표 선택 모달
             case .recordingCreationModal:
-                PresentationListModalView(presentations: vm.presentations)
+                PresentationListModalView()
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
                 
-            // 새 발표 만드는 모달
+                // 새 발표 만드는 모달
             case .addNewPresentationModal:
                 AddNewPresentationModalView()
                     .presentationDetents([.fraction(0.7)])
                     .presentationDragIndicator(.visible)
             default:
                 EmptyView()
+            }
+        }
+    }
+    
+    
+    @ViewBuilder
+    private func menuView(for menu: HomeMenu) -> some View {
+        switch menu {
+        case .avgScoreGraph:
+            avgScoreGraph
+                .transition(.asymmetric(
+                    insertion: .move(edge: .top).combined(with: .opacity),
+                    removal: .move(edge: .top).combined(with: .opacity)
+                ))
+            
+        case .searchBarOff:
+            searchBarOff
+                .transition(.asymmetric(
+                    insertion: .move(edge: .bottom).combined(with: .opacity),
+                    removal: .move(edge: .top).combined(with: .opacity)
+                ))
+            
+        case .searchBarOn:
+            SearchBarView(searchText: $searchText, isExpanded: $isSearchBarExpanded)
+                .transition(.asymmetric(
+                    insertion: .move(edge: .leading).combined(with: .opacity),
+                    removal: .move(edge: .trailing).combined(with: .opacity)
+                ))
+            
+        case .filter:
+            filter
+                .transition(.asymmetric(
+                    insertion: .move(edge: .top).combined(with: .opacity),
+                    removal: .move(edge: .top).combined(with: .opacity)
+                ))
+            
+        case .presentationList:
+            VStack(alignment: .leading, spacing: 8) {
+                if vm.presentations.isEmpty {
+                    emptyView
+                        .padding(.top, 40)
+                } else {
+                    // 데이터 연동
+                    ForEach(vm.presentations, id: \.id) { presentation in
+                        PresentationListItemView(
+                            presentation: presentation,
+                            vm: vm,
+                            navigationManager: navigationManager
+                        )
+                    }
+                }
             }
         }
     }
@@ -253,13 +318,99 @@ struct HomeView: View {
         .padding(.bottom, 12)
     }
     
-    private var presentationList: some View {
+    private var emptyView: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "folder.badge.questionmark")
+                .font(.system(size: 40))
+                .foregroundColor(.gray)
+            Text("아직 생성된 발표가 없어요")
+                .font(.pretendardMedium(size: 16))
+                .foregroundColor(.gray)
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
+    //TODO: 이제 필요없음
+    //    private var presentationList: some View {
+    //        ZStack(alignment: .trailing){
+    //            HStack(alignment: .top,spacing:0){
+    //
+    //                if vm.showDeleteMode {
+    //                    Button(action: {
+    //
+    //                    }){
+    //                        Image("select_off")
+    //                            .padding(.vertical, 30)
+    //                            .padding(.horizontal, 12)
+    //                    }
+    //                    .padding(.leading, 4)
+    //                } else {
+    //                    Button(action: {
+    //
+    //                    }){
+    //                        Image("star_yello_off")
+    //                            .padding(.vertical, 30)
+    //                            .padding(.horizontal, 12)
+    //                    }
+    //                    .padding(.leading, 4)
+    //                }
+    //
+    //                VStack(alignment: .leading, spacing: 0) {
+    //                    HStack(alignment: .top) {
+    //
+    //                        Text("협업체험학습 발표")
+    //                            .foregroundStyle(Color.black)
+    //                            .font(.pretendardMedium(size: 16))
+    //
+    //                        VStack(spacing:0){
+    //                            Text("4개")
+    //                                .font(.pretendardMedium(size: 12))
+    //                                .foregroundStyle(Color.blue200)
+    //                                .padding(.horizontal, 6)
+    //                                .padding(.vertical, 2)
+    //                                .overlay(
+    //                                    RoundedRectangle(cornerRadius: 20)
+    //                                        .stroke(Color.blue200, lineWidth: 1)
+    //                                )
+    //                        }
+    //                    } // : HStack
+    //                    .padding(.top, 21.5)
+    //                    .padding(.bottom, 2)
+    //
+    //                    Text("1일 전")
+    //                        .font(.pretendardMedium(size: 14))
+    //                        .foregroundStyle(Color.textGray)
+    //                } // : VStack
+    //
+    //                Spacer()
+    //            }// : HStack
+    //            .background(Color.sectionBackground)
+    //            .cornerRadiusCustom(20, corners: [.topLeft, .bottomLeft])
+    //            .cornerRadiusCustom(35, corners: [.topRight, .bottomRight])
+    //            .applyShadowStyle()
+    //
+    //
+    //            CircularProgressBarView(value: vm.score)
+    //                .frame(width: 80, height: 80)
+    //        } // : ZStack
+    //        .onTapGesture {
+    //            navigationManager.push(.presentationList)
+    //        }
+    //    }
+}
+
+struct PresentationListItemView: View {
+    let presentation: Presentation
+    @ObservedObject var vm: HomeViewModel
+    let navigationManager: NavigationManager
+    
+    var body: some View {
         ZStack(alignment: .trailing){
             HStack(alignment: .top,spacing:0){
                 
                 if vm.showDeleteMode {
                     Button(action: {
-                        
+                        // 삭제 선택 액션
                     }){
                         Image("select_off")
                             .padding(.vertical, 30)
@@ -268,9 +419,9 @@ struct HomeView: View {
                     .padding(.leading, 4)
                 } else {
                     Button(action: {
-                        
+                        // 즐겨찾기 액션
                     }){
-                        Image("star_yello_off")
+                        Image(presentation.isFavorite ? "star_yello_on" : "star_yello_off") // 데이터 연동
                             .padding(.vertical, 30)
                             .padding(.horizontal, 12)
                     }
@@ -280,12 +431,12 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(alignment: .top) {
                         
-                        Text("협업체험학습 발표")
+                        Text(presentation.presentationName)
                             .foregroundStyle(Color.black)
                             .font(.pretendardMedium(size: 16))
                         
                         VStack(spacing:0){
-                            Text("4개")
+                            Text("\(presentation.totalPractices)개")
                                 .font(.pretendardMedium(size: 12))
                                 .foregroundStyle(Color.blue200)
                                 .padding(.horizontal, 6)
@@ -295,28 +446,28 @@ struct HomeView: View {
                                         .stroke(Color.blue200, lineWidth: 1)
                                 )
                         }
-                    } // : HStack
+                    }
                     .padding(.top, 21.5)
                     .padding(.bottom, 2)
                     
-                    Text("1일 전")
+                    Text(presentation.updatedAtText ?? "")
                         .font(.pretendardMedium(size: 14))
                         .foregroundStyle(Color.textGray)
-                } // : VStack
+                }
                 
                 Spacer()
-            }// : HStack
+            }
             .background(Color.sectionBackground)
             .cornerRadiusCustom(20, corners: [.topLeft, .bottomLeft])
             .cornerRadiusCustom(35, corners: [.topRight, .bottomRight])
             .applyShadowStyle()
             
-            
-            CircularProgressBarView(value: vm.score)
+            CircularProgressBarView(value: Double(presentation.totalScore ?? 0) / 100.0)
                 .frame(width: 80, height: 80)
-        } // : ZStack
+        }
         .onTapGesture {
-            navigationManager.push(.presentationList)
+            // 상세 화면으로 이동 시 해당 발표 정보 전달 필요
+            navigationManager.push(.presentationList) // .presentationDetail(presentation) 등으로 수정 필요할 수 있음
         }
     }
 }
