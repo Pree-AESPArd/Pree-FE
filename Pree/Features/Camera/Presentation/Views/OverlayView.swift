@@ -170,7 +170,7 @@ struct OverlayView: View {
     }
     
     private var descriptionText: some View {
-        Text("얼굴을 프레임에 맞추고\n 중심의 점을 바라봐주세요")
+        Text("얼굴을 프레임에 맞추고\n 중간을 바라봐주세요")
             .font(.pretendardMedium(size: 14))
             .foregroundStyle(Color.primary)
             .multilineTextAlignment(.center)
@@ -191,12 +191,16 @@ struct OverlayView: View {
     }
     
     private var timerText: some View {
-        Text("\(vm.timerString)")
+        
+        let backgroundColor: Color = vm.currentTimerStatus == .warning ? Color.preeRed : Color.white
+        let foregroundColor: Color = vm.currentTimerStatus == .warning ? Color.white : Color.preeRed
+        
+        return Text("\(vm.timerString)")
             .font(.pretendardMedium(size: 20))
-            .foregroundStyle(Color.white)
+            .foregroundStyle(foregroundColor) // 글자색
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(Color.preeRed)
+            .background(backgroundColor) // 배경색
             .cornerRadius(4)
     }
     

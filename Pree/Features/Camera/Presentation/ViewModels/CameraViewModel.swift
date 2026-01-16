@@ -10,6 +10,11 @@ import ReplayKit
 import Combine
 import RealityKit
 
+enum TimerStatus {
+    case warning // 최소 시간 미만 or 최대 시간 초과 (빨간 배경)
+    case normal  // 정상 범위 (흰색 배경)
+}
+
 @MainActor
 final class CameraViewModel: ObservableObject {
     @Published var isCapturing = false
@@ -20,13 +25,25 @@ final class CameraViewModel: ObservableObject {
     @Published var videoURL: URL?
     @Published var errorMessage: String?
     @Published var gazePoint: CGPoint = .zero // 시선이 닿은 화면 좌표 (UIKit 좌표계)
-    @Published var eyeTrackingRate: Int?;
+    @Published var eyeTrackingRate: Int?
     
     let presentation: Presentation
     
-    
     private var recordingTimer: Timer?
     private var recordingTime: TimeInterval = 0
+    
+    // 타이머 색상 변경 위한 변수
+    var currentTimerStatus: TimerStatus {
+        let currentSeconds = recordingTime
+        let minSeconds = presentation.idealMinTime
+        let maxSeconds = presentation.idealMaxTime
+        
+        if currentSeconds < minSeconds || currentSeconds > maxSeconds {
+            return .warning
+        } else {
+            return .normal
+        }
+    }
     
     // 시선 추적 타이머 관련 프로퍼티
     private var eyeTrackingTimer: Timer?
