@@ -95,10 +95,10 @@ extension AppDelegate: MessagingDelegate, UNUserNotificationCenterDelegate {
             Task {
                 do {
                     // Firebase ID Token도 새로 가져옴
-                    let idToken = try await currentUser.getIDTokenResult().token
+//                    let idToken = try await currentUser.getIDTokenResult().token
                     
                     let requestDTO = GuestLoginRequest(
-                        device_id: idToken,
+                        device_id: currentUser.uid,
                         fcm_tocken: fcmToken
                     )
                     
