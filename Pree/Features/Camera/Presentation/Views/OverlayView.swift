@@ -25,6 +25,17 @@ struct OverlayView: View {
             if vm.isCalibrating {
                 EyeTrackingCalibrationView(vm: vm)
             } else {
+                
+                ZStack {
+                    if !vm.presentation.showMeOnScreen && vm.isDoneCalibration {
+                        Color(hex: "#6D7078")
+                            .ignoresSafeArea()
+                    } else {
+                        Color.clear
+                            .ignoresSafeArea()
+                    }
+                
+                
                 GeometryReader { geometry in
                     
                     VStack(spacing: 0) {
@@ -46,26 +57,27 @@ struct OverlayView: View {
                         
                         Spacer()
                         
-                        if !vm.isCapturing && !vm.presentation.showMeOnScreen {
-                            Image("face_guide")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
-                                .frame(maxWidth: .infinity) // 가운데 정렬
+                        if !vm.isCapturing  {
+                            if !vm.presentation.showMeOnScreen && vm.isDoneCalibration{
+                                
+                            } else {
+                                Image("face_guide")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: geometry.size.width * 0.65) // 화면 너비의 60% 크기
+                                    .frame(maxWidth: .infinity) // 가운데 정렬
+                            }
                         }
                         
                         Spacer()
                         
                         bottomActionButton
                             .appPadding()
-                            .background(
-                                vm.presentation.showMeOnScreen ? Color.clear : Color(hex: "#6D7078")
-                            )
                     }
                     .appPadding()
-                    .background(
-                        vm.presentation.showMeOnScreen ? Color.clear : Color(hex: "#6D7078")
-                    )
+//                    .background(
+//                        (vm.presentation.showMeOnScreen || !vm.isCapturing) ? Color.clear : Color(hex: "#6D7078")
+//                    )
                     
                     // alert는 커스텀 스타일 적용 못함
                     // text에 폰트나 색상 바꾸고 싶으면 confirmationDialog 사용
@@ -100,6 +112,7 @@ struct OverlayView: View {
                     }
                 }
             }
+            }
             
         }
         
@@ -108,7 +121,7 @@ struct OverlayView: View {
     @ViewBuilder
     private var centerGuideText: some View {
         if !vm.isCapturing {
-            if vm.presentation.showMeOnScreen {
+            if vm.presentation.showMeOnScreen || !vm.isDoneCalibration {
                 descriptionText
             } else {
                 faceHidingDescriptionText
@@ -167,11 +180,12 @@ struct OverlayView: View {
     }
     
     private var faceHidingDescriptionText: some View {
-        Text("촬영 중 화면은 보이지 않지만,\n 촬영이 끝난 후 리포트에선 녹화 화면을 볼 수 있어요!")
+        Text("촬영 중 화면은 보이지 않지만,\n 촬영이 끝난 후 리포트에선\n 녹화 화면을 볼 수 있어요!")
             .font(.pretendardMedium(size: 14))
             .foregroundStyle(Color.primary)
             .multilineTextAlignment(.center)
-            .padding(8)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
             .background(.white)
             .cornerRadius(20)
     }

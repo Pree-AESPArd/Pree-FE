@@ -22,16 +22,6 @@ class AuthManager: ObservableObject {
     init() {
         self.handle = Auth.auth().addStateDidChangeListener { [weak self] auth, user in
             self?.user = user
-            if let user = user {
-                Task {
-                    do {
-                        // try await를 붙여서 호출
-                        try await self?.fetchTokensAndSendToServer(user: user)
-                    } catch {
-                        print("⚠️ 자동 로그인 동기화 실패: \(error.localizedDescription)")
-                    }
-                }
-            }
         }
     }
     
