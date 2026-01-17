@@ -17,11 +17,11 @@ struct Presentation: Codable, Equatable,Hashable {
     let isDevMode: Bool
     
     let totalScore: Int?
-    let totalPractices: Int?
+    let totalPractices: Int
     let isFavorite: Bool
-    let updatedAtText: String?
+    let updatedAtText: String
     let createdAt: String
-    let updatedAt: String?
+    let updatedAt: String
 
 }
 
