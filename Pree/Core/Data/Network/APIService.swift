@@ -11,7 +11,7 @@ import FirebaseAuth
 
 struct APIService: APIServiceProtocol {
     
-    func fetchPresentations() async throws -> [PresentationDTO] {
+    func fetchPresentations(sortOption: String) async throws -> [PresentationDTO] {
         
         // 저장된 UUID 꺼내기 (없으면 에러 처리)
         guard let userId = UserStorage.shared.getUUID() else {
@@ -19,7 +19,7 @@ struct APIService: APIServiceProtocol {
             throw URLError(.userAuthenticationRequired)
         }
         
-        let route = APIEndpoint.fetchProjects(userId: userId)
+        let route = APIEndpoint.fetchProjects(userId: userId, sortOption: sortOption)
         
         // 인증 헤더 (Firebase 토큰 - 기존에 있다면 유지)
         guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
@@ -145,6 +145,40 @@ struct APIService: APIServiceProtocol {
                let errorBody = String(data: data, encoding: .utf8) {
                 print("❌ [Network] 서버 에러: \(errorBody)")
             }
+            throw error
+        }
+    }
+    
+    
+    func toggleFavorite(projectId: String) async throws -> Bool {
+        // 1. Endpoint 생성
+        let route = APIEndpoint.toggleFavorite(projectId: projectId)
+        
+        // 2. 토큰 가져오기
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        // 3. 요청 (PATCH)
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method, // .patch
+            encoding: JSONEncoding.default, // Body가 없어도 JSONEncoding 사용 무방
+            headers: headers
+        ).validate(statusCode: 200..<300)
+        
+        do {
+            // 4. 응답 파싱
+            let response = try await dataRequest.serializingDecodable(FavoriteResponseDTO.self).value
+            print("⭐️ [Network] 즐겨찾기 변경 완료: \(response.isFavorite)")
+            return response.isFavorite
+        } catch {
+            print("❌ [Network] 즐겨찾기 요청 실패: \(error.localizedDescription)")
             throw error
         }
     }

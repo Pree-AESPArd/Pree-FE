@@ -46,57 +46,7 @@ struct HomeView: View {
                     ForEach(menus, id: \.self) { menu in
                         menuView(for: menu)
                     }
-                    //                    ForEach(menus, id:\.self){ menu in
-                    //                        switch menu {
-                    //                        case .avgScoreGraph:
-                    //                            avgScoreGraph
-                    //                                .transition(.asymmetric(
-                    //                                    insertion: .move(edge: .top).combined(with: .opacity),
-                    //                                    removal: .move(edge: .top).combined(with: .opacity)
-                    //                                ))
-                    //
-                    //                        case .searchBarOff:
-                    //                            searchBarOff
-                    //                                .transition(.asymmetric(
-                    //                                    insertion: .move(edge: .bottom).combined(with: .opacity),
-                    //                                    removal: .move(edge: .top).combined(with: .opacity)
-                    //                                ))
-                    //
-                    //                        case .searchBarOn:
-                    //                            SearchBarView(
-                    //                                searchText: $searchText,
-                    //                                isExpanded: $isSearchBarExpanded)
-                    //                            .transition(.asymmetric(
-                    //                                insertion: .move(edge: .leading).combined(with: .opacity),
-                    //                                removal: .move(edge: .trailing).combined(with: .opacity)
-                    //                            ))
-                    //
-                    //                        case .filter:
-                    //                            filter
-                    //                                .transition(.asymmetric(
-                    //                                    insertion: .move(edge: .top).combined(with: .opacity),
-                    //                                    removal: .move(edge: .top).combined(with: .opacity)
-                    //                                ))
-                    //                        case .presentationList:
-                    //                            VStack(alignment: .leading, spacing: 8){
-                    //                                if vm.presentations.isEmpty {
-                    //                                    // 데이터 없을 때 보여줄 뷰 (선택사항)
-                    //                                    emptyView
-                    //                                        .padding(.top, 40)
-                    //                                } else {
-                    //                                    ForEach(vm.presentations, id: \.id) { presentation in
-                    //                                        // 리스트 아이템 뷰에 실제 데이터 전달
-                    ////                                        PresentationListItemView(
-                    ////                                            presentation: presentation,
-                    ////                                            vm: vm,
-                    ////                                            navigationManager: navigationManager
-                    ////                                        )
-                    //                                    }
-                    //                                }
-                    //                            } // :VStack
-                    //                        }
-                    //                    } // ForEach
-                    //
+                    
                     Spacer()
                 } // : VStack
                 .padding(.horizontal, 16)
@@ -419,7 +369,7 @@ struct PresentationListItemView: View {
                     .padding(.leading, 4)
                 } else {
                     Button(action: {
-                        // 즐겨찾기 액션
+                        vm.toggleFavorite(presentation: presentation)
                     }){
                         Image(presentation.isFavorite ? "star_yello_on" : "star_yello_off") // 데이터 연동
                             .padding(.vertical, 30)

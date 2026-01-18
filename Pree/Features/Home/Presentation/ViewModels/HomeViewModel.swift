@@ -18,7 +18,12 @@ final class HomeViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    @Published var filterMode: FilterMode = .recentMode
+    @Published var filterMode: FilterMode = .recentMode {
+        didSet {
+            // 모드가 바뀌면 자동으로 목록 갱신 요청
+            Task { await fetchList() }
+        }
+    }
     @Published var showDeleteMode: Bool = false
     
     @Published var userName: String = "게스트"
@@ -48,6 +53,36 @@ final class HomeViewModel: ObservableObject {
     
     @MainActor
     func fetchList() async {
-        try? await presentationRepository.fetchPresentations()
+        isLoading = true
+        
+        // 현재 filterMode에 따라 서버에 보낼 문자열 결정
+        let sortOptionString: String
+        switch filterMode {
+        case .recentMode:
+            sortOptionString = "latest"
+        case .bookmarkMode:
+            sortOptionString = "favorite"
+        }
+        
+        do {
+            try await presentationRepository.fetchPresentations(sortOption: sortOptionString)
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
     }
+    
+    func toggleFavorite(presentation: Presentation) {
+        Task {
+            do {
+                // ViewModel에서는 Repository만 호출하면 끝 (UI 갱신은 Combine이 알아서 함)
+                try await presentationRepository.toggleFavorite(projectId: presentation.id)
+            } catch {
+                // 에러 발생 시 처리 (Repository가 롤백하므로 Toast 정도만 띄워주면 됨)
+                self.errorMessage = "즐겨찾기 변경 실패: \(error.localizedDescription)"
+            }
+        }
+    }
+    
 }

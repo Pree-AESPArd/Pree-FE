@@ -8,8 +8,10 @@
 import Foundation
 
 protocol PresentationRepositoryProtocol {
-    func fetchPresentations() async throws
+    func fetchPresentations(sortOption: String) async throws
     
     func createNewPresentation(request: CreatePresentationRequest) async throws -> Presentation
+    
+    func toggleFavorite(projectId: String) async throws
 }
 

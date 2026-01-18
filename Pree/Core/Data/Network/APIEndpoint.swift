@@ -9,9 +9,10 @@ import Foundation
 import Alamofire
 
 enum APIEndpoint {
-    case fetchProjects(userId: String)
+    case fetchProjects(userId: String, sortOption: String)
     case createProject
     case uploadTake(projectId: String)
+    case toggleFavorite(projectId: String)
     
     var path: String {
         switch self {
@@ -21,6 +22,8 @@ enum APIEndpoint {
             return "/projects/"
         case .uploadTake(let projectId):
             return "/projects/\(projectId)/takes"
+        case .toggleFavorite(projectId: let projectId):
+            return "/projects/\(projectId)/favorite"
         }
     }
     
@@ -32,13 +35,18 @@ enum APIEndpoint {
             return .post
         case .uploadTake:
             return .post
+        case .toggleFavorite:
+            return .patch
         }
     }
     
     var parameters: Parameters? {
         switch self {
-        case .fetchProjects(let userId):
-            return ["user_id": userId]
+        case .fetchProjects(let userId, let sortOption):
+            return [
+                "user_id": userId,
+                "sort_option": sortOption
+            ]
         default:
             return nil
         }
