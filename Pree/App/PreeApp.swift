@@ -55,6 +55,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct PreeApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var navigationManager = NavigationManager()
     @StateObject private var authVM = AuthViewModel()
     
     init() {
@@ -65,12 +66,21 @@ struct PreeApp: App {
         WindowGroup {
             Group {
                 if authVM.isSignedIn {
-                    RootTabView()
+                    RootTabView(navigationManager: navigationManager)
                 } else {
                     LaunchSignInView()
                 }
             }
             .environmentObject(authVM)
+            .environmentObject(navigationManager) // 하위 뷰들이 쓸 수 있게
+            
+            // 알림 클릭 이벤트 감지
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("FCM_Notification_Clicked"))) { notification in
+                if let userInfo = notification.userInfo {
+                    print("🔔 PreeApp에서 알림 신호 받음: \(userInfo)")
+                    navigationManager.handlePushNotification(userInfo: userInfo)
+                }
+            }
         }
     }
 }
@@ -95,11 +105,11 @@ extension AppDelegate: MessagingDelegate, UNUserNotificationCenterDelegate {
             Task {
                 do {
                     // Firebase ID Token도 새로 가져옴
-//                    let idToken = try await currentUser.getIDTokenResult().token
+                    //                    let idToken = try await currentUser.getIDTokenResult().token
                     
                     let requestDTO = GuestLoginRequest(
                         device_id: currentUser.uid,
-                        fcm_tocken: fcmToken
+                        fcm_token: fcmToken
                     )
                     
                     // 서버 API 호출 (토큰 업데이트용)
@@ -113,6 +123,24 @@ extension AppDelegate: MessagingDelegate, UNUserNotificationCenterDelegate {
                 }
             }
         }
+    }
+    
+    // 사용자가 알림을 '클릭'했을 때 호출됨
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        let userInfo = response.notification.request.content.userInfo
+        print("🔔 AppDelegate: 알림 클릭됨 - \(userInfo)")
+        
+        // PreeApp에 신호를 보냄
+        NotificationCenter.default.post(
+            name: NSNotification.Name("FCM_Notification_Clicked"),
+            object: nil,
+            userInfo: userInfo
+        )
+        
+        completionHandler()
     }
     
     // 앱이 실행 중일 때 알림이 오면 처리

@@ -10,7 +10,7 @@ import SwiftUI
 enum Tab { case home, profile }
 
 struct RootTabView: View {
-    @StateObject private var navigationManager = NavigationManager()
+    @ObservedObject var navigationManager = NavigationManager()
     @StateObject private var modalManager = ModalManager.shared
     
     let homeViewModel = AppDI.shared.makeHomeViewModel()
