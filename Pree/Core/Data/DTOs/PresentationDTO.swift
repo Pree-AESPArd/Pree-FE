@@ -21,7 +21,7 @@ struct PresentationDTO: Codable, Identifiable {
     let totalPractices: Int
     let isFavorite: Bool
     let createdAt: String
-    let updatedAt: String?
+    let updatedAt: String
     
     // 서버에서 오는 JSON 키값과 매칭
     enum CodingKeys: String, CodingKey {

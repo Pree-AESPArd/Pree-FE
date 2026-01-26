@@ -8,6 +8,7 @@
 import Foundation
 
 enum PresentationMapper {
+    
     static func toEntity(_ dto: PresentationDTO) -> Presentation {
         Presentation(
             id: dto.id,
@@ -26,23 +27,28 @@ enum PresentationMapper {
         )
     }
     
-    private static func makeUpdatedAtText(from dateString: String?) -> String? {
-        guard let dateString = dateString else { return nil }
+    
+    private static func makeUpdatedAtText(from dateString: String) -> String {
         
-        // 1. 서버에서 오는 날짜 형식에 맞춰 Formatter 생성
-        // (일반적인 ISO8601 형식을 가정 e.g., "2024-01-08T14:30:00Z")
+        // 1. ISO8601 포맷터 생성
         let isoFormatter = ISO8601DateFormatter()
-        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds] // 초 단위 소수점(.123)이 있을 경우 대비
         
-        // 날짜 변환 시도
-        guard let targetDate = isoFormatter.date(from: dateString) else {
-            // 소수점이 없는 포맷일 수도 있으므로 옵션 빼고 한 번 더 시도
-            isoFormatter.formatOptions = [.withInternetDateTime]
-            guard let retryDate = isoFormatter.date(from: dateString) else { return nil }
+        // 2. 먼저 '초 단위 소수점(.123)'이 포함된 형식 시도
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        
+        if let targetDate = isoFormatter.date(from: dateString) {
+            return daysBetween(start: targetDate)
+        }
+        
+        // 3. 실패 시, 소수점이 없는 일반적인 ISO8601 형식 시도
+        isoFormatter.formatOptions = [.withInternetDateTime]
+        
+        if let retryDate = isoFormatter.date(from: dateString) {
             return daysBetween(start: retryDate)
         }
         
-        return daysBetween(start: targetDate)
+        // 4. 날짜 파싱에 모두 실패했을 경우 안전하게 기본값 반환
+        return "날짜 알 수 없음"
     }
     
     private static func daysBetween(start: Date) -> String {
@@ -56,17 +62,15 @@ enum PresentationMapper {
         // 날짜 차이 계산
         let components = calendar.dateComponents([.day], from: startDate, to: endDate)
         
-        guard let days = components.day else { return "" }
+        // 날짜 계산 실패 시 기본값
+        guard let days = components.day else { return "방금 전" }
         
-        return String(days)
-//        if days == 0 {
-//            return "오늘"
-//        } else if days == 1 {
-//            return "어제"
-//        } else if days > 0 {
-//            return "\(days)일 전"
-//        } else {
-//            return "방금 전" // 미래의 시간이 들어올 경우 예외 처리
-//        }
+        if days == 0 {
+            return "오늘"
+        } else if days > 0 {
+            return "\(days)일 전"
+        } else {
+            return "방금 전" // 미래의 시간이 들어올 경우 등 예외 처리
+        }
     }
 }

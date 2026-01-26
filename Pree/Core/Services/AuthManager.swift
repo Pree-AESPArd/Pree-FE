@@ -39,13 +39,24 @@ class AuthManager: ObservableObject {
         // Step A: ID Token
         let idToken = try await user.getIDTokenResult(forcingRefresh: false).token
         
-        // Step B: FCM Token
-        let fcmToken = try await Messaging.messaging().token()
+        // Step B: FCM Token (안전하게 가져오기)
+        let fcmToken: String = try await withCheckedThrowingContinuation { continuation in
+            Messaging.messaging().token { token, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let token = token {
+                    continuation.resume(returning: token)
+                } else {
+                    continuation.resume(throwing: NSError(domain: "FCM", code: -1, userInfo: [NSLocalizedDescriptionKey: "토큰이 없음"]))
+                }
+            }
+        }
+        
         
         // Step C: DTO
         let requestDTO = GuestLoginRequest(
             device_id: user.uid,
-            fcm_tocken: fcmToken
+            fcm_token: fcmToken
         )
         
         // Step D: 서버 전송 (AuthRepository 내부에서 UserStorage.shared.saveUUID 수행)

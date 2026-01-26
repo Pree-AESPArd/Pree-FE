@@ -17,17 +17,34 @@ struct Presentation: Codable, Equatable,Hashable {
     let isDevMode: Bool
     
     let totalScore: Int?
-    let totalPractices: Int?
+    let totalPractices: Int
     let isFavorite: Bool
-    let updatedAtText: String?
+    let updatedAtText: String
     let createdAt: String
-    let updatedAt: String?
-
+    let updatedAt: String
+    
 }
 
 
 extension Presentation {
-        
+    
+    func updateFavorite(_ isFavorite: Bool) -> Presentation {
+        return Presentation(
+            id: self.id,
+            presentationName: self.presentationName,
+            idealMinTime: self.idealMinTime,
+            idealMaxTime: self.idealMaxTime,
+            showTimeOnScreen: self.showTimeOnScreen,
+            showMeOnScreen: self.showMeOnScreen,
+            isDevMode: self.isDevMode,
+            totalScore: self.totalScore,
+            totalPractices: self.totalPractices,
+            isFavorite: isFavorite, // 여기만 변경됨
+            updatedAtText: self.updatedAtText,
+            createdAt: self.createdAt,
+            updatedAt: self.updatedAt
+        )
+    }
     
     static func mockList() -> [Presentation] {
         return [

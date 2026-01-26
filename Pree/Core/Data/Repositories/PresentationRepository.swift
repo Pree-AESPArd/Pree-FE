@@ -23,8 +23,8 @@ struct PresentationRepository: PresentationRepositoryProtocol {
     }
     
     // 서버에서 리스트 가져와서 스트림에 쏘기
-    func fetchPresentations() async throws {
-        let dtos = try await apiService.fetchPresentations()
+    func fetchPresentations(sortOption: String = "latest") async throws {
+        let dtos = try await apiService.fetchPresentations(sortOption: sortOption)
         let entities = dtos.map { PresentationMapper.toEntity($0) }
         
         // 받아온 데이터를 스트림에 방출 (구독자들 UI 업데이트됨)
@@ -44,5 +44,44 @@ struct PresentationRepository: PresentationRepositoryProtocol {
         
         return newEntity
     }
+    
+    func toggleFavorite(projectId: String) async throws {
+            // 1. 현재 리스트 가져오기
+            var currentList = presentationsSubject.value
+            
+            // 2. 해당 프로젝트 찾기 (Index 찾기)
+            guard let index = currentList.firstIndex(where: { $0.id == projectId }) else { return }
+            
+            // 3. [Optimistic Update] 서버 통신 전에 로컬 데이터 먼저 뒤집기
+            let oldItem = currentList[index]
+            let newItem = oldItem.updateFavorite(!oldItem.isFavorite) // 토글
+            
+            currentList[index] = newItem
+            presentationsSubject.send(currentList) // UI 즉시 갱신
+            
+            // 4. 서버 요청 보내기 (백그라운드)
+            do {
+                let serverResult = try await apiService.toggleFavorite(projectId: projectId)
+                
+                // (선택) 서버 결과가 로컬 상태와 다르면 다시 맞춰줌 (동기화 보장)
+                if newItem.isFavorite != serverResult {
+                    var fixedList = presentationsSubject.value
+                    if let fixIndex = fixedList.firstIndex(where: { $0.id == projectId }) {
+                        fixedList[fixIndex] = oldItem.updateFavorite(serverResult)
+                        presentationsSubject.send(fixedList)
+                    }
+                }
+                
+            } catch {
+                // 5. 실패 시 원상복구 (Rollback)
+                print("❌ 즐겨찾기 실패 -> 롤백 수행")
+                var rollbackList = presentationsSubject.value
+                if let rollbackIndex = rollbackList.firstIndex(where: { $0.id == projectId }) {
+                    rollbackList[rollbackIndex] = oldItem // 원래대로 되돌림
+                    presentationsSubject.send(rollbackList)
+                }
+                throw error
+            }
+        }
     
 }

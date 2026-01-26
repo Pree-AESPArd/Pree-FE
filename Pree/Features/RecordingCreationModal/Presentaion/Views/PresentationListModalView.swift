@@ -125,7 +125,7 @@ struct PresentationListModalView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             
-            Text("\(presentation.updatedAtText)일 전")
+            Text(presentation.updatedAtText ?? "오늘")
                 .font(.pretendardMedium(size: 14))
                 .foregroundStyle(Color.textGray)
                 .frame(maxWidth: .infinity, alignment: .leading)

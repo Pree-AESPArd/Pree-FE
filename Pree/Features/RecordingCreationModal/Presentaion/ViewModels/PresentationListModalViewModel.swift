@@ -33,7 +33,7 @@ class PresentationListModalViewModel: ObservableObject {
         
         // 모달 켜질 때 최신 데이터 한 번 더 당겨오기
         Task {
-            try? await presentationRepository.fetchPresentations()
+            try? await presentationRepository.fetchPresentations(sortOption: "latest")
         }
     }
     
