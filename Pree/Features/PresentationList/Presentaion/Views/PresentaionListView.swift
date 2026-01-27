@@ -1,5 +1,5 @@
 //
-//  PresentaionList.swift
+//  PresentationListView.swift
 //  Pree
 //
 //  Created by 이유현 on 8/1/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PresentaionListView: View {
+struct PresentationListView: View {
     @StateObject var vm: PresentationListViewModel
     @EnvironmentObject var navigationManager: NavigationManager
     @EnvironmentObject private var modalManager: ModalManager
@@ -42,8 +42,17 @@ struct PresentaionListView: View {
                                 deleteFilter
                             case .practiceList:
                                 VStack(alignment: .leading, spacing: 8){
-                                    ForEach(1...10, id:\.self){ _ in
-                                        practiceList
+                                    if vm.takes.isEmpty {
+                                        // 데이터가 없을 때 표시할 뷰
+                                        Text("아직 연습 기록이 없어요.")
+                                            .font(.pretendardMedium(size: 14))
+                                            .foregroundColor(.textGray)
+                                            .padding(.top, 20)
+                                            .frame(maxWidth: .infinity, alignment: .center)
+                                    } else {
+                                        ForEach(vm.takes, id: \.id) { take in
+                                            practiceList(take: take) // 데이터 전달
+                                        }
                                     }
                                 } // :VStack
                             }
@@ -65,7 +74,7 @@ struct PresentaionListView: View {
             // 모달은 RootTabView에서 관리됨
         } // :ZStack
         .navigationBarBackButtonHidden(true)
-        .onChange(of: vm.option) { newOption in
+        .onChange(of: vm.option) { _, newOption in
             switch newOption {
             case .editName:
                 modalManager.showEditAlert(
@@ -92,7 +101,9 @@ struct PresentaionListView: View {
             }
         } // : onChange
         .task {
+            // 화면 진입 시 그래프 데이터와 리스트 데이터 모두 호출
             await vm.fetchGraphData()
+            await vm.fetchTakesList()
         }
     }
     
@@ -149,7 +160,7 @@ struct PresentaionListView: View {
                             .offset(y:6)
                             .applyShadowStyle()
                             .overlay {
-                                Text("최근 \(vm.practiceCount)개 데이터의 결과에요!")
+                                Text("최근 \(vm.takes.count)개 데이터의 결과에요!")
                                     .font(.pretendardMedium(size: 12))
                                     .foregroundStyle(Color.primary)
                             }// : overlay
@@ -169,7 +180,8 @@ struct PresentaionListView: View {
     
     private var deleteFilter: some View {
         HStack(alignment: .top, spacing: 0) {
-            Text("\(vm.practiceCount)번의 연습 횟수가 있어요")
+            // ⭐️ [수정 3] 실제 데이터 개수 반영
+            Text("\(vm.takes.count)번의 연습 횟수가 있어요")
                 .font(.pretendardSemiBold(size: 20))
                 .foregroundStyle(Color.textTitle)
             
@@ -190,11 +202,11 @@ struct PresentaionListView: View {
         .padding(.bottom, 16)
     }
     
-    private var practiceList: some View {
+    private func practiceList(take: Take) -> some View {
         HStack(spacing: 0) {
             if vm.showDeleteMode {
                 Button(action: {
-                    
+                    // TODO: 삭제 선택 로직
                 }){
                     Image("select_off")
                         .padding(.leading, 16)
@@ -205,25 +217,30 @@ struct PresentaionListView: View {
                     .fill(Color.primary)
                     .frame(width: 20, height: 20)
                     .overlay {
-                        Text("1")
+                        // 순번 표시 (단순 인덱스라면 뷰모델에서 index를 넘겨주거나 해야 함. 여기선 takeNumber 사용)
+                        Text("\(take.takeNumber)")
                             .foregroundStyle(Color.white)
                             .font(.pretendardMedium(size: 12))
                     }
                     .padding(.leading, 16)
                     .padding(.trailing, 12)
             }
-            Text("1번째 테이크")
+            
+            // ⭐️ 회차 정보 바인딩
+            Text("\(take.takeNumber)번째 테이크")
                 .foregroundColor(Color.textBlack)
                 .font(.pretendardMedium(size:16))
                 .padding(.trailing,4)
             
-            Text("2023. 12. 20")
+            // 날짜 정보
+            Text(take.dateText)
                 .foregroundColor(Color.textGray)
                 .font(.pretendardMedium(size:14))
             
             Spacer()
             
-            SmallCircularProgressBarRepresentable(value: 0.6)
+            // 점수 정보
+            SmallCircularProgressBarRepresentable(value: Double(take.totalScore) / 100.0)
                 .frame(width: 60, height: 60)
             
         } // : HStack
@@ -233,6 +250,7 @@ struct PresentaionListView: View {
         .cornerRadiusCustom(35, corners: [.topRight, .bottomRight])
         .applyShadowStyle()
         .onTapGesture {
+            // 상세 화면으로 이동
             navigationManager.push(.practiceResult)
         }
     }
@@ -289,10 +307,3 @@ struct PresentaionListView: View {
     }
     
 }
-
-//#Preview {
-//    let vm = AppDI.shared.makePresnetationListViewModel()
-//    PresentaionListView(vm:vm)
-//        .environmentObject(NavigationManager())
-//        .environmentObject(ModalManager.shared)
-//}

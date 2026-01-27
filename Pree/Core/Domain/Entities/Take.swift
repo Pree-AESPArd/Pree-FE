@@ -7,13 +7,23 @@
 
 import Foundation
 
-struct Take: Codable {
-    var id: Int
-    var projectId: String
-    var takeNumber: Int
-    var practiceName: String
-    var createdAt: String
-    var totalScore: Int
-    var analysisId: Int
-    var videoKey: String
+import Foundation
+
+struct Take: Identifiable, Hashable {
+    let id: String
+    let presentationId: String
+    let takeNumber: Int
+    let videoKey: String
+    let audioURL: String?
+    let status: TakeStatus
+    let eyeTrackingScore: Int
+    let totalScore: Int
+    let createdAt: Date
+    
+    // 날짜 포맷팅을 위한 연산 프로퍼티
+    var dateText: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy. MM. dd"
+        return formatter.string(from: createdAt)
+    }
 }

@@ -14,6 +14,7 @@ enum APIEndpoint {
     case uploadTake(projectId: String)
     case toggleFavorite(projectId: String)
     case getFiveTakesScores(projectId: String)
+    case getTakes(projectId: String)
     
     
     var path: String {
@@ -28,6 +29,8 @@ enum APIEndpoint {
             return "/projects/\(projectId)/favorite"
         case .getFiveTakesScores(let projectId):
             return "/projects/\(projectId)/takes/recent-scores"
+        case .getTakes(let projectId):
+            return "/projects/\(projectId)/takes"
         }
     }
     
@@ -42,6 +45,8 @@ enum APIEndpoint {
         case .toggleFavorite:
             return .patch
         case .getFiveTakesScores:
+            return .get
+        case .getTakes:
             return .get
         }
     }

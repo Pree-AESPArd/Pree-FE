@@ -216,5 +216,36 @@ struct APIService: APIServiceProtocol {
     }
     
     
+    func fetchTakes(presentationId: String) async throws -> [TakeDTO] {
+        let route = APIEndpoint.getTakes(projectId: presentationId)
+        
+        // 유저 인증 정보
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            headers: headers
+        )
+            .validate(statusCode: 200..<300)
+        
+        do {
+            let response = try await dataRequest.serializingDecodable([TakeDTO].self).value
+            print("✅ [Network] Take List 조회 성공: \(response.count)개")
+            return response
+        } catch {
+            print("❌ [Network] 점수 조회 실패: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    
     
 }

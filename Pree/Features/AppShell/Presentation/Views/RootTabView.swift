@@ -32,7 +32,7 @@ struct RootTabView: View {
                             EmptyView()
                         case .presentationDetail(let presentation):
                             let vm = AppDI.shared.makePresnetationListViewModel(presentation: presentation)
-                            PresentaionListView(vm: vm)
+                            PresentationListView(vm: vm)
                         case .practiceResult:
                             PracticeResultView(vm: practiceResultViewModel)
                         case .completeRecording(let id, let url, let eyeTrackingRate):

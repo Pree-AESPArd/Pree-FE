@@ -16,8 +16,9 @@ enum MoreOption {
 final class PresentationListViewModel: ObservableObject {
     @Published var presentation: Presentation
     
-    @Published var ptTitle: String = "협체발표"
-    @Published var practiceCount: Int = 5
+    @Published var takes: [Take] = []
+    @Published var ptTitle: String
+    @Published var practiceCount: Int = 0
     @Published var scores: [Double]
     
     @Published var option: MoreOption? = nil
@@ -25,10 +26,12 @@ final class PresentationListViewModel: ObservableObject {
     @Published var showEditMode: Bool = false
     
     private let getRecentScoresUseCase: GetRecentScoresUseCaseProtocol
+    private let fetchTakesUseCase: FetchTakesUseCaseProtocol
     
-    init(presentation: Presentation, getRecentScoresUseCase: GetRecentScoresUseCaseProtocol) {
+    init(presentation: Presentation, getRecentScoresUseCase: GetRecentScoresUseCaseProtocol, fetchTakesUseCase: FetchTakesUseCaseProtocol) {
         self.presentation = presentation
         self.getRecentScoresUseCase = getRecentScoresUseCase
+        self.fetchTakesUseCase = fetchTakesUseCase
         
         self.ptTitle = presentation.presentationName
         self.practiceCount = presentation.totalPractices
@@ -52,6 +55,15 @@ final class PresentationListViewModel: ObservableObject {
         } catch {
             print("❌ 그래프 데이터 로드 실패: \(error)")
             // 에러 시 UI 처리 (ex: scores = [])
+        }
+    }
+    
+    func fetchTakesList() async {
+        do {
+            let fetchedTakes = try await fetchTakesUseCase.execute(presentationId: presentation.id)
+            self.takes = fetchedTakes
+        } catch {
+            print("❌ 테이크 리스트 로드 실패: \(error)")
         }
     }
     

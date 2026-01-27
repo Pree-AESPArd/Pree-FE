@@ -13,4 +13,5 @@ protocol APIServiceProtocol {
     func uploadTake(presentationId: String, videoKey: String, eyeTrackingRate: Int, audioURL: URL) async throws -> TakeDTO
     func toggleFavorite(projectId: String) async throws -> Bool
     func fetchFiveTakesScores(presentationId: String) async throws -> [RecentScore]
+    func fetchTakes(presentationId: String) async throws -> [TakeDTO]
 }
