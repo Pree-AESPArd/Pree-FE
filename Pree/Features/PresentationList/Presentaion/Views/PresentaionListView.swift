@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PresentaionListView: View {
-    @StateObject var vm: PresentaionListViewModel
+    @StateObject var vm: PresentationListViewModel
     @EnvironmentObject var navigationManager: NavigationManager
     @EnvironmentObject private var modalManager: ModalManager
     
@@ -91,6 +91,9 @@ struct PresentaionListView: View {
                 break
             }
         } // : onChange
+        .task {
+            await vm.fetchGraphData()
+        }
     }
     
     //MARK: - view
@@ -287,9 +290,9 @@ struct PresentaionListView: View {
     
 }
 
-#Preview {
-    let vm = AppDI.shared.makePresnetationListViewModel()
-    PresentaionListView(vm:vm)
-        .environmentObject(NavigationManager())
-        .environmentObject(ModalManager.shared)
-}
+//#Preview {
+//    let vm = AppDI.shared.makePresnetationListViewModel()
+//    PresentaionListView(vm:vm)
+//        .environmentObject(NavigationManager())
+//        .environmentObject(ModalManager.shared)
+//}

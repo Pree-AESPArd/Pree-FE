@@ -183,4 +183,38 @@ struct APIService: APIServiceProtocol {
         }
     }
     
+    
+    func fetchFiveTakesScores(presentationId: String) async throws -> [RecentScore] {
+        let route = APIEndpoint.getFiveTakesScores(projectId: presentationId)
+        
+        // 유저 인증 정보
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            headers: headers
+        )
+            .validate(statusCode: 200..<300)
+        
+        do {
+            // [RecentScore] 배열로 디코딩
+            let response = try await dataRequest.serializingDecodable([RecentScore].self).value
+            print("✅ [Network] 최근 5개 점수 조회 성공: \(response.count)개")
+            return response
+        } catch {
+            print("❌ [Network] 점수 조회 실패: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    
+    
 }

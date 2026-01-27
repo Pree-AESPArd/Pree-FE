@@ -416,8 +416,8 @@ struct PresentationListItemView: View {
                 .frame(width: 80, height: 80)
         }
         .onTapGesture {
-            // 상세 화면으로 이동 시 해당 발표 정보 전달 필요
-            navigationManager.push(.presentationList) // .presentationDetail(presentation) 등으로 수정 필요할 수 있음
+            // 상세 화면으로 이동
+            navigationManager.push(.presentationDetail(presentation: presentation))
         }
     }
 }

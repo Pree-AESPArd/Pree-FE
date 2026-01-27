@@ -31,7 +31,7 @@ final class AppDI {
     private let createPresentationUseCase: CreatePresentationUseCase
     private let uploadPracticeUseCase: UploadTakeUseCaseProtocol
     private let processMediaUseCase: ProcessMediaUseCaseProtocol
-    
+    private let getRecentScoresUseCase: GetRecentScoresUseCaseProtocol
     
     private init() {
         // Service 구현체 생성
@@ -50,6 +50,7 @@ final class AppDI {
         self.createPresentationUseCase = CreatePresentationUseCase(repository: presentationRepository)
         self.uploadPracticeUseCase = UploadTakeUseCase(repository: takeRepository)
         self.processMediaUseCase = ProcessMediaUseCase(mediaService: mediaService)
+        self.getRecentScoresUseCase = GetRecentScoresUseCase(repository: takeRepository)
     }
     
     // 3) ViewModel 팩토리
@@ -61,13 +62,16 @@ final class AppDI {
             presentation: newPresentation
         )
     }
-  
+    
     func makeHomeViewModel() -> HomeViewModel {
         return HomeViewModel(presentationRepository: presentationRepository)
     }
     
-    func makePresnetationListViewModel() -> PresentaionListViewModel {
-        PresentaionListViewModel()
+    func makePresnetationListViewModel(presentation: Presentation) -> PresentationListViewModel {
+        return PresentationListViewModel(
+            presentation: presentation,
+            getRecentScoresUseCase: getRecentScoresUseCase
+        )
     }
     
     func makePracticeResultViewModel()-> PracticeResultViewModel {

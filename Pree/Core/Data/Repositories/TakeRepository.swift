@@ -25,4 +25,8 @@ final class TakeRepository: TakeRepositoryProtocol {
             audioURL: audioURL
         )
     }
+    
+    func fetchRecentScores(presentationId: String) async throws -> [RecentScore] {
+        return try await apiService.fetchFiveTakesScores(presentationId: presentationId)
+    }
 }

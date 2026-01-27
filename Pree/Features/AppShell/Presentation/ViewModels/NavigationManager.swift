@@ -12,7 +12,7 @@ enum ViewType: Hashable {
     case home
     case camera(presentation: Presentation)
     case profile
-    case presentationList
+    case presentationDetail(presentation: Presentation)
     case practiceResult
     case completeRecording(presentationId: String, url: URL, eyeTrackingRate: Int)
 }

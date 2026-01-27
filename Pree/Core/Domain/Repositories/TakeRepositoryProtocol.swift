@@ -10,4 +10,5 @@ import Foundation
 
 protocol TakeRepositoryProtocol {
     func uploadPractice(presentationId: String, videoKey: String, eyeTrackingRate: Int, audioURL: URL) async throws
+    func fetchRecentScores(presentationId: String) async throws -> [RecentScore]
 }
