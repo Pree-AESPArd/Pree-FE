@@ -31,7 +31,12 @@ final class AppDI {
     private let createPresentationUseCase: CreatePresentationUseCase
     private let uploadPracticeUseCase: UploadTakeUseCaseProtocol
     private let processMediaUseCase: ProcessMediaUseCaseProtocol
-    
+    private let getRecentScoresUseCase: GetRecentScoresUseCaseProtocol
+    private let fetchTakesUseCase: FetchTakesUseCaseProtocol
+    private let getTakeResultUseCase: GetTakeResultUseCaseProtocol
+    private let getLatestProjectScoresUseCase: GetLatestProjectScoresUseCase
+    private let searchProjectsUseCase: SearchProjectsUseCase
+    private let deletePresentationUseCase: DeletePresentationUseCase
     
     private init() {
         // Service 구현체 생성
@@ -50,6 +55,12 @@ final class AppDI {
         self.createPresentationUseCase = CreatePresentationUseCase(repository: presentationRepository)
         self.uploadPracticeUseCase = UploadTakeUseCase(repository: takeRepository)
         self.processMediaUseCase = ProcessMediaUseCase(mediaService: mediaService)
+        self.getRecentScoresUseCase = GetRecentScoresUseCase(repository: takeRepository)
+        self.fetchTakesUseCase = FetchTakesUseCase(repository: takeRepository)
+        self.getTakeResultUseCase = GetTakeResultUseCase(repository: takeRepository)
+        self.getLatestProjectScoresUseCase = GetLatestProjectScoresUseCase(repository: presentationRepository)
+        self.searchProjectsUseCase = SearchProjectsUseCase(repository: presentationRepository)
+        self.deletePresentationUseCase = DeletePresentationUseCase(repository: presentationRepository)
     }
     
     // 3) ViewModel 팩토리
@@ -61,17 +72,28 @@ final class AppDI {
             presentation: newPresentation
         )
     }
-  
+    
     func makeHomeViewModel() -> HomeViewModel {
-        return HomeViewModel(presentationRepository: presentationRepository)
+        return HomeViewModel(presentationRepository: presentationRepository,
+                             getLatestProjectScoresUseCase: getLatestProjectScoresUseCase,
+                             searchProjectsUseCase: searchProjectsUseCase,
+                             deletePresentationUseCase: deletePresentationUseCase
+        )
     }
     
-    func makePresnetationListViewModel() -> PresentaionListViewModel {
-        PresentaionListViewModel()
+    func makePresnetationListViewModel(presentation: Presentation) -> PresentationListViewModel {
+        return PresentationListViewModel(
+            presentation: presentation,
+            getRecentScoresUseCase: getRecentScoresUseCase,
+            fetchTakesUseCase: fetchTakesUseCase
+        )
     }
     
-    func makePracticeResultViewModel()-> PracticeResultViewModel {
-        PracticeResultViewModel()
+    func makePracticeResultViewModel(takeId: String) -> PracticeResultViewModel {
+        return PracticeResultViewModel(
+            takeId: takeId,
+            getTakeResultUseCase: getTakeResultUseCase
+        )
     }
     
     func makePresentationListModalViewModel() -> PresentationListModalViewModel {

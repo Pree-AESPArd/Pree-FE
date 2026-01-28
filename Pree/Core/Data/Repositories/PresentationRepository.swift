@@ -46,42 +46,59 @@ struct PresentationRepository: PresentationRepositoryProtocol {
     }
     
     func toggleFavorite(projectId: String) async throws {
-            // 1. 현재 리스트 가져오기
-            var currentList = presentationsSubject.value
+        // 1. 현재 리스트 가져오기
+        var currentList = presentationsSubject.value
+        
+        // 2. 해당 프로젝트 찾기 (Index 찾기)
+        guard let index = currentList.firstIndex(where: { $0.id == projectId }) else { return }
+        
+        // 3. [Optimistic Update] 서버 통신 전에 로컬 데이터 먼저 뒤집기
+        let oldItem = currentList[index]
+        let newItem = oldItem.updateFavorite(!oldItem.isFavorite) // 토글
+        
+        currentList[index] = newItem
+        presentationsSubject.send(currentList) // UI 즉시 갱신
+        
+        // 4. 서버 요청 보내기 (백그라운드)
+        do {
+            let serverResult = try await apiService.toggleFavorite(projectId: projectId)
             
-            // 2. 해당 프로젝트 찾기 (Index 찾기)
-            guard let index = currentList.firstIndex(where: { $0.id == projectId }) else { return }
-            
-            // 3. [Optimistic Update] 서버 통신 전에 로컬 데이터 먼저 뒤집기
-            let oldItem = currentList[index]
-            let newItem = oldItem.updateFavorite(!oldItem.isFavorite) // 토글
-            
-            currentList[index] = newItem
-            presentationsSubject.send(currentList) // UI 즉시 갱신
-            
-            // 4. 서버 요청 보내기 (백그라운드)
-            do {
-                let serverResult = try await apiService.toggleFavorite(projectId: projectId)
-                
-                // (선택) 서버 결과가 로컬 상태와 다르면 다시 맞춰줌 (동기화 보장)
-                if newItem.isFavorite != serverResult {
-                    var fixedList = presentationsSubject.value
-                    if let fixIndex = fixedList.firstIndex(where: { $0.id == projectId }) {
-                        fixedList[fixIndex] = oldItem.updateFavorite(serverResult)
-                        presentationsSubject.send(fixedList)
-                    }
+            // (선택) 서버 결과가 로컬 상태와 다르면 다시 맞춰줌 (동기화 보장)
+            if newItem.isFavorite != serverResult {
+                var fixedList = presentationsSubject.value
+                if let fixIndex = fixedList.firstIndex(where: { $0.id == projectId }) {
+                    fixedList[fixIndex] = oldItem.updateFavorite(serverResult)
+                    presentationsSubject.send(fixedList)
                 }
-                
-            } catch {
-                // 5. 실패 시 원상복구 (Rollback)
-                print("❌ 즐겨찾기 실패 -> 롤백 수행")
-                var rollbackList = presentationsSubject.value
-                if let rollbackIndex = rollbackList.firstIndex(where: { $0.id == projectId }) {
-                    rollbackList[rollbackIndex] = oldItem // 원래대로 되돌림
-                    presentationsSubject.send(rollbackList)
-                }
-                throw error
             }
+            
+        } catch {
+            // 5. 실패 시 원상복구 (Rollback)
+            print("❌ 즐겨찾기 실패 -> 롤백 수행")
+            var rollbackList = presentationsSubject.value
+            if let rollbackIndex = rollbackList.firstIndex(where: { $0.id == projectId }) {
+                rollbackList[rollbackIndex] = oldItem // 원래대로 되돌림
+                presentationsSubject.send(rollbackList)
+            }
+            throw error
         }
+    }
+    
+    
+    func fetchLatestProjectScores() async throws -> ProjectAverageScores {
+        let dto = try await apiService.fetchLatestAverageScores()
+        return dto.toDomain()
+    }
+    
+    
+    func searchProjects(query: String) async throws -> [Presentation] {
+        let dtos = try await apiService.searchProjects(query: query)
+        
+        return dtos.map { PresentationMapper.toEntity($0) }
+    }
+    
+    func deletePresentation(id: String) async throws {
+        try await apiService.deleteProject(projectId: id)
+    }
     
 }

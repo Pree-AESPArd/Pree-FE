@@ -25,4 +25,23 @@ final class TakeRepository: TakeRepositoryProtocol {
             audioURL: audioURL
         )
     }
+    
+    func fetchRecentScores(presentationId: String) async throws -> [RecentScore] {
+        return try await apiService.fetchFiveTakesScores(presentationId: presentationId)
+    }
+    
+    
+    func fetchTakes(presentationId: String) async throws -> [Take] {
+        // 1. API 호출하여 DTO 배열 받기
+        let dtos = try await apiService.fetchTakes(presentationId: presentationId)
+        
+        // 2. DTO -> Domain Entity 변환
+        return dtos.map { $0.toDomain() }
+            .sorted { $0.takeNumber > $1.takeNumber } // 회차 역순 정렬
+    }
+    
+    func fetchTakeResult(takeId: String) async throws -> TakeResult {
+        let dto = try await apiService.fetchTakeResult(takeId: takeId)
+        return dto.toDomain()
+    }
 }

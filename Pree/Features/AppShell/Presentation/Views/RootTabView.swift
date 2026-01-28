@@ -14,9 +14,6 @@ struct RootTabView: View {
     @StateObject private var modalManager = ModalManager.shared
     
     let homeViewModel = AppDI.shared.makeHomeViewModel()
-//    let cameraViewModel = AppDI.shared.makeCameraViewModel()
-    let presnetationListViewModel = AppDI.shared.makePresnetationListViewModel()
-    let practiceResultViewModel = AppDI.shared.makePracticeResultViewModel()
     
     var body: some View {
         ZStack(alignment: .bottom){
@@ -32,10 +29,12 @@ struct RootTabView: View {
                             HomeView(vm: homeViewModel)
                         case .profile:
                             EmptyView()
-                        case .presentationList:
-                            PresentaionListView(vm: presnetationListViewModel)
-                        case .practiceResult:
-                            PracticeResultView(vm: practiceResultViewModel)
+                        case .presentationDetail(let presentation):
+                            let vm = AppDI.shared.makePresnetationListViewModel(presentation: presentation)
+                            PresentationListView(vm: vm)
+                        case .practiceResult(let takeId):
+                            let vm = AppDI.shared.makePracticeResultViewModel(takeId: takeId)
+                            PracticeResultView(vm: vm)
                         case .completeRecording(let id, let url, let eyeTrackingRate):
                             CompleteView(presentationId: id, videoUrl: url, eyeTrackingRate: eyeTrackingRate)
                         }

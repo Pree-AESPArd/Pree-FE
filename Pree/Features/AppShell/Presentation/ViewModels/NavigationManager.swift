@@ -12,8 +12,8 @@ enum ViewType: Hashable {
     case home
     case camera(presentation: Presentation)
     case profile
-    case presentationList
-    case practiceResult
+    case presentationDetail(presentation: Presentation)
+    case practiceResult(takeId: String)
     case completeRecording(presentationId: String, url: URL, eyeTrackingRate: Int)
 }
 
@@ -75,7 +75,7 @@ final class NavigationManager: ObservableObject {
                 
                 // ⚠️ 현재 ViewType에 파라미터 받는 practiceResult가 없다면 추가해야 합니다.
                 // 임시 코드:
-                self.push(.practiceResult)
+                //self.push(.practiceResult)
             }
         }
     }

@@ -12,8 +12,9 @@ import SwiftUI
 /// - 올라가는 버튼으로 닫기 가능
 struct ExpandableReportItemView: View {
     let item: String
-    let progressScore: Double
+    let progressScore: Int
     let index: Int
+    let detailValue: String
     
     @State private var isExpanded: Bool = false
     @State private var showHelpView: Bool = false
@@ -65,11 +66,11 @@ struct ExpandableReportItemView: View {
                     .font(.pretendardMedium(size: 14))
                     .padding(.bottom, 8)
                 
-                ProgressView(value: progressScore/100)
+                ProgressView(value: Double(progressScore), total: 100.0)
                     .progressViewStyle(CustomLinearProgressStyle(
                         score: Int(progressScore),
                         trackColor: Color.progressBarGray,
-                        progressColor: Color(colorForScore(progressScore/100)),
+                        progressColor: Color(colorForScore(Double(progressScore))),
                         height: 24,
                         cornerRadius: 8,
                         width: 280
@@ -101,36 +102,39 @@ struct ExpandableReportItemView: View {
     /// 드롭다운이 열렸을 때 표시되는 상세 정보 영역
     private var detailSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            
-            ForEach(Array(getDetailContent(for: item).enumerated()), id:\.offset){index, str in
-                HStack(spacing: 0) {
-                    Text(str)
-                        .foregroundColor(Color.textGray)
-                        .font(.pretendardMedium(size: 14))
-                    
-                    if index == 0 {
-                        Button(action: {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                showHelpView.toggle()
-                            }
-                        }) {
-                            Image("help")
-                                .padding(.horizontal, 5.33)
-                        }
-                    } // : if
-                    
-                    Spacer()
-                    
-                    Text("결과값")
-                        .foregroundColor(.black)
-                        .font(.pretendardMedium(size: 14))
-                }//: HStack
-                
-            } // :ForEach
-            
-        } // : VStack
+            let contents = getDetailContent(for: item)
+            ForEach(Array(contents.enumerated()), id: \.offset) { index, str in
+                detailRow(index: index, content: str)
+            }
+        }
         .padding(.top, 8)
         .padding(.bottom, 16)
+    }
+    
+    @ViewBuilder
+    private func detailRow(index: Int, content: String) -> some View {
+        HStack(spacing: 0) {
+            Text(content)
+                .foregroundColor(Color.textGray)
+                .font(.pretendardMedium(size: 14))
+            
+            if index == 0 {
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showHelpView.toggle()
+                    }
+                }) {
+                    Image("help")
+                        .padding(.horizontal, 5.33)
+                }
+            }
+            
+            Spacer()
+            
+            Text(getDisplayValue(for: item, labelIndex: index))
+                .foregroundColor(.black)
+                .font(.pretendardMedium(size: 14))
+        }
     }
     
     // MARK: - Help Overlay
@@ -173,6 +177,21 @@ struct ExpandableReportItemView: View {
             return ["관객을 바라본 시선의 비율"]
         default:
             return []
+        }
+    }
+    
+    private func getDisplayValue(for item: String, labelIndex: Int) -> String {
+        switch item {
+        case "발표 시간":
+            return labelIndex == 0 ? "3:00" : detailValue // 설정 시간은 예시
+        case "말의 빠르기":
+            return labelIndex == 0 ? "300 ~ 350" : detailValue
+        case "목소리 크기":
+            return labelIndex == 0 ? "60 ~ 70dB" : detailValue
+        case "발화 지연 표현 횟수", "불필요한 공백 횟수", "시선 처리":
+            return detailValue
+        default:
+            return "-"
         }
     }
     

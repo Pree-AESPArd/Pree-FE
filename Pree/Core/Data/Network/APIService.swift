@@ -183,4 +183,190 @@ struct APIService: APIServiceProtocol {
         }
     }
     
+    
+    func fetchFiveTakesScores(presentationId: String) async throws -> [RecentScore] {
+        let route = APIEndpoint.getFiveTakesScores(projectId: presentationId)
+        
+        // 유저 인증 정보
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            headers: headers
+        )
+            .validate(statusCode: 200..<300)
+        
+        do {
+            // [RecentScore] 배열로 디코딩
+            let response = try await dataRequest.serializingDecodable([RecentScore].self).value
+            print("✅ [Network] 최근 5개 점수 조회 성공: \(response.count)개")
+            return response
+        } catch {
+            print("❌ [Network] 점수 조회 실패: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    
+    func fetchTakes(presentationId: String) async throws -> [TakeDTO] {
+        let route = APIEndpoint.getTakes(projectId: presentationId)
+        
+        // 유저 인증 정보
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            headers: headers
+        )
+            .validate(statusCode: 200..<300)
+        
+        do {
+            let response = try await dataRequest.serializingDecodable([TakeDTO].self).value
+            print("✅ [Network] Take List 조회 성공: \(response.count)개")
+            return response
+        } catch {
+            print("❌ [Network] 점수 조회 실패: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    func fetchTakeResult(takeId: String) async throws -> TakeResultDTO {
+        let route = APIEndpoint.getResult(takeId: takeId)
+        
+        // 유저 인증 정보
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            headers: headers
+        )
+            .validate(statusCode: 200..<300)
+        
+        do {
+            let response = try await dataRequest.serializingDecodable(TakeResultDTO.self).value
+            
+            return response
+        } catch {
+            
+            throw error
+        }
+    }
+    
+    func fetchLatestAverageScores() async throws -> ProjectAverageScoresDTO {
+        // 1. 유저 ID 가져오기
+        guard let userId = UserStorage.shared.getUUID() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        // 2. Endpoint 생성
+        let route = APIEndpoint.fetchLatestAverageScores(userId: userId)
+        
+        // 3. 토큰 헤더 설정
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        // 4. 요청
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            parameters: route.parameters,
+            encoding: URLEncoding.default, // GET 요청은 URLEncoding
+            headers: headers
+        )
+            .validate(statusCode: 200..<300)
+        
+        // 5. 응답 디코딩
+        do {
+            let dto = try await dataRequest.serializingDecodable(ProjectAverageScoresDTO.self).value
+            return dto
+        } catch {
+            throw error
+        }
+    }
+    
+    
+    func searchProjects(query: String) async throws -> [PresentationDTO] {
+        guard let userId = UserStorage.shared.getUUID() else { throw URLError(.userAuthenticationRequired) }
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else { throw URLError(.userAuthenticationRequired) }
+        
+        let route = APIEndpoint.searchProjects(userId: userId, query: query)
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            parameters: route.parameters,
+            encoding: URLEncoding.default,
+            headers: headers
+        ).validate(statusCode: 200..<300)
+        
+        do {
+            let dtos = try await dataRequest.serializingDecodable([PresentationDTO].self).value
+            
+            return dtos
+        } catch {
+            
+            throw error
+        }
+    }
+    
+    
+    func deleteProject(projectId: String) async throws {
+        let route = APIEndpoint.deleteProject(projectId: projectId)
+        
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            parameters: nil,
+            headers: headers
+        ).validate(statusCode: 200..<300)
+        
+        // 응답 본문이 {"message": "..."} 형태이므로 굳이 디코딩 안 하고
+        // 상태 코드가 200번대이면 성공으로 간주
+        _ = try await dataRequest.serializingData().value
+    }
+    
 }

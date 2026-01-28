@@ -226,7 +226,7 @@ final class CameraViewModel: ObservableObject {
         var rate: Int = 0
         if recordingTime > 0 { // 0으로 나누기 방지
             // (시선 추적 시간 / 총 녹화 시간) * 100
-            rate = Int((eyeTrackingTime / recordingTime) * 100)
+            rate = Int(round((eyeTrackingTime / recordingTime) * 100))
         }
         // 0% ~ 100% 사이로 값을 보정
         self.eyeTrackingRate = max(0, min(100, rate))
