@@ -66,10 +66,11 @@ struct PresentationListView: View {
             } // : VStack
             .background(Color.mainBackground.ignoresSafeArea())
             
+            // MARK: 구현 보류
             // eidtor 및 alert overlay
-            if let option = vm.option {
-                overlayClearBg
-            }
+//            if let option = vm.option {
+//                overlayClearBg
+//            }
             
             // 모달은 RootTabView에서 관리됨
         } // :ZStack
@@ -124,15 +125,17 @@ struct PresentationListView: View {
                 .foregroundStyle(Color.black)
             
             Spacer()
-            
+//
+            // MARK: 구현 보류, UI 위치 유지위해 안보이게만 처리
             VStack {
                 Button(action:{
-                    vm.option = .defalut
+//                    vm.option = .defalut
                 }){
                     Image("more")
                 }
                 .frame(height: 48)
             }
+            .opacity(0)
             .background(Color.clear)
             .onTapGesture {
                 // VStack 내부 클릭은 무시
@@ -185,19 +188,20 @@ struct PresentationListView: View {
                 .font(.pretendardSemiBold(size: 20))
                 .foregroundStyle(Color.textTitle)
             
-            Spacer()
-            
-            Button(action: {
-                vm.showDeleteMode.toggle()
-            }){
-                HStack(spacing: 4){
-                    Image(vm.showDeleteMode ? "trash_on": "trash_off")
-                    Text("삭제하기")
-                        .foregroundStyle(vm.showDeleteMode ? Color.preeRed : Color.textGray)
-                        .font(.pretendardMedium(size: 14))
-                }
-                .padding(.vertical, 8)
-            }
+            // MARK: 구현 보류
+//            Spacer()
+//            
+//            Button(action: {
+//                vm.showDeleteMode.toggle()
+//            }){
+//                HStack(spacing: 4){
+//                    Image(vm.showDeleteMode ? "trash_on": "trash_off")
+//                    Text("삭제하기")
+//                        .foregroundStyle(vm.showDeleteMode ? Color.preeRed : Color.textGray)
+//                        .font(.pretendardMedium(size: 14))
+//                }
+//                .padding(.vertical, 8)
+//            }
         }// : HStack
         .padding(.bottom, 16)
     }
@@ -251,7 +255,7 @@ struct PresentationListView: View {
         .applyShadowStyle()
         .onTapGesture {
             // 상세 화면으로 이동
-            navigationManager.push(.practiceResult)
+            navigationManager.push(.practiceResult(takeId: take.id))
         }
     }
     

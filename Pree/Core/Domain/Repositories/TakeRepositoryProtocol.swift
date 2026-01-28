@@ -12,4 +12,5 @@ protocol TakeRepositoryProtocol {
     func uploadPractice(presentationId: String, videoKey: String, eyeTrackingRate: Int, audioURL: URL) async throws
     func fetchRecentScores(presentationId: String) async throws -> [RecentScore]
     func fetchTakes(presentationId: String) async throws -> [Take]
+    func fetchTakeResult(takeId: String) async throws -> TakeResult
 }

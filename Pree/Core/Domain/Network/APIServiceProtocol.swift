@@ -14,4 +14,7 @@ protocol APIServiceProtocol {
     func toggleFavorite(projectId: String) async throws -> Bool
     func fetchFiveTakesScores(presentationId: String) async throws -> [RecentScore]
     func fetchTakes(presentationId: String) async throws -> [TakeDTO]
+    func fetchTakeResult(takeId: String) async throws -> TakeResultDTO
+    func fetchLatestAverageScores() async throws -> ProjectAverageScoresDTO
+    func searchProjects(query: String) async throws -> [PresentationDTO]
 }

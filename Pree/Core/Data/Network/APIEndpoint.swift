@@ -15,6 +15,9 @@ enum APIEndpoint {
     case toggleFavorite(projectId: String)
     case getFiveTakesScores(projectId: String)
     case getTakes(projectId: String)
+    case getResult(takeId: String)
+    case fetchLatestAverageScores(userId: String)
+    case searchProjects(userId: String, query: String)
     
     
     var path: String {
@@ -31,6 +34,12 @@ enum APIEndpoint {
             return "/projects/\(projectId)/takes/recent-scores"
         case .getTakes(let projectId):
             return "/projects/\(projectId)/takes"
+        case .getResult(let takeId):
+            return "/takes/\(takeId)/result"
+        case .fetchLatestAverageScores:
+            return "/projects/latest/average-scores"
+        case .searchProjects:
+            return "/projects/search"
         }
     }
     
@@ -48,6 +57,12 @@ enum APIEndpoint {
             return .get
         case .getTakes:
             return .get
+        case .getResult:
+            return .get
+        case .fetchLatestAverageScores:
+            return .get
+        case .searchProjects:
+            return .get
         }
     }
     
@@ -57,6 +72,13 @@ enum APIEndpoint {
             return [
                 "user_id": userId,
                 "sort_option": sortOption
+            ]
+        case .fetchLatestAverageScores(let userId):
+            return ["user_id": userId]
+        case .searchProjects(let userId, let query):
+            return [
+                "user_id": userId,
+                "query": query
             ]
         default:
             return nil

@@ -246,6 +246,102 @@ struct APIService: APIServiceProtocol {
         }
     }
     
+    func fetchTakeResult(takeId: String) async throws -> TakeResultDTO {
+        let route = APIEndpoint.getResult(takeId: takeId)
+        
+        // 유저 인증 정보
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            headers: headers
+        )
+            .validate(statusCode: 200..<300)
+        
+        do {
+            let response = try await dataRequest.serializingDecodable(TakeResultDTO.self).value
+            
+            return response
+        } catch {
+            
+            throw error
+        }
+    }
     
+    func fetchLatestAverageScores() async throws -> ProjectAverageScoresDTO {
+        // 1. 유저 ID 가져오기
+        guard let userId = UserStorage.shared.getUUID() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        // 2. Endpoint 생성
+        let route = APIEndpoint.fetchLatestAverageScores(userId: userId)
+        
+        // 3. 토큰 헤더 설정
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        // 4. 요청
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            parameters: route.parameters,
+            encoding: URLEncoding.default, // GET 요청은 URLEncoding
+            headers: headers
+        )
+            .validate(statusCode: 200..<300)
+        
+        // 5. 응답 디코딩
+        do {
+            let dto = try await dataRequest.serializingDecodable(ProjectAverageScoresDTO.self).value
+            return dto
+        } catch {
+            throw error
+        }
+    }
+    
+    
+    func searchProjects(query: String) async throws -> [PresentationDTO] {
+        guard let userId = UserStorage.shared.getUUID() else { throw URLError(.userAuthenticationRequired) }
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else { throw URLError(.userAuthenticationRequired) }
+        
+        let route = APIEndpoint.searchProjects(userId: userId, query: query)
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            parameters: route.parameters,
+            encoding: URLEncoding.default,
+            headers: headers
+        ).validate(statusCode: 200..<300)
+        
+        do {
+            let dtos = try await dataRequest.serializingDecodable([PresentationDTO].self).value
+            
+            return dtos
+        } catch {
+            
+            throw error
+        }
+    }
     
 }

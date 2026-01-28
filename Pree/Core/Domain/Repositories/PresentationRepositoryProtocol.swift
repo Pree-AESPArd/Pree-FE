@@ -13,5 +13,9 @@ protocol PresentationRepositoryProtocol {
     func createNewPresentation(request: CreatePresentationRequest) async throws -> Presentation
     
     func toggleFavorite(projectId: String) async throws
+    
+    func fetchLatestProjectScores() async throws -> ProjectAverageScores
+    
+    func searchProjects(query: String) async throws -> [Presentation]
 }
 

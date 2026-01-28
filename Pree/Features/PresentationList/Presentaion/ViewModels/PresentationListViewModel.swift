@@ -13,6 +13,7 @@ enum MoreOption {
     case deleteAll
 }
 
+@MainActor
 final class PresentationListViewModel: ObservableObject {
     @Published var presentation: Presentation
     

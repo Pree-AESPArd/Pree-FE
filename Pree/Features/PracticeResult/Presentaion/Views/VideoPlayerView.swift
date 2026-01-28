@@ -9,8 +9,7 @@ import SwiftUI
 import AVKit
 
 struct VideoPlayerView: View {
-    let videoKey: String // PHAsset identifier
-    @StateObject private var viewModel = VideoPlayerViewModel()
+    @ObservedObject var viewModel: VideoPlayerViewModel
     
     var body: some View {
         ZStack {
@@ -40,14 +39,6 @@ struct VideoPlayerView: View {
                 .cornerRadius(20)
             }
         }
-        .onAppear {
-            // View 등장 시 영상 로딩
-            viewModel.loadVideo(from: videoKey)
-        }
-        .onDisappear {
-            // View 사라질 때 영상 멈춤
-            viewModel.player?.pause()
-        }
     }
 }
 
@@ -60,7 +51,7 @@ struct VideoPlayerRepresentable: UIViewControllerRepresentable {
         let controller = AVPlayerViewController()
         controller.player = player
         controller.showsPlaybackControls = true                      // 재생/일시정지 등 기본 컨트롤 보이기
-        controller.videoGravity = .resizeAspectFill                  // 영상 비율 조정 (화면 가득 채우기)
+        controller.videoGravity = .resizeAspect                 
         controller.allowsPictureInPicturePlayback = true            // PIP 모드 허용
         controller.canStartPictureInPictureAutomaticallyFromInline = true
         return controller

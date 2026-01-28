@@ -26,7 +26,6 @@ struct HomeView: View {
     @State var showPresentationList: Bool = false
     
     @State private var isSearchBarExpanded = false
-    @State private var searchText = ""
     
     @State private var menus: [HomeMenu] = [
         .avgScoreGraph,
@@ -70,6 +69,7 @@ struct HomeView: View {
         }
         .task {
             await vm.fetchList()
+            await vm.fetchLatestScores()
         }
         .sheet(isPresented: $modalManager.isShowingModal){
             switch modalManager.currentModal {
@@ -110,7 +110,7 @@ struct HomeView: View {
                 ))
             
         case .searchBarOn:
-            SearchBarView(searchText: $searchText, isExpanded: $isSearchBarExpanded)
+            SearchBarView(searchText: $vm.searchText, isExpanded: $isSearchBarExpanded)
                 .transition(.asymmetric(
                     insertion: .move(edge: .leading).combined(with: .opacity),
                     removal: .move(edge: .trailing).combined(with: .opacity)
@@ -172,7 +172,7 @@ struct HomeView: View {
                 HStack(alignment: .center, spacing: 0){
                     Spacer()
                     
-                    BarGraphViewRepresentable(percentages: vm.percentagesZero)
+                    BarGraphViewRepresentable(percentages: vm.percentages)
                         .padding(.bottom, 12)
                     
                     Spacer()
@@ -280,73 +280,6 @@ struct HomeView: View {
         .frame(maxWidth: .infinity)
     }
     
-    //TODO: 이제 필요없음
-    //    private var presentationList: some View {
-    //        ZStack(alignment: .trailing){
-    //            HStack(alignment: .top,spacing:0){
-    //
-    //                if vm.showDeleteMode {
-    //                    Button(action: {
-    //
-    //                    }){
-    //                        Image("select_off")
-    //                            .padding(.vertical, 30)
-    //                            .padding(.horizontal, 12)
-    //                    }
-    //                    .padding(.leading, 4)
-    //                } else {
-    //                    Button(action: {
-    //
-    //                    }){
-    //                        Image("star_yello_off")
-    //                            .padding(.vertical, 30)
-    //                            .padding(.horizontal, 12)
-    //                    }
-    //                    .padding(.leading, 4)
-    //                }
-    //
-    //                VStack(alignment: .leading, spacing: 0) {
-    //                    HStack(alignment: .top) {
-    //
-    //                        Text("협업체험학습 발표")
-    //                            .foregroundStyle(Color.black)
-    //                            .font(.pretendardMedium(size: 16))
-    //
-    //                        VStack(spacing:0){
-    //                            Text("4개")
-    //                                .font(.pretendardMedium(size: 12))
-    //                                .foregroundStyle(Color.blue200)
-    //                                .padding(.horizontal, 6)
-    //                                .padding(.vertical, 2)
-    //                                .overlay(
-    //                                    RoundedRectangle(cornerRadius: 20)
-    //                                        .stroke(Color.blue200, lineWidth: 1)
-    //                                )
-    //                        }
-    //                    } // : HStack
-    //                    .padding(.top, 21.5)
-    //                    .padding(.bottom, 2)
-    //
-    //                    Text("1일 전")
-    //                        .font(.pretendardMedium(size: 14))
-    //                        .foregroundStyle(Color.textGray)
-    //                } // : VStack
-    //
-    //                Spacer()
-    //            }// : HStack
-    //            .background(Color.sectionBackground)
-    //            .cornerRadiusCustom(20, corners: [.topLeft, .bottomLeft])
-    //            .cornerRadiusCustom(35, corners: [.topRight, .bottomRight])
-    //            .applyShadowStyle()
-    //
-    //
-    //            CircularProgressBarView(value: vm.score)
-    //                .frame(width: 80, height: 80)
-    //        } // : ZStack
-    //        .onTapGesture {
-    //            navigationManager.push(.presentationList)
-    //        }
-    //    }
 }
 
 struct PresentationListItemView: View {

@@ -39,4 +39,9 @@ final class TakeRepository: TakeRepositoryProtocol {
         return dtos.map { $0.toDomain() }
             .sorted { $0.takeNumber > $1.takeNumber } // 회차 역순 정렬
     }
+    
+    func fetchTakeResult(takeId: String) async throws -> TakeResult {
+        let dto = try await apiService.fetchTakeResult(takeId: takeId)
+        return dto.toDomain()
+    }
 }

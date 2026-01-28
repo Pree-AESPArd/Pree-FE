@@ -33,6 +33,9 @@ final class AppDI {
     private let processMediaUseCase: ProcessMediaUseCaseProtocol
     private let getRecentScoresUseCase: GetRecentScoresUseCaseProtocol
     private let fetchTakesUseCase: FetchTakesUseCaseProtocol
+    private let getTakeResultUseCase: GetTakeResultUseCaseProtocol
+    private let getLatestProjectScoresUseCase: GetLatestProjectScoresUseCase
+    private let searchProjectsUseCase: SearchProjectsUseCase
     
     private init() {
         // Service 구현체 생성
@@ -53,6 +56,9 @@ final class AppDI {
         self.processMediaUseCase = ProcessMediaUseCase(mediaService: mediaService)
         self.getRecentScoresUseCase = GetRecentScoresUseCase(repository: takeRepository)
         self.fetchTakesUseCase = FetchTakesUseCase(repository: takeRepository)
+        self.getTakeResultUseCase = GetTakeResultUseCase(repository: takeRepository)
+        self.getLatestProjectScoresUseCase = GetLatestProjectScoresUseCase(repository: presentationRepository)
+        self.searchProjectsUseCase = SearchProjectsUseCase(repository: presentationRepository)
     }
     
     // 3) ViewModel 팩토리
@@ -66,7 +72,10 @@ final class AppDI {
     }
     
     func makeHomeViewModel() -> HomeViewModel {
-        return HomeViewModel(presentationRepository: presentationRepository)
+        return HomeViewModel(presentationRepository: presentationRepository,
+                             getLatestProjectScoresUseCase: getLatestProjectScoresUseCase,
+                             searchProjectsUseCase: searchProjectsUseCase
+        )
     }
     
     func makePresnetationListViewModel(presentation: Presentation) -> PresentationListViewModel {
@@ -77,8 +86,11 @@ final class AppDI {
         )
     }
     
-    func makePracticeResultViewModel()-> PracticeResultViewModel {
-        PracticeResultViewModel()
+    func makePracticeResultViewModel(takeId: String) -> PracticeResultViewModel {
+        return PracticeResultViewModel(
+            takeId: takeId,
+            getTakeResultUseCase: getTakeResultUseCase
+        )
     }
     
     func makePresentationListModalViewModel() -> PresentationListModalViewModel {
