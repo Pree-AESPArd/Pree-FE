@@ -36,6 +36,7 @@ final class AppDI {
     private let getTakeResultUseCase: GetTakeResultUseCaseProtocol
     private let getLatestProjectScoresUseCase: GetLatestProjectScoresUseCase
     private let searchProjectsUseCase: SearchProjectsUseCase
+    private let deletePresentationUseCase: DeletePresentationUseCase
     
     private init() {
         // Service 구현체 생성
@@ -59,6 +60,7 @@ final class AppDI {
         self.getTakeResultUseCase = GetTakeResultUseCase(repository: takeRepository)
         self.getLatestProjectScoresUseCase = GetLatestProjectScoresUseCase(repository: presentationRepository)
         self.searchProjectsUseCase = SearchProjectsUseCase(repository: presentationRepository)
+        self.deletePresentationUseCase = DeletePresentationUseCase(repository: presentationRepository)
     }
     
     // 3) ViewModel 팩토리
@@ -74,7 +76,8 @@ final class AppDI {
     func makeHomeViewModel() -> HomeViewModel {
         return HomeViewModel(presentationRepository: presentationRepository,
                              getLatestProjectScoresUseCase: getLatestProjectScoresUseCase,
-                             searchProjectsUseCase: searchProjectsUseCase
+                             searchProjectsUseCase: searchProjectsUseCase,
+                             deletePresentationUseCase: deletePresentationUseCase
         )
     }
     

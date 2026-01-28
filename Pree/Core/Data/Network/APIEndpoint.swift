@@ -18,6 +18,7 @@ enum APIEndpoint {
     case getResult(takeId: String)
     case fetchLatestAverageScores(userId: String)
     case searchProjects(userId: String, query: String)
+    case deleteProject(projectId: String)
     
     
     var path: String {
@@ -40,6 +41,8 @@ enum APIEndpoint {
             return "/projects/latest/average-scores"
         case .searchProjects:
             return "/projects/search"
+        case .deleteProject(let projectId):
+            return "/projects/\(projectId)"
         }
     }
     
@@ -63,6 +66,8 @@ enum APIEndpoint {
             return .get
         case .searchProjects:
             return .get
+        case .deleteProject:
+            return .delete
         }
     }
     

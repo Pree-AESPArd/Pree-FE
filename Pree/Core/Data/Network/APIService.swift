@@ -344,4 +344,29 @@ struct APIService: APIServiceProtocol {
         }
     }
     
+    
+    func deleteProject(projectId: String) async throws {
+        let route = APIEndpoint.deleteProject(projectId: projectId)
+        
+        guard let idToken = try await Auth.auth().currentUser?.getIDToken() else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        let headers: HTTPHeaders = [
+            "Authorization": "Bearer \(idToken)",
+            "Content-Type": "application/json"
+        ]
+        
+        let dataRequest = AF.request(
+            route.url,
+            method: route.method,
+            parameters: nil,
+            headers: headers
+        ).validate(statusCode: 200..<300)
+        
+        // 응답 본문이 {"message": "..."} 형태이므로 굳이 디코딩 안 하고
+        // 상태 코드가 200번대이면 성공으로 간주
+        _ = try await dataRequest.serializingData().value
+    }
+    
 }

@@ -97,4 +97,8 @@ struct PresentationRepository: PresentationRepositoryProtocol {
         return dtos.map { PresentationMapper.toEntity($0) }
     }
     
+    func deletePresentation(id: String) async throws {
+        try await apiService.deleteProject(projectId: id)
+    }
+    
 }

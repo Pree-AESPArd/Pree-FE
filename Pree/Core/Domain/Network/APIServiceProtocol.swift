@@ -17,4 +17,5 @@ protocol APIServiceProtocol {
     func fetchTakeResult(takeId: String) async throws -> TakeResultDTO
     func fetchLatestAverageScores() async throws -> ProjectAverageScoresDTO
     func searchProjects(query: String) async throws -> [PresentationDTO]
+    func deleteProject(projectId: String) async throws
 }

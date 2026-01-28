@@ -39,15 +39,18 @@ final class HomeViewModel: ObservableObject {
     private let presentationRepository: PresentationRepositoryProtocol
     private let getLatestProjectScoresUseCase: GetLatestProjectScoresUseCaseProtocol
     private let searchProjectsUseCase: SearchProjectsUseCaseProtocol
+    private let deletePresentationUseCase: DeletePresentationUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
     init(presentationRepository: PresentationRepositoryProtocol,
          getLatestProjectScoresUseCase: GetLatestProjectScoresUseCase,
-         searchProjectsUseCase: SearchProjectsUseCaseProtocol
+         searchProjectsUseCase: SearchProjectsUseCaseProtocol,
+         deletePresentationUseCase: DeletePresentationUseCaseProtocol
     ) {
         self.presentationRepository = presentationRepository
         self.getLatestProjectScoresUseCase = getLatestProjectScoresUseCase
         self.searchProjectsUseCase = searchProjectsUseCase
+        self.deletePresentationUseCase = deletePresentationUseCase
         
         if let repo = presentationRepository as? PresentationRepository {
             repo.presentationsPublisher
@@ -149,6 +152,29 @@ final class HomeViewModel: ObservableObject {
             // 필요 시 에러 메시지 표시
         }
         isLoading = false
+    }
+    
+    
+    func deleteItem(presentation: Presentation) {
+        Task {
+            do {
+                // 1. 서버 요청
+                try await deletePresentationUseCase.execute(id: presentation.id)
+                
+                // 2. 로컬 리스트에서 즉시 제거 (UI 반응성 향상)
+                if let index = self.presentations.firstIndex(where: { $0.id == presentation.id }) {
+                    withAnimation {
+                        self.presentations.remove(at: index)
+                    }
+                }
+                
+                // 3. 최신 점수 그래프 등 다른 정보도 갱신 호출
+                await fetchLatestScores()
+                
+            } catch {
+                self.errorMessage = "삭제 실패: \(error.localizedDescription)"
+            }
+        }
     }
     
 }

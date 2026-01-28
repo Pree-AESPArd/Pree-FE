@@ -17,5 +17,7 @@ protocol PresentationRepositoryProtocol {
     func fetchLatestProjectScores() async throws -> ProjectAverageScores
     
     func searchProjects(query: String) async throws -> [Presentation]
+    
+    func deletePresentation(id: String) async throws
 }
 

@@ -293,7 +293,7 @@ struct PresentationListItemView: View {
                 
                 if vm.showDeleteMode {
                     Button(action: {
-                        // 삭제 선택 액션
+                        vm.deleteItem(presentation: presentation)
                     }){
                         Image("select_off")
                             .padding(.vertical, 30)
